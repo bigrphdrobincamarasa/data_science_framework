@@ -1,7 +1,5 @@
 # Data Science Framework 
 
-[Docs](http://nx-framework.com/docs)
-
 **data\_science\_framework is a modular data science framework - built as Pytorch framework.**
 data\_science\_framework is a tiny library, that allows you to develop your own customable datascience project.
 The main idea is that data science project are built by blocks. It exists 3 kind of blocks :
@@ -16,6 +14,8 @@ is highly customable.
 ![Alt text](ressources/readme/preocess_overview.png?raw=true "Title")
 
 ## Resources
+
+- [Docs](http://nx-framework.com/docs)
 
 ## Requirements
 
