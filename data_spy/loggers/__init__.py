@@ -14,4 +14,5 @@
 TODO: doc
 **  **
 """
+MODULE=['data_spy', 'loggers']
 

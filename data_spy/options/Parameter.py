@@ -17,7 +17,6 @@ import inspect
 
 from click import Option
 from click.decorators import _param_memo
-from pyfiglet import Figlet
 
 from scripting.doc_management import parse_class_docstring
 

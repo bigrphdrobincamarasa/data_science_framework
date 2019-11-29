@@ -20,7 +20,7 @@ from scripting.file_structure_manager import get_dir_structure, create_error_les
 
 
 def set_test_folders(
-        current_module: str, ressouces_root: str, output_root: str
+        current_module: str, ressouces_root: str = None, output_root: str = None
 ) -> Callable:
     """
     Decorator that generate output test directory and load ressources
@@ -33,20 +33,28 @@ def set_test_folders(
     def decorator(f):
         def wrapper():
             # Generate path
-            ressources_folder = os.path.join(
-                ressouces_root, *tuple(current_module)
-            )
-            output_folder = os.path.join(
-                output_root, *tuple(current_module)
-            )
+            if ressouces_root != None:
+                ressources_folder = os.path.join(
+                    ressouces_root, *tuple(current_module)
+                )
+            if output_root != None:
+                output_folder = os.path.join(
+                    output_root, *tuple(current_module)
+                )
 
             # Create output directory
-            create_error_less_directory(output_folder)
+            if output_folder != None:
+                create_error_less_directory(output_folder, override=True)
+
+            if ressouces_root != None:
+                ressources_structure = get_dir_structure(ressources_folder)
 
             # Apply test
-            f(
-                get_dir_structure(ressources_folder),
-                output_folder
-            )
+            if ressouces_root == None:
+                f(output_folder)
+            elif output_root == None:
+                f(ressources_structure)
+            else:
+                f(ressources_structure, output_folder)
         return wrapper
     return decorator

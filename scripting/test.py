@@ -83,7 +83,8 @@ def test_parse_class_docstring() -> None:
     output_root=TEST_ROOT
 )
 def test_set_test_folders(
-        ressources_file_structure:dict, output_root:str) -> None:
+        ressources_file_structure:dict, output_root:str
+) -> None:
     """
     Function that test test_file_structure decorator
 
