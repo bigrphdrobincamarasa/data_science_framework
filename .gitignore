@@ -1,22 +1,13 @@
-# Ignore python cache
-*__pycache__*
+# Pycharm
+.idea
+
+# Temporary
+data_science_framework
+
+# Cache
 *.pyc
+*__pycache__
+.pytest_cache
 
-# Ignore IntelliJ cache
-.idea/*
-
-# Ignore Sphinx build
-doc/build/*
-
-# Ignore pytest cache
-.pytest_cache/*
-
-# Django cache and database
-*migrations*
-*db.sqlite3
-
-# Ignore npm dependencies
-*node_modules/*
-
-# Ignore settings files
-*settings.py
+# Django
+*migrations
