@@ -17,6 +17,11 @@ import datetime
 import json
 import os
 from collections import Callable
+import pandas as pd
+from pyfiglet import Figlet
+
+from scripting.file_structure_manager import create_error_less_directory
+from settings import FILENAME_TEMPLATE
 
 
 def get_git_current_state(project_root: str) -> dict:
@@ -47,68 +52,45 @@ def get_git_current_state(project_root: str) -> dict:
     return output
 
 
-def timer(
-        process_name: str, folder: str,
-        tag: str
-) -> Callable:
+
+
+def clear_experiments(folder: str) -> None:
     """
-    TODO doc and test
+    Clear uncommented experiments
+
+    :param folder: Path to the folder to clear
+    :return: None
     """
-    def decorator(f):
-        def wrapper(*args, **kwargs):
-            # Generate filename
-            filename = os.path.join(folder, '#timer_{}.json'.format(tag))
+    # Get tags items
+    items = {
+        '_'.join(item.split('_')[1:]).split('.')[0]
+        for item in os.listdir(folder) if '#glogger' in item
+    }
+    for item in list(items):
+        # Get csv input
+        csv_input = os.path.join(
+            folder, FILENAME_TEMPLATE['glogger']['input'].format(item)
+        )
 
-            # Get time
-            start_time = datetime.datetime.now().timestamp()
+        # Get csv output
+        csv_output = os.path.join(
+            folder, FILENAME_TEMPLATE['glogger']['output'].format(item)
+        )
 
-            # Launch function
-            f(*args, **kwargs)
+        # Input dataframe
+        df_input = pd.read_csv(csv_input)
+        df_output = pd.read_csv(csv_output)
 
-            # Get end time
-            end_time = datetime.datetime.now().timestamp()
+        # Get commented experiments
+        df_input = df_input.fillna('')
+        commented_ids = df_input[df_input['comment'] != '']['index']
 
-            # Process log
-            process = {
-                'name': process_name,
-                'process_time': (end_time - start_time).__round__(4),
-                'start_time': start_time.__round__(4),
-                'end_time': end_time.__round__(4),
-                'subprocesses': []
-            }
-            prototype = {
-                'name': tag,
-                'process_time': (end_time - start_time).__round__(4),
-                'start_time': start_time.__round__(4),
-                'end_time': end_time.__round__(4),
-                'subprocesses': []
-            }
+        # Update dataframes
+        df_input = df_input[df_input['index'].isin(commented_ids)]
+        df_output = df_output[df_output['index'].isin(commented_ids)]
 
-
-            # Test if tag timer exists
-            if os.path.isfile(filename):
-                # Load json file
-                with open(filename, 'r') as handle:
-                    timer_dict_ = json.load(handle)
-
-                if timer_dict_['end_time'] < process['start_time']:
-                    # Subprocess case
-                    timer_dict_['subprocesses'].append(process)
-                    timer_dict_['end_time'] = process['end_time']
-
-                    with open(filename, 'w') as handle:
-                        json.dump(timer_dict_, handle)
-                else:
-                    process['subprocesses'] = timer_dict_['subprocesses']
-                    prototype['subprocesses'] = [process]
-
-                    with open(filename, 'w') as handle:
-                        json.dump(prototype, handle)
-            else:
-                prototype['subprocesses'].append(process)
-                with open(filename, 'w') as handle:
-                    json.dump(prototype, handle)
-        return wrapper
-    return decorator
+        # Save updated dataframes
+        df_input.to_csv(csv_input, index=False)
+        df_output.to_csv(csv_output, index=False)
 
 

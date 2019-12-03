@@ -33,7 +33,7 @@ with open('requirements.txt', 'r') as requirements_handler:
       requirements = requirements_handler.readlines()
 
 setup(
-      name='data_science_framework',
+      name='datascienceframework',
       version=version,
       packages=find_packages(),
       description='data\_science\_framework is a tiny library, that allows you to develop' + \

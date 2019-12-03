@@ -23,3 +23,13 @@ TEST_ROOT = os.path.join(PROJECT_ROOT, 'test')
 
 # Set ressources root
 RESSOURCES_ROOT = os.path.join(PROJECT_ROOT, 'ressources')
+
+FILENAME_TEMPLATE = {
+    'glogger': {
+        'input': '#glogger_{}.csv',
+        'output': '#gloggeroutput_{}.csv',
+        'experiment_folder': '#{}_{}'
+    },
+    'tlogger': '#tlogger_{}.json',
+    'mlogger': '#mlogger_{}.csv'
+}

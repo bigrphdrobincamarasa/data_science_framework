@@ -28,6 +28,7 @@ def set_test_folders(
 
     :param ressouces_root: Path root of the ressources folder
     :param output_root: Path root of the output folder
+    :param current_module: List of the modules
     :return: The test function updated
     """
     def decorator(f):
@@ -46,6 +47,7 @@ def set_test_folders(
             if output_folder != None:
                 create_error_less_directory(output_folder, override=True)
 
+            # Create ressources tree
             if ressouces_root != None:
                 ressources_structure = get_dir_structure(ressources_folder)
 

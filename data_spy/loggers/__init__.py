@@ -11,8 +11,7 @@
 
 **Project** : data_science_framework
 
-TODO: doc
-**  **
+** Module that helps handle loggers **
 """
 MODULE=['data_spy', 'loggers']
 

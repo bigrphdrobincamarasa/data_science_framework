@@ -14,11 +14,15 @@
 TODO: doc
 **  **
 """
+import os
+
 import click
 import numpy as np
 from pyfiglet import Figlet
 
+from data_spy.loggers.experiment_utils import global_logger
 from data_spy.options.option_manager import parameters_to_options, initialize_experiment_parameters
+from settings import PROJECT_ROOT
 
 
 class Network1:
@@ -62,12 +66,12 @@ EXPERIMENT_OBJECTS = {
 
 @click.command()
 @parameters_to_options(experiment_objects=EXPERIMENT_OBJECTS)
-def experiment(**option_values):
+@global_logger(folder='./', tag='training', project_root=PROJECT_ROOT)
+def experiment(index, experiment_folder, **option_values):
     initialize_experiment_parameters(
         experiment_objects=EXPERIMENT_OBJECTS,
         option_values=option_values
     )
-    print(6)
 
 
 if __name__ == '__main__':

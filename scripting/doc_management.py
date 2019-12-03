@@ -11,8 +11,7 @@
 
 **Project** : data_science_framework
 
-TODO: doc
-**  **
+** File that contains the docstring management functions **
 """
 
 

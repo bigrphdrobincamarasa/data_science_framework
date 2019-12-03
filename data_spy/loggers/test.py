@@ -11,16 +11,17 @@
 
 **Project** : data_science_framework
 
-TODO: rewrite all functions
-TODO: doc
-**  **
+** File that tests the module functions and decorators **
 """
 import json
 import os
 import time
+import pandas as pd
 
 from data_spy.loggers import MODULE
-from data_spy.loggers.experiment_utils import get_git_current_state, timer
+from data_spy.loggers.experiment_loggers import metric_logger, global_logger, timer
+from data_spy.loggers.experiment_utils import get_git_current_state, clear_experiments
+from scripting.file_structure_manager import get_file_structure
 from scripting.test_manager import set_test_folders
 from settings import PROJECT_ROOT, TEST_ROOT
 
@@ -45,28 +46,165 @@ def test_git_current_state() -> None:
 @set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
 def test_timer(output_folder):
     """
-    TODO doc
+    Test timer decorator generator
 
-    :param output:
-    :return:
+    :param output_folder: Path to the output folder
+    :return: None
     """
-    @timer(process_name='g', folder=output_folder, tag='test')
+
+    @timer
     def g(*args, **kwargs):
         time.sleep(0.1)
 
-    @timer(process_name='f', folder=output_folder, tag='test')
+    @timer
     def f(*args, **kwargs):
         for i in range(5):
-            g()
-    f()
-    with open(os.path.join(output_folder, '#timer_test.json')) as handle:
+            g(folder=output_folder, tag='test', save=(i % 2 == 0))
+
+    f(folder=output_folder, tag='test', save=True)
+    with open(os.path.join(output_folder, '#tlogger_test.json')) as handle:
         output_dict = json.load(handle)
     assert output_dict['name'] == 'test'
 
     # Test main process
     assert output_dict['subprocesses'][0]['name'] == 'f'
-    assert len(output_dict['subprocesses'][0]['subprocesses']) == 5
+    assert len(output_dict['subprocesses'][0]['subprocesses']) == 3
 
     # Test subprocess
     assert output_dict['subprocesses'][0]['subprocesses'][0]['name'] == 'g'
     assert len(output_dict['subprocesses'][0]['subprocesses'][0]['subprocesses']) == 0
+
+
+@set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
+def test_metric_logger(output_folder):
+    """
+    Test metric logger decorator
+
+    :param output_folder: Path to the output folder
+    :return: None
+    """
+    @metric_logger
+    def f(a, b, *args, **kwargs):
+        return a * b
+
+    @metric_logger
+    def g(c, d, *args, **kwargs):
+        return c + d
+
+    @metric_logger
+    def h(g, h, *args, **kwargs):
+        return g - h
+
+    for i in range(10):
+        f(
+            i, i**2, folder=output_folder, save=(i % 2) == 0, meta={'index': i, 'epoch': i},
+            tag='phase1', metric='f'
+        )
+        g(
+            i, i**3, folder=output_folder, save=(i % 3) == 0, meta={'index': i, 'epoch': i},
+            tag='phase1', metric='g'
+        )
+
+    for i in range(5):
+        h(
+            i, i**3, folder=output_folder, save=True, meta={'index': i, 'epoch': i},
+            tag='phase2', metric='h'
+        )
+
+    # Get paths
+    phase1_path = os.path.join(output_folder, '#mlogger_phase1.csv')
+    phase2_path = os.path.join(output_folder, '#mlogger_phase2.csv')
+
+    # Get dataframes
+    df_phase1 = pd.read_csv(phase1_path, index_col='index')
+    df_phase2 = pd.read_csv(phase2_path, index_col='index')
+
+    # Check sizes of the dataframe
+    assert df_phase1.shape == (7, 3)
+    assert df_phase2.shape == (5, 2)
+    assert pd.isna(df_phase1['g'][8])
+    assert pd.isna(df_phase1['f'][3])
+
+
+@set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
+def test_global_logger(output_folder: str) -> None:
+    """
+    Function that test the global logger
+
+    :param output_folder: Path to the output folder
+    :return:None
+    """
+
+    @global_logger(tag='training', folder=output_folder, project_root=PROJECT_ROOT)
+    def g(testa, testb, index, experiment_folder, *args, **kwargs):
+        assert testa ** 2 == testb
+        return {'result': testa * testb}
+
+    for i in range(5):
+        g(testa=i, testb=i ** 2)
+
+    assert os.path.isfile(os.path.join(output_folder, '#glogger_training.csv'))
+
+    # Test input logger
+    df_test = get_file_structure(
+        os.path.join(
+            os.path.join(output_folder, '#glogger_training.csv')
+        )
+    )['object']
+    assert 'index' in list(df_test)
+    assert 'comment' in list(df_test)
+    assert 'branch' in list(df_test)
+    assert 'time' in list(df_test)
+    assert 'hash' in list(df_test)
+    assert df_test.shape[0] == 5
+
+    # Test output logger
+    df_test = get_file_structure(
+        os.path.join(
+            os.path.join(output_folder, '#gloggeroutput_training.csv')
+        )
+    )['object']
+    assert 'index' in list(df_test)
+    assert 'total_time' in list(df_test)
+    assert df_test.shape[0] == 5
+
+
+@set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
+def test_clear_experiments(output_folder: str) -> None:
+    """
+    Function that tests clear_experiments function
+
+    :param output: Path to the output folder
+    :return: None
+    """
+    @global_logger(tag='training', folder=output_folder, project_root=PROJECT_ROOT)
+    def g1(testa, testb, index, experiment_folder, *args, **kwargs):
+        return {'result': testa * testb}
+
+    @global_logger(tag='training2', folder=output_folder, project_root=PROJECT_ROOT, test=True)
+    def g2(testa, testb, index, experiment_folder, *args, **kwargs):
+        return {'result': testa * testb}
+
+    for i in range(5):
+        g1(testa=i, testb=i**2)
+        g2(testa=i, testb=i**3)
+
+    # Comment two experiments
+    input_path = os.path.join(output_folder, '#glogger_training.csv')
+    df_test = get_file_structure(input_path)['object'].set_index('index')
+
+    # Get input and output path
+    df_test.loc[0, 'comment'] = 'This is a test'
+    df_test.loc[4, 'comment'] = 'This is a test'
+    df_test.to_csv(input_path)
+
+    # Clear experiments
+    clear_experiments(output_folder)
+
+    # Check results
+    for length, tag in [(2, 'training'), (0, 'training2_test')]:
+        input_path = os.path.join(
+            output_folder, '#glogger_{}.csv'.format(tag)
+        )
+        df = pd.read_csv(input_path)
+        assert df.shape[0] == length

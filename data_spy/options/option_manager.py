@@ -11,8 +11,7 @@
 
 **Project** : data_science_framework
 
-TODO: doc
-**  **
+** File that contains the options manager **
 """
 import inspect
 from typing import Callable, Dict, List
@@ -48,8 +47,8 @@ def get_parameters(optionable_class_object: object, object_key):
     Function that transforms your constructor items into
     a list of Parameter objects
 
-    :param object: Object that is optionable (every constructor argument has default value)
-    :param object_name: Name of the main object
+    :param optionable_class_object: Object that is optionable (every constructor argument has default value)
+    :param object_key: Name of the main object
     :return: None
     """
     # Initialise output

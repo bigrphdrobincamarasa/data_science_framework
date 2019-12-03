@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>data_spy.loggers.experiment_loggers &#8212; Data Science Framework  documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Data Science Framework  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for data_spy.loggers.experiment_loggers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Author** : Robin Camarasa </span>
+
+<span class="sd">**Institution** : Erasmus Medical Center</span>
+
+<span class="sd">**Position** : PhD student</span>
+
+<span class="sd">**Contact** : r.camarasa@erasmusmc.nl</span>
+
+<span class="sd">**Date** : 2019-11-28</span>
+
+<span class="sd">**Project** : data_science_framework</span>
+
+<span class="sd">** File that contains the main loggers **</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pyfiglet</span> <span class="kn">import</span> <span class="n">Figlet</span>
+
+<span class="kn">from</span> <span class="nn">data_spy.loggers.experiment_utils</span> <span class="kn">import</span> <span class="n">get_git_current_state</span>
+<span class="kn">from</span> <span class="nn">scripting.file_structure_manager</span> <span class="kn">import</span> <span class="n">create_error_less_directory</span>
+<span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">FILENAME_TEMPLATE</span>
+
+
+<div class="viewcode-block" id="global_logger"><a class="viewcode-back" href="../../../data_spy.loggers.html#data_spy.loggers.experiment_loggers.global_logger">[docs]</a><span class="k">def</span> <span class="nf">global_logger</span><span class="p">(</span>
+        <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;experiment&#39;</span><span class="p">,</span>
+        <span class="n">test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that return a decorator that logs the experiments parameters and the output of the experiment</span>
+
+<span class="sd">    :param folder: Path to the folder that contains the experiments</span>
+<span class="sd">    :param project_root: Root of the project (for github logs)</span>
+<span class="sd">    :param tag: Tag associated with the experiment</span>
+<span class="sd">    :param test: Boolean that is true only if the experiment is a test</span>
+<span class="sd">    :return: Decorator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="c1"># Update tag if necessary</span>
+            <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                <span class="n">tag_</span> <span class="o">=</span> <span class="n">tag</span> <span class="o">+</span> <span class="s1">&#39;_test&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tag_</span> <span class="o">=</span> <span class="n">tag</span>
+            <span class="c1"># Manage dataframe</span>
+            <span class="n">csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">FILENAME_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;glogger&#39;</span><span class="p">][</span><span class="s1">&#39;input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag_</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">csv_path</span><span class="p">):</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+
+
+            <span class="c1"># Get git values</span>
+            <span class="n">git_values</span> <span class="o">=</span> <span class="n">get_git_current_state</span><span class="p">(</span><span class="n">project_root</span><span class="p">)</span>
+            <span class="n">git_values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Get time values</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+            <span class="c1"># Append experiments input values</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span><span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>  <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span> <span class="o">**</span><span class="n">git_values</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">},</span>
+                <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Save csv file</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1"># Get the added row</span>
+            <span class="n">row_with_id</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+            <span class="c1"># Create experiment folder</span>
+            <span class="n">experiment_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;#</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag_</span><span class="p">,</span> <span class="n">row_with_id</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]))</span>
+            <span class="n">create_error_less_directory</span><span class="p">(</span><span class="n">experiment_folder</span><span class="p">)</span>
+
+            <span class="c1">#Apply fonction</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">Figlet</span><span class="p">()</span><span class="o">.</span><span class="n">renderText</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag_</span><span class="p">,</span> <span class="n">row_with_id</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">])))</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">experiment_folder</span><span class="o">=</span><span class="n">experiment_folder</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">row_with_id</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Get csv output path</span>
+            <span class="n">csv_output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">FILENAME_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;glogger&#39;</span><span class="p">][</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag_</span><span class="p">))</span>
+
+            <span class="c1"># Log output of the function</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">csv_output_path</span><span class="p">):</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_output_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">row_with_id</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;total_time&#39;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+                        <span class="p">)</span><span class="o">.</span><span class="fm">__round__</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                        <span class="o">**</span><span class="n">output</span>
+                    <span class="p">},</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">row_with_id</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;total_time&#39;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+                        <span class="p">)</span><span class="o">.</span><span class="fm">__round__</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+                    <span class="p">},</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_output_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">output</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+<div class="viewcode-block" id="metric_logger"><a class="viewcode-back" href="../../../data_spy.loggers.html#data_spy.loggers.experiment_loggers.metric_logger">[docs]</a><span class="k">def</span> <span class="nf">metric_logger</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator that logs a metric</span>
+
+<span class="sd">    :param f: Decorated function</span>
+<span class="sd">    :return: Decorated function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;save&#39;</span><span class="p">]:</span>
+                <span class="c1"># apply function</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                <span class="c1"># Get index</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+
+                <span class="c1"># Get csv path</span>
+                <span class="n">csv_metric_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;folder&#39;</span><span class="p">],</span> <span class="n">FILENAME_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;mlogger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">])</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Get already saved data</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">csv_metric_file</span><span class="p">):</span>
+                    <span class="n">metric_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_metric_file</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">metric_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                        <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+
+                <span class="c1"># Add value in the dataframe</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">metric_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                    <span class="c1"># if the row already exists</span>
+                    <span class="n">row_to_update</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metric_dataframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;metric&#39;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                    <span class="n">metric_dataframe</span> <span class="o">=</span> <span class="n">metric_dataframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">metric_dataframe</span><span class="o">.</span><span class="n">index</span> <span class="o">!=</span> <span class="n">index</span><span class="p">]</span>
+                    <span class="n">metric_dataframe</span> <span class="o">=</span> <span class="n">metric_dataframe</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">index</span><span class="p">,</span>
+                            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;metric&#39;</span><span class="p">]:</span> <span class="n">output</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">row_to_update</span>
+                        <span class="p">},</span>
+                        <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">metric_dataframe</span> <span class="o">=</span> <span class="n">metric_dataframe</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">index</span><span class="p">,</span>
+                            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;metric&#39;</span><span class="p">]:</span> <span class="n">output</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">]</span>
+                        <span class="p">},</span>
+                        <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                <span class="n">metric_dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_metric_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span>
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<div class="viewcode-block" id="timer"><a class="viewcode-back" href="../../../data_spy.loggers.html#data_spy.loggers.experiment_loggers.timer">[docs]</a><span class="k">def</span> <span class="nf">timer</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator that times a function</span>
+
+<span class="sd">    :param f: Function to time</span>
+<span class="sd">    :return: Decorated function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;save&#39;</span><span class="p">]:</span>
+                <span class="c1"># Create folder</span>
+                <span class="n">create_error_less_directory</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;folder&#39;</span><span class="p">])</span>
+
+                <span class="c1"># Get process name</span>
+                <span class="n">process_name</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__name__</span>
+
+                <span class="c1"># Generate filename</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;folder&#39;</span><span class="p">],</span> <span class="n">FILENAME_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;tlogger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">]))</span>
+
+                <span class="c1"># Get time</span>
+                <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+
+                <span class="c1"># Launch function</span>
+                <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                <span class="c1"># Get end time</span>
+                <span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+
+                <span class="c1"># Process log</span>
+                <span class="n">process</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">process_name</span><span class="p">,</span>
+                    <span class="s1">&#39;process_time&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="fm">__round__</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                    <span class="s1">&#39;start_time&#39;</span><span class="p">:</span> <span class="n">start_time</span><span class="o">.</span><span class="fm">__round__</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                    <span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">end_time</span><span class="o">.</span><span class="fm">__round__</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                    <span class="s1">&#39;subprocesses&#39;</span><span class="p">:</span> <span class="p">[]</span>
+                <span class="p">}</span>
+                <span class="n">prototype</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;process_time&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="fm">__round__</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                    <span class="s1">&#39;start_time&#39;</span><span class="p">:</span> <span class="n">start_time</span><span class="o">.</span><span class="fm">__round__</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                    <span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">end_time</span><span class="o">.</span><span class="fm">__round__</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                    <span class="s1">&#39;subprocesses&#39;</span><span class="p">:</span> <span class="p">[]</span>
+                <span class="p">}</span>
+
+                <span class="c1"># Test if tag timer exists</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+                    <span class="c1"># Load json file</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+                        <span class="n">timer_dict_</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">timer_dict_</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">process</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]:</span>
+                        <span class="c1"># Subprocess case</span>
+                        <span class="n">timer_dict_</span><span class="p">[</span><span class="s1">&#39;subprocesses&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+                        <span class="n">timer_dict_</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span>
+
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+                            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">timer_dict_</span><span class="p">,</span> <span class="n">handle</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">process</span><span class="p">[</span><span class="s1">&#39;subprocesses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timer_dict_</span><span class="p">[</span><span class="s1">&#39;subprocesses&#39;</span><span class="p">]</span>
+                        <span class="n">prototype</span><span class="p">[</span><span class="s1">&#39;subprocesses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">process</span><span class="p">]</span>
+
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+                            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">prototype</span><span class="p">,</span> <span class="n">handle</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prototype</span><span class="p">[</span><span class="s1">&#39;subprocesses&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+                        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">prototype</span><span class="p">,</span> <span class="n">handle</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Data Science Framework  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Robin Camarasa.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>data_spy.options.option_manager &#8212; Data Science Framework  documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Data Science Framework  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for data_spy.options.option_manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Author** : Robin Camarasa </span>
+
+<span class="sd">**Institution** : Erasmus Medical Center</span>
+
+<span class="sd">**Position** : PhD student</span>
+
+<span class="sd">**Contact** : r.camarasa@erasmusmc.nl</span>
+
+<span class="sd">**Date** : 2019-11-28</span>
+
+<span class="sd">**Project** : data_science_framework</span>
+
+<span class="sd">** File that contains the options manager **</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+
+<span class="kn">from</span> <span class="nn">data_spy.options</span> <span class="kn">import</span> <span class="n">Parameter</span>
+
+
+<div class="viewcode-block" id="parameters_to_options"><a class="viewcode-back" href="../../../data_spy.options.html#data_spy.options.option_manager.parameters_to_options">[docs]</a><span class="k">def</span> <span class="nf">parameters_to_options</span><span class="p">(</span><span class="n">experiment_objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function manage the options of your experiments</span>
+
+<span class="sd">    :param experiment_objects: A dictionnary of list of optionable</span>
+<span class="sd">    objects used in your experiment</span>
+<span class="sd">    :return: A decorator that can be applied on every fonction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
+        <span class="c1"># Loop over each function</span>
+        <span class="k">for</span> <span class="n">object_key</span><span class="p">,</span> <span class="n">experiment_object</span> <span class="ow">in</span> <span class="n">experiment_objects</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">experiment_parameter</span> <span class="ow">in</span> <span class="n">get_parameters</span><span class="p">(</span>
+                <span class="n">optionable_class_object</span><span class="o">=</span><span class="n">experiment_object</span><span class="p">,</span> <span class="n">object_key</span><span class="o">=</span><span class="n">object_key</span>
+            <span class="p">):</span>
+                <span class="n">experiment_parameter</span><span class="o">.</span><span class="n">render_click_option</span><span class="p">(</span>
+                    <span class="n">f</span><span class="o">=</span><span class="n">function</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">function</span>
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+<div class="viewcode-block" id="get_parameters"><a class="viewcode-back" href="../../../data_spy.options.html#data_spy.options.option_manager.get_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="n">optionable_class_object</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">object_key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that transforms your constructor items into</span>
+<span class="sd">    a list of Parameter objects</span>
+
+<span class="sd">    :param optionable_class_object: Object that is optionable (every constructor argument has default value)</span>
+<span class="sd">    :param object_key: Name of the main object</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialise output</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Get __init__ values</span>
+    <span class="n">init_values</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="n">optionable_class_object</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span>
+
+    <span class="c1"># Get default</span>
+    <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">init_values</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">documentation</span> <span class="o">=</span> <span class="n">optionable_class_object</span><span class="o">.</span><span class="vm">__doc__</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Parameter</span><span class="p">(</span>
+                    <span class="n">parameter</span><span class="o">=</span><span class="n">parameter</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">optionable_class_object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">parameter</span><span class="p">),</span>
+                    <span class="n">object_key</span><span class="o">=</span><span class="n">object_key</span><span class="p">,</span> <span class="n">documentation</span><span class="o">=</span><span class="n">documentation</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="initialize_experiment_parameters"><a class="viewcode-back" href="../../../data_spy.options.html#data_spy.options.option_manager.initialize_experiment_parameters">[docs]</a><span class="k">def</span> <span class="nf">initialize_experiment_parameters</span><span class="p">(</span>
+        <span class="n">experiment_objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">option_values</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that returns experiment objects initialized by option parser input</span>
+
+<span class="sd">    :param experiment_objects: Dictionnary of objects corresponding to the experiment</span>
+<span class="sd">    required objects</span>
+<span class="sd">    :param option_values: Dictionnary containing the values inputted as options</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">option_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Extract experiment object key</span>
+            <span class="n">experiment_object_key_</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Extract parameter key</span>
+            <span class="n">parameter_key_</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">experiment_objects</span><span class="p">[</span><span class="n">experiment_object_key_</span><span class="p">]</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">parameter_key_</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Data Science Framework  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Robin Camarasa.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>
