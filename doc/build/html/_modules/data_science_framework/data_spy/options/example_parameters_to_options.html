@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>data_science_framework.data_spy.options.example_parameters_to_options &#8212; Data Science Framework  documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Data Science Framework  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for data_science_framework.data_spy.options.example_parameters_to_options</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Author** : Robin Camarasa</span>
+
+<span class="sd">**Institution** : Erasmus Medical Center</span>
+
+<span class="sd">**Position** : PhD student</span>
+
+<span class="sd">**Contact** : r.camarasa@erasmusmc.nl</span>
+
+<span class="sd">**Date** : 2019-11-25</span>
+
+<span class="sd">**Project** : data_science_framework</span>
+
+<span class="sd">TODO: doc</span>
+<span class="sd">**  **</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+
+<span class="kn">from</span> <span class="nn">data_science_framework.data_spy.loggers.experiment_loggers</span> <span class="k">import</span> <span class="n">global_logger</span>
+<span class="kn">from</span> <span class="nn">data_science_framework.data_spy.options.option_manager</span> <span class="k">import</span> <span class="n">parameters_to_options</span><span class="p">,</span> <span class="n">initialize_experiment_parameters</span>
+<span class="kn">from</span> <span class="nn">data_science_framework.settings</span> <span class="k">import</span> <span class="n">PROJECT_ROOT</span>
+
+
+<div class="viewcode-block" id="Network1"><a class="viewcode-back" href="../../../../data_science_framework.data_spy.options.html#data_science_framework.data_spy.options.example_parameters_to_options.Network1">[docs]</a><span class="k">class</span> <span class="nc">Network1</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class Network1</span>
+
+<span class="sd">    :param depth: Depth of the network</span>
+<span class="sd">    :param in_channel: Number of channel of the input layer</span>
+<span class="sd">    :param out_channel: Number of channels of the output layer</span>
+<span class="sd">    :param dropout: Type of dropout applied</span>
+<span class="sd">    :param callbacks: Callbacks applied to the network</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">in_channel</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">out_channel</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="s1">&#39;training&#39;</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">depth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_channel</span> <span class="o">=</span> <span class="n">in_channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_channel</span> <span class="o">=</span> <span class="n">out_channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">dropout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="n">callbacks</span></div>
+
+
+<div class="viewcode-block" id="Network2"><a class="viewcode-back" href="../../../../data_science_framework.data_spy.options.html#data_science_framework.data_spy.options.example_parameters_to_options.Network2">[docs]</a><span class="k">class</span> <span class="nc">Network2</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class Network2</span>
+
+<span class="sd">    :param depth: Depth of the network</span>
+<span class="sd">    :param in_channel: Number of channel of the input layer</span>
+<span class="sd">    :param out_channel: Number of channels of the output layer</span>
+<span class="sd">    :param mc_dropout: Type of dropout applied</span>
+<span class="sd">    :param callbacks: Callbacks applied to the network</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">depth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="n">callbacks</span></div>
+
+
+<span class="n">EXPERIMENT_OBJECTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;generator&#39;</span><span class="p">:</span> <span class="n">Network1</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span>
+    <span class="s1">&#39;discriminator&#39;</span><span class="p">:</span> <span class="n">Network2</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@parameters_to_options</span><span class="p">(</span><span class="n">experiment_objects</span><span class="o">=</span><span class="n">EXPERIMENT_OBJECTS</span><span class="p">)</span>
+<span class="nd">@global_logger</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;training&#39;</span><span class="p">,</span> <span class="n">project_root</span><span class="o">=</span><span class="n">PROJECT_ROOT</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">experiment</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">experiment_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">option_values</span><span class="p">):</span>
+    <span class="n">initialize_experiment_parameters</span><span class="p">(</span>
+        <span class="n">experiment_objects</span><span class="o">=</span><span class="n">EXPERIMENT_OBJECTS</span><span class="p">,</span>
+        <span class="n">option_values</span><span class="o">=</span><span class="n">option_values</span>
+    <span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">experiment</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Data Science Framework  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Robin Camarasa.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

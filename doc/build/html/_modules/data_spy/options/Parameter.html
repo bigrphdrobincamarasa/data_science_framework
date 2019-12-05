@@ -54,14 +54,14 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 
-<span class="kn">from</span> <span class="nn">click</span> <span class="kn">import</span> <span class="n">Option</span>
-<span class="kn">from</span> <span class="nn">click.decorators</span> <span class="kn">import</span> <span class="n">_param_memo</span>
+<span class="kn">from</span> <span class="nn">click</span> <span class="k">import</span> <span class="n">Option</span>
+<span class="kn">from</span> <span class="nn">click.decorators</span> <span class="k">import</span> <span class="n">_param_memo</span>
 
-<span class="kn">from</span> <span class="nn">scripting.doc_management</span> <span class="kn">import</span> <span class="n">parse_class_docstring</span>
+<span class="kn">from</span> <span class="nn">scripting.doc_management</span> <span class="k">import</span> <span class="n">parse_class_docstring</span>
 
 
 <div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../../data_spy.options.html#data_spy.options.Parameter.Parameter">[docs]</a><span class="k">class</span> <span class="nc">Parameter</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span>
             <span class="n">object_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">documentation</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
     <span class="p">):</span>
@@ -114,7 +114,7 @@
             <span class="n">OptionClass</span> <span class="o">=</span> <span class="n">click_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;cls&#39;</span><span class="p">,</span> <span class="n">Option</span><span class="p">)</span>
             <span class="n">_param_memo</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">OptionClass</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">option_name</span><span class="p">,</span> <span class="p">),</span> <span class="o">**</span><span class="n">click_dict</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">option_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
@@ -157,7 +157,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Robin Camarasa.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>

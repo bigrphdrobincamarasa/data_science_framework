@@ -4,5 +4,4 @@ data_science_framework
 .. toctree::
    :maxdepth: 4
 
-   data_spy
-   scripting
+   data_science_framework

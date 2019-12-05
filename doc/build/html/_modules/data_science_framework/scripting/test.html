@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>data_science_framework.scripting.test &#8212; Data Science Framework  documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Data Science Framework  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for data_science_framework.scripting.test</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Author** : Robin Camarasa </span>
+
+<span class="sd">**Institution** : Erasmus Medical Center</span>
+
+<span class="sd">**Position** : PhD student</span>
+
+<span class="sd">**Contact** : r.camarasa@erasmusmc.nl</span>
+
+<span class="sd">**Date** : 2019-11-28</span>
+
+<span class="sd">**Project** : data_science_framework</span>
+
+<span class="sd">** File that test scripting functions, classes, decorators ... **</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">data_science_framework.scripting</span> <span class="k">import</span> <span class="n">MODULE</span>
+<span class="kn">from</span> <span class="nn">data_science_framework.scripting.doc_management</span> <span class="k">import</span> <span class="n">parse_function_docstring</span><span class="p">,</span> <span class="n">parse_class_docstring</span>
+<span class="kn">from</span> <span class="nn">data_science_framework.scripting.file_structure_manager</span> <span class="k">import</span> <span class="n">get_file_structure</span><span class="p">,</span> <span class="n">get_dir_structure</span><span class="p">,</span> <span class="n">create_error_less_directory</span>
+<span class="kn">from</span> <span class="nn">data_science_framework.scripting.test_manager</span> <span class="k">import</span> <span class="n">set_test_folders</span>
+<span class="kn">from</span> <span class="nn">data_science_framework.settings</span> <span class="k">import</span> <span class="n">RESSOURCES_ROOT</span><span class="p">,</span> <span class="n">TEST_ROOT</span>
+
+
+<div class="viewcode-block" id="test_parse_function_docstring"><a class="viewcode-back" href="../../../data_science_framework.scripting.html#data_science_framework.scripting.test.test_parse_function_docstring">[docs]</a><span class="k">def</span> <span class="nf">test_parse_function_docstring</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that test function docstring parser</span>
+
+<span class="sd">    :param ressources: Folder parsed as a dictionnary</span>
+<span class="sd">    :param output_path: Output save path</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">test_function</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Header</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">parse_function_docstring</span><span class="p">(</span><span class="n">test_function</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;Header&#39;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;header&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="s1">&#39;None&#39;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;return&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">test_function</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Header</span>
+
+<span class="sd">        :param test: test_doc</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">parse_function_docstring</span><span class="p">(</span><span class="n">test_function</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;Header&#39;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;header&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="s1">&#39;test_doc&#39;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="s1">&#39;None&#39;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;return&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="test_parse_class_docstring"><a class="viewcode-back" href="../../../data_science_framework.scripting.html#data_science_framework.scripting.test.test_parse_class_docstring">[docs]</a><span class="k">def</span> <span class="nf">test_parse_class_docstring</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that test class_docstring parser</span>
+
+<span class="sd">    :param ressources: Folder parsed as a dictionnary</span>
+<span class="sd">    :param output_path: Output save path</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Test</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Header</span>
+
+<span class="sd">        :param test: test_doc</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">parse_class_docstring</span><span class="p">(</span><span class="n">Test</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;test_doc&#39;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span></div>
+
+
+<span class="nd">@set_test_folders</span><span class="p">(</span>
+    <span class="n">current_module</span><span class="o">=</span><span class="n">MODULE</span><span class="p">,</span> <span class="n">ressouces_root</span><span class="o">=</span><span class="n">RESSOURCES_ROOT</span><span class="p">,</span>
+    <span class="n">output_root</span><span class="o">=</span><span class="n">TEST_ROOT</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_set_test_folders</span><span class="p">(</span>
+        <span class="n">ressources_file_structure</span><span class="p">:</span><span class="nb">dict</span><span class="p">,</span> <span class="n">output_root</span><span class="p">:</span><span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that test test_file_structure decorator</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">ressources_file_structure</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">output_root</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">output_root</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TEST_ROOT</span><span class="p">,</span> <span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="n">MODULE</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="test_create_error_less_directory"><a class="viewcode-back" href="../../../data_science_framework.scripting.html#data_science_framework.scripting.test.test_create_error_less_directory">[docs]</a><span class="k">def</span> <span class="nf">test_create_error_less_directory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that test create_error_less_directory</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Set folder under study</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TEST_ROOT</span><span class="p">,</span> <span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="n">MODULE</span><span class="p">))</span>
+
+    <span class="c1"># Try with non existant folder</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">create_error_less_directory</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">create_error_less_directory</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+
+    <span class="c1"># Try with existant folder</span>
+    <span class="n">subfolder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">subfolder</span><span class="p">)</span>
+    <span class="n">create_error_less_directory</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subfolder</span><span class="p">)</span>
+    <span class="n">create_error_less_directory</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subfolder</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_get_dir_structure"><a class="viewcode-back" href="../../../data_science_framework.scripting.html#data_science_framework.scripting.test.test_get_dir_structure">[docs]</a><span class="k">def</span> <span class="nf">test_get_dir_structure</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that test test_file_structure decorator</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get path value</span>
+    <span class="n">path_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">RESSOURCES_ROOT</span><span class="p">,</span> <span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="n">MODULE</span><span class="p">))</span>
+
+    <span class="c1"># Test subfolder tree height parameter</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">get_dir_structure</span><span class="p">(</span>
+        <span class="n">path_root</span><span class="o">=</span><span class="n">path_root</span><span class="p">,</span>
+        <span class="n">subfolder_tree_height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;object&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dir&#39;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">get_dir_structure</span><span class="p">(</span>
+        <span class="n">path_root</span><span class="o">=</span><span class="n">path_root</span><span class="p">,</span>
+        <span class="n">subfolder_tree_height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;test.txt&#39;</span><span class="p">][</span><span class="s1">&#39;object&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+
+
+
+
+<div class="viewcode-block" id="test_get_file_structure"><a class="viewcode-back" href="../../../data_science_framework.scripting.html#data_science_framework.scripting.test.test_get_file_structure">[docs]</a><span class="k">def</span> <span class="nf">test_get_file_structure</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that test test_file_structure decorator</span>
+<span class="sd">    #TODO: test supported extensions</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialize tested files</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;test.json&#39;</span><span class="p">,</span> <span class="s1">&#39;test.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;test.npy&#39;</span><span class="p">,</span> <span class="s1">&#39;test.csv&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;broken_test.json&#39;</span><span class="p">,</span> <span class="s1">&#39;broken_test.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;broken_test.npy&#39;</span><span class="p">,</span> <span class="s1">&#39;broken_test.csv&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="c1"># Initialize tested objects</span>
+    <span class="n">objects</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">},</span> <span class="s1">&#39;test</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="s1">&#39;abcd&#39;</span><span class="p">)</span>
+            <span class="p">},</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="s1">&#39;1234&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+        <span class="p">),</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Initialize values</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">RESSOURCES_ROOT</span><span class="p">,</span> <span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="n">MODULE</span><span class="p">),</span> <span class="n">file</span><span class="p">),</span>
+            <span class="s1">&#39;object&#39;</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">objects</span><span class="p">))</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="n">file_</span><span class="p">,</span> <span class="n">object_</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">get_file_structure</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">assert</span> <span class="n">file_</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">object_</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">])</span></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Data Science Framework  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Robin Camarasa.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>
