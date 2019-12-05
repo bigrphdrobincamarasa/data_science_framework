@@ -1,9 +1,6 @@
 # Pycharm
 .idea
 
-# Temporary
-data_science_framework
-
 # Cache
 *.pyc
 *__pycache__*
