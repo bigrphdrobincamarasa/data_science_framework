@@ -82,6 +82,9 @@ def global_logger(
                 index=row_with_id['index']
             )
 
+            # Create parent directory of the csv file
+            create_error_less_directory(os.path.dirname(os.path.abspath(csv_path)))
+
             # Get csv output path
             csv_output_path = os.path.join(folder, FILENAME_TEMPLATE['glogger']['output'].format(tag_))
 
