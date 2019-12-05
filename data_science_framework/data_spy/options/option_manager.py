@@ -53,7 +53,7 @@ def get_parameters(optionable_class_object: object, object_key):
     output = []
 
     # Get __init__ values
-    init_values = inspect.getargspec(optionable_class_object.__init__)._asdict()
+    init_values = inspect.getfullargspec(optionable_class_object.__init__)._asdict()
 
     # Get default
     for parameter in init_values['args'][1:]:

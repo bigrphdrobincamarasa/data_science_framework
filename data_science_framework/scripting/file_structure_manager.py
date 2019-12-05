@@ -67,7 +67,8 @@ def get_dir_structure(
             subfolder_tree_height= None if subfolder_tree_height is None else subfolder_tree_height -1
             output[folder_item] = get_dir_structure(
                 path_root=path_root_,
-                subfolder_tree_height=subfolder_tree_height
+                subfolder_tree_height=subfolder_tree_height,
+                supported_extensions=supported_extensions
             )
         else:
             output[folder_item] = get_file_structure(
