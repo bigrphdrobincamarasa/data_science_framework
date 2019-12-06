@@ -20,13 +20,13 @@ from data_science_framework.scripting.file_structure_manager import get_dir_stru
 
 
 def set_test_folders(
-        current_module: str, ressouces_root: str = None, output_root: str = None
+        current_module: str, ressources_root: str = None, output_root: str = None
 ) -> Callable:
     """
     Decorator that generate output test directory and load ressources
     for a test
 
-    :param ressouces_root: Path root of the ressources folder
+    :param ressources_root: Path root of the ressources folder
     :param output_root: Path root of the output folder
     :param current_module: List of the modules
     :return: The test function updated
@@ -34,25 +34,18 @@ def set_test_folders(
     def decorator(f):
         def wrapper():
             # Generate path
-            if ressouces_root != None:
+            if ressources_root != None:
                 ressources_folder = os.path.join(
-                    ressouces_root, *tuple(current_module)
+                    ressources_root, *tuple(current_module)
                 )
+                ressources_structure = get_dir_structure(ressources_folder)
             if output_root != None:
                 output_folder = os.path.join(
                     output_root, *tuple(current_module)
                 )
-
-            # Create output directory
-            if output_folder != None:
                 create_error_less_directory(output_folder, override=True)
 
-            # Create ressources tree
-            if ressouces_root != None:
-                ressources_structure = get_dir_structure(ressources_folder)
-
-            # Apply test
-            if ressouces_root == None:
+            if ressources_root == None:
                 f(output_folder)
             elif output_root == None:
                 f(ressources_structure)

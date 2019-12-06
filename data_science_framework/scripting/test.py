@@ -79,11 +79,11 @@ def test_parse_class_docstring() -> None:
 
 
 @set_test_folders(
-    current_module=MODULE, ressouces_root=RESSOURCES_ROOT,
+    current_module=MODULE, ressources_root=RESSOURCES_ROOT,
     output_root=TEST_ROOT
 )
 def test_set_test_folders(
-        ressources_file_structure:dict, output_root:str
+        ressources_file_structure: dict, output_root: str
 ) -> None:
     """
     Function that test test_file_structure decorator
