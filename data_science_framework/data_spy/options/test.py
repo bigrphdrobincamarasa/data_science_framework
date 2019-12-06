@@ -27,10 +27,11 @@ def test_initialize_experiment_parameters() -> None:
     :return: None
     """
     class Fooa:
-        def __init__(self, a=5, b=6, c=7, **kwargs):
+        def __init__(self, a=5, b=6, c=7, d=[1, 2, 3], **kwargs):
                     self.a = a
                     self.b = b
                     self.c = c
+                    self.d = d
 
     # Initialize experiment objects
     experiment_objects = {
@@ -39,15 +40,17 @@ def test_initialize_experiment_parameters() -> None:
 
     # Initialize experiment objects
     initialize_experiment_parameters(
-        experiment_objects= experiment_objects,
+        experiment_objects=experiment_objects,
         option_values={
             'test_a': 6,
             'test_b': 8,
+            'test_d': '1,2,3'
         }
     )
     assert experiment_objects['test'].a == 6
     assert experiment_objects['test'].b == 8
     assert experiment_objects['test'].c == 7
+    assert experiment_objects['test'].d == ['1', '2', '3']
 
 
 def test_manage_option() -> None:

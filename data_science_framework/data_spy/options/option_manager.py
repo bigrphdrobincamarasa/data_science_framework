@@ -88,6 +88,15 @@ def initialize_experiment_parameters(
 
             # Extract parameter key
             parameter_key_ = '_'.join(key.split('_')[1:])
-            experiment_objects[experiment_object_key_].__setattr__(parameter_key_, value)
+
+            # Treat list case
+            if type(getattr(experiment_objects[experiment_object_key_], parameter_key_)) == list:
+                experiment_objects[experiment_object_key_].__setattr__(
+                    parameter_key_,
+                    value.replace(' ', '').split(',')
+                )
+            else:
+
+                experiment_objects[experiment_object_key_].__setattr__(parameter_key_, value)
         except:
             pass

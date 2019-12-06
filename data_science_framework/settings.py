@@ -34,5 +34,9 @@ FILENAME_TEMPLATE = {
         'experiment_folder': '#{}_{}'
     },
     'tlogger': '#tlogger_{}.json',
-    'mlogger': '#mlogger_{}.csv'
+    'mlogger': '#mlogger_{}.csv',
+    'dlogger': {
+        'file': '#dlogger_{}.{}',
+        'directory': '#dlogger_{}'
+    }
 }

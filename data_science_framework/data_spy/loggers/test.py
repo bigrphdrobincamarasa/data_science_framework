@@ -17,10 +17,12 @@ import json
 import os
 import time
 import pandas as pd
+import nibabel as nib
+import numpy as np
 
 from data_science_framework.data_spy.loggers import MODULE
-from data_science_framework.data_spy.loggers.experiment_loggers import metric_logger,\
-    global_logger, timer
+from data_science_framework.data_spy.loggers.experiment_loggers import metric_logger, \
+    global_logger, timer, data_saver
 from data_science_framework.data_spy.loggers.experiment_utils import get_git_current_state, clear_experiments
 from data_science_framework.scripting.file_structure_manager import get_file_structure
 from data_science_framework.scripting.test_manager import set_test_folders
@@ -42,6 +44,58 @@ def test_git_current_state() -> None:
     assert output['hash'] == ''
     assert output['branch'] == ''
     assert output['status'] == ''
+
+
+@set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
+def test_data_saver(output_folder: str) -> None:
+    """
+    Function that tests data_saver
+
+    :param output_folder: Path to the output folder
+    :return: None
+    """
+    @data_saver
+    def f(*args, **kwargs):
+        return {
+            'train_df': pd.DataFrame(
+                data=[{'a': 1, 'b': 2, 'index': 3}]
+            ).set_index('index'),
+            'parameters': {'a': 1, 'b': 2, 'index': 3},
+            'read': 'hello world',
+            'image': nib.Nifti1Image(np.eye(4), np.eye(4))
+        }
+
+    output = f(save=True, folder=output_folder)
+    assert type(output) == dict
+    output = f(save=True, folder=output_folder, subdirectories=['test1', 'test2'])
+    assert type(output) == dict
+
+    # Check file creation without subdirectories
+    assert os.path.isfile(os.path.join(output_folder, '#dlogger_f', '#dlogger_train_df.csv'))
+    assert os.path.isfile(os.path.join(output_folder, '#dlogger_f', '#dlogger_parameters.json'))
+    assert os.path.isfile(os.path.join(output_folder, '#dlogger_f', '#dlogger_read.txt'))
+    assert os.path.isfile(os.path.join(output_folder, '#dlogger_f', '#dlogger_image.nii.gz'))
+
+    # Check file creation with subdirectories
+    assert os.path.isfile(os.path.join(output_folder, '#dlogger_test1', '#dlogger_test2', '#dlogger_train_df.csv'))
+    assert os.path.isfile(os.path.join(output_folder, '#dlogger_test1', '#dlogger_test2', '#dlogger_parameters.json'))
+    assert os.path.isfile(os.path.join(output_folder, '#dlogger_test1', '#dlogger_test2', '#dlogger_read.txt'))
+    assert os.path.isfile(os.path.join(output_folder, '#dlogger_test1', '#dlogger_test2', '#dlogger_image.nii.gz'))
+
+    # Check file consistency
+    assert pd.read_csv(os.path.join(output_folder, '#dlogger_f', '#dlogger_train_df.csv')).shape == (1, 3)
+    with open(os.path.join(output_folder, '#dlogger_f', '#dlogger_read.txt'), 'r') as handle:
+        assert handle.read() == 'hello world'
+    with open(os.path.join(output_folder, '#dlogger_f', '#dlogger_parameters.json'), 'r') as handle:
+        tmp_ = json.load(handle)
+        assert 'a' in tmp_.keys()
+        assert 'b' in tmp_.keys()
+        assert 'index' in tmp_.keys()
+    try:
+        nib.load(os.path.join(output_folder, '#dlogger_f', '#dlogger_image.nii.gz'))
+    except:
+        assert False
+    assert pd.read_csv(os.path.join(output_folder, '#dlogger_f', '#dlogger_train_df.csv')).shape == (1, 3)
 
 
 @set_test_folders(output_root=TEST_ROOT, current_module=MODULE)

@@ -17,6 +17,8 @@ import datetime
 import json
 import os
 import pandas as pd
+import numpy as np
+import nibabel as nib
 from pyfiglet import Figlet
 
 from data_science_framework.data_spy.loggers.experiment_utils import get_git_current_state
@@ -267,3 +269,73 @@ def timer(f):
             return f(*args, **kwargs)
     return wrapper
 
+
+def data_saver(f):
+    """
+    Decorator that saves data a function
+
+    :param f: Function to time
+    :return: Decorated function
+    """
+    def wrapper(*args, **kwargs):
+        try:
+            if kwargs['save']:
+                # Create save path
+                if 'subdirectories' in kwargs.keys():
+                    # If subdirectory is define by user
+                    save_directory = os.path.join(
+                        kwargs['folder'],
+                        *tuple(
+                            [
+                                FILENAME_TEMPLATE['dlogger']['directory'].format(subdirectory)
+                                for subdirectory in kwargs['subdirectories']
+                            ]
+                        )
+                    )
+                else:
+                    # If subdirectory is not define by user
+                    save_directory = os.path.join(
+                        kwargs['folder'],
+                        FILENAME_TEMPLATE['dlogger']['directory'].format(f.__name__)
+                    )
+
+                create_error_less_directory(save_directory)
+
+                # Get output
+                output = f(*args, **kwargs)
+                for key, value in output.items():
+                    if type(value) == str:
+                        # String case
+                        path_ = os.path.join(
+                            save_directory, FILENAME_TEMPLATE['dlogger']['file'].format(key, 'txt')
+                        )
+                        with open(path_, 'w') as handle:
+                            handle.write(value)
+
+                    if type(value) == dict:
+                        # Dictionnary case
+                        path_ = os.path.join(
+                            save_directory, FILENAME_TEMPLATE['dlogger']['file'].format(key, 'json')
+                        )
+                        with open(path_, 'w') as handle:
+                            json.dump(value, handle)
+
+                    elif type(value) == type(pd.DataFrame()):
+                        # Dataframe case
+                        path_ = os.path.join(
+                            save_directory, FILENAME_TEMPLATE['dlogger']['file'].format(key, 'csv')
+                        )
+                        value.to_csv(path_)
+
+                    elif type(value) == type(nib.Nifti1Image(np.eye(4), np.eye(4))):
+                        # Nifty image case
+                        path_ = os.path.join(
+                            save_directory, FILENAME_TEMPLATE['dlogger']['file'].format(key, 'nii.gz')
+                        )
+                        nib.save(value, path_)
+                return output
+            else:
+                return f(*args, **kwargs)
+        except Exception as e:
+            return f(*args, **kwargs)
+    return wrapper

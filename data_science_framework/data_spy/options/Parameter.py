@@ -13,7 +13,7 @@
 
 **This class represents a parameters**
 """
-
+import click
 from click import Option
 from click.decorators import _param_memo
 
@@ -64,12 +64,21 @@ class Parameter:
         :param f: The function under study
         :return: None
         """
-        if self.type in [str, int, list, float, bool]:
+        if self.type in [str, int, float, bool]:
             click_dict = {
                 'show_default': True,
                 'default': self.default,
                 'help': self.help,
                 'type': self.type,
+            }
+            OptionClass = click_dict.pop('cls', Option)
+            _param_memo(f, OptionClass((self.option_name, ), **click_dict))
+        elif self.type == list:
+            click_dict = {
+                'show_default': True,
+                'default': self.default,
+                'help': self.help,
+                'type': str,
             }
             OptionClass = click_dict.pop('cls', Option)
             _param_memo(f, OptionClass((self.option_name, ), **click_dict))
