@@ -26,7 +26,7 @@ from data_science_framework.data_spy.loggers.experiment_loggers import metric_lo
 from data_science_framework.data_spy.loggers.experiment_utils import get_git_current_state, clear_experiments
 from data_science_framework.scripting.file_structure_manager import get_file_structure
 from data_science_framework.scripting.test_manager import set_test_folders
-from data_science_framework.settings import PROJECT_ROOT, TEST_ROOT
+from data_science_framework.settings import PROJECT_ROOT, TEST_ROOT, RESSOURCES_ROOT
 
 
 def test_git_current_state() -> None:
@@ -35,12 +35,14 @@ def test_git_current_state() -> None:
 
     :return: None
     """
-    output = get_git_current_state(PROJECT_ROOT)
-    assert output['hash'] != ''
-    assert output['branch'] != ''
+    output = get_git_current_state(
+        os.path.join(RESSOURCES_ROOT, *tuple(MODULE))
+    )
+    assert output['hash'] == '27aca544341aca4108c7d5ed8603579d96aee8c3'
+    assert output['branch'] == 'master'
     assert output['status'] != ''
 
-    output = get_git_current_state(os.path.join(PROJECT_ROOT, 'foo'))
+    output = get_git_current_state(os.path.join(RESSOURCES_ROOT, 'foo'))
     assert output['hash'] == ''
     assert output['branch'] == ''
     assert output['status'] == ''

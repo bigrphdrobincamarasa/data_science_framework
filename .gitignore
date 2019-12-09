@@ -9,4 +9,6 @@
 # Django
 *migrations
 
-venv
+# Tox
+.tox
+data_science_framework.egg-info
