@@ -20,7 +20,8 @@ from data_science_framework.settings import RESSOURCES_ROOT
 
 from data_science_framework.pytorch_utils.data_manager import MODULE
 
-from data_science_framework.pytorch_utils.data_manager.data_transformation import rotate_images, flip_images
+from data_science_framework.pytorch_utils.data_manager.data_transformation import rotate_images, flip_images, \
+    crop_half_images
 
 
 @set_test_folders(
@@ -153,3 +154,61 @@ def test_flip_image(ressources_structure: dict) -> None:
 
         for expected_, output_ in zip(expected_flipped_gt_images, flipped_gt_images):
             assert ((expected_.get_fdata() - output_.get_fdata()) ** 2).sum() < 10
+
+
+@set_test_folders(
+    ressources_root=RESSOURCES_ROOT,
+    current_module=MODULE
+)
+def test_crop_half_images(ressources_structure: dict) -> None:
+    """
+    Function that tests crop_half_images
+
+    :param ressources_structure: Dictionnary containing the path and objects contained in the ressource folder
+    :return: None
+    """
+    input_images = []
+    gt_images = []
+
+    for side in ['left', 'right']:
+
+        # Get inputs
+        for i in range(1, 10):
+            input_images.append(
+                nib.load(
+                    ressources_structure['input_{}.nii'.format(i)]['path']
+                )
+            )
+
+        # Get ground truth
+        gt_images.append(
+            nib.load(
+                ressources_structure['{}_gt_1.nii'.format(side)]['path']
+            )
+        )
+
+        # Obtain flipped images
+        cropped_input_images, cropped_gt_images = crop_half_images(
+            input_images=input_images, gt_images=gt_images
+        )
+
+        # Test gt shapes
+        assert cropped_gt_images[0].shape[1] == int(gt_images[0].shape[1] / 2) + 1
+        assert cropped_gt_images[0].shape[0] == gt_images[0].shape[0]
+        assert cropped_gt_images[0].shape[2] == gt_images[0].shape[2]
+
+        # Test gt non nullity of cropped gt
+        assert cropped_gt_images[0].get_fdata().sum() != 0
+
+        for input_image, cropped_input_image in zip(input_images, cropped_input_images):
+            # Test image shape
+            assert cropped_input_image.shape[1] == int(input_image.shape[1]/2) + 1
+            assert cropped_input_image.shape[0] == input_image.shape[0]
+            assert cropped_input_image.shape[2] == input_image.shape[2]
+
+            # Test matching between input and gt
+            assert (
+                (cropped_input_image.get_fdata() * cropped_gt_images[0].get_fdata()).sum() - \
+                (input_image.get_fdata() * gt_images[0].get_fdata()).sum()
+            ).sum() < 0.05
+

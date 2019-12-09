@@ -11,7 +11,6 @@
 
 **Project** : baseline_unet
 
-TODO: doc
 ** File that contains the codes that implements data transformations **
 """
 from typing import Tuple
@@ -81,8 +80,33 @@ def crop_half_images(
     :param gt_images: List of ground truth nifty images
     :return: The modified input images and the modified gt images
     """
-    #TODO: implements
-    pass
+    input_images_ = input_images.copy()
+    gt_images_ = gt_images.copy()
+
+    # Define new dimension
+    updated_second_dimension = int(gt_images[0].shape[1]/2)
+
+    # Define
+    left_sum = (gt_images[0].get_fdata()[:, :updated_second_dimension, :]).sum()/2
+    right_sum = (gt_images[0].get_fdata()[:, updated_second_dimension:, :]).sum()/2
+
+    # Define cropping functions
+    crop = lambda x: x[:, :updated_second_dimension, :] if left_sum > right_sum else \
+        x[:, updated_second_dimension:, :]
+
+    # Crop ground truths
+    gt_images_[0] = nib.Nifti1Image(
+        dataobj=crop(gt_images[0].get_fdata()), affine=gt_images[0].affine, header=gt_images[0].header
+    )
+
+    # Crop input images
+    for i, input_image in enumerate(input_images):
+        input_images_[i] = nib.Nifti1Image(
+            dataobj=crop(input_image.get_fdata()), affine=input_image.affine, header=input_image.header
+        )
+
+    # Return output
+    return input_images_, gt_images_
 
 
 def flip_images(
