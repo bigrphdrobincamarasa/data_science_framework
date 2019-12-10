@@ -152,9 +152,9 @@ def flip_images(
     """
     # Test randomness
     if random:
-        flip_x = np.random.rand() < 0.5
-        flip_y = np.random.rand() < 0.5
-        flip_z = np.random.rand() < 0.5
+        flip_x = (flip_x and np.random.rand() < 0.5)
+        flip_y = (flip_y and np.random.rand() < 0.5)
+        flip_z = (flip_z and np.random.rand() < 0.5)
 
     # Define flips
     flip_x_transform = lambda x: x[::-1, :, :] if flip_x else x
@@ -172,4 +172,3 @@ def flip_images(
             dataobj=flip_xyz(gt_image.get_fdata()), affine=gt_image.affine, header=gt_image.header
         )
     return input_images, gt_images
-
