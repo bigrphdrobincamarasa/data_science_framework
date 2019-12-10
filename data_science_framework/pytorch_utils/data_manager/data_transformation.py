@@ -22,22 +22,39 @@ import numpy as np
 
 def apply_transformations_to_batch(
         input_batch: list, gt_batch: list,
-        transformations: list, random: bool = True
+        transformations: list
 ) -> Tuple:
     """
     Function that applies transformations to a batch of images
 
     :param input_batch: Input images of the batch
     :param gt_batch: Ground truth images of the
-    :param random: True if randomness is enabled
     :return: the updated input batch and gt batch
     """
-    pass
+    # Initialise output
+    input_batch_, gt_batch_ = [], []
+
+    # Loop over the images
+    for input_images, gt_images in zip(input_batch, gt_batch):
+        input_images_, gt_images_ = input_images.copy(), gt_images.copy()
+
+        # Loop over the transformations
+        for transformation in transformations:
+            input_images_, gt_images_ = transformation(
+                input_images_, gt_images_
+            )
+        # Add transformed images
+        input_batch_.append(input_images_.copy())
+        gt_batch_.append(gt_images_.copy())
+
+    # Return output
+    return input_batch_, gt_batch_
 
 
 def rotate_images(
         input_images: list, gt_images: list,
-        angle_x: int, angle_y: int, angle_z: int,
+        angle_x: float = 0, angle_y: float = 0, angle_z: float = 0,
+        random: bool = False
 ) -> Tuple:
     """
     Function that apply the same rotation to the two set of images
@@ -50,8 +67,16 @@ def rotate_images(
     otherwise it corresponds to the value of the rotation angle
     :param angle_z: If random is enabled it corresponds to the max rotation angle around z axis
     otherwise it corresponds to the value of the rotation angle
+    :param random: True if randomness is enabled. In this case, the angle of rotation follows a
+    a uniforme distribution between -angle and angle for each direction
     :return: The modified input images and the modified gt images
     """
+    # Test randomness
+    if random:
+        angle_x = (2 * np.random.rand() - 1) * angle_x
+        angle_y = (2 * np.random.rand() - 1) * angle_y
+        angle_z = (2 * np.random.rand() - 1) * angle_z
+
     # Define rotations
     rotate_x = lambda x: rotate(x, reshape=False, angle=angle_x, axes=(1, 2))
     rotate_y = lambda x: rotate(x, reshape=False, angle=angle_y, axes=(2, 0))
@@ -86,7 +111,7 @@ def crop_half_images(
     # Define new dimension
     updated_second_dimension = int(gt_images[0].shape[1]/2)
 
-    # Define
+    # Analyse ground truth
     left_sum = (gt_images[0].get_fdata()[:, :updated_second_dimension, :]).sum()/2
     right_sum = (gt_images[0].get_fdata()[:, updated_second_dimension:, :]).sum()/2
 
@@ -110,8 +135,8 @@ def crop_half_images(
 
 
 def flip_images(
-    input_images: list, gt_images: list, flip_x=True, flip_y=True,
-    flip_z=True
+    input_images: list, gt_images: list, flip_x=False, flip_y=False,
+    flip_z=False, random: bool = False
 ):
     """
     Function that flip images
@@ -122,8 +147,16 @@ def flip_images(
     :param flip_x: Boolean that is true if function flips image along x axis
     :param flip_y: Boolean that is true if function flips image along y axis
     :param flip_z: Boolean that is true if function flips image along z axis
+    :param random: True if randomness is enabled
     :return: The modified input images and the modified gt images
     """
+    # Test randomness
+    if random:
+        flip_x = np.random.rand() < 0.5
+        flip_y = np.random.rand() < 0.5
+        flip_z = np.random.rand() < 0.5
+
+    # Define flips
     flip_x_transform = lambda x: x[::-1, :, :] if flip_x else x
     flip_y_transform = lambda x: x[:, ::-1, :] if flip_y else x
     flip_z_transform = lambda x: x[:, :, ::-1] if flip_z else x

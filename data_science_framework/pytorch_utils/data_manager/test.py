@@ -12,6 +12,7 @@
 **Project** : baseline_unet
 
 **File that tests codes of data_manager module**
+#TODO: test random
 """
 import nibabel as nib
 import numpy as np
@@ -21,7 +22,11 @@ from data_science_framework.settings import RESSOURCES_ROOT
 from data_science_framework.pytorch_utils.data_manager import MODULE
 
 from data_science_framework.pytorch_utils.data_manager.data_transformation import rotate_images, flip_images, \
-    crop_half_images
+    crop_half_images, apply_transformations_to_batch
+from scipy.ndimage import rotate
+
+from data_science_framework.pytorch_utils.data_manager.data_conversion import \
+    convert_nifty_batch_to_torch_tensor
 
 
 @set_test_folders(
@@ -35,7 +40,45 @@ def test_apply_transformations_to_batch(ressources_structure: dict) -> None:
     :param ressources_structure: Dictionnary containing the path and objects contained in the ressource folder
     :return: None
     """
-    pass
+    # Initialize tests variables
+    transformations = [
+        lambda x, y: rotate_images(x, y, angle_x=10), lambda x, y: rotate_images(x, y, angle_x=30)
+    ]
+    input_batch = [
+        [
+            nib.load(ressources_structure['input_{}.nii'.format(3*i + j + 1)]['path'])
+            for i in range(2)
+        ]
+        for j in range(3)
+    ]
+    gt_batch = [
+        [nib.load(ressources_structure['input_{}.nii'.format(3 * 2 + j + 1)]['path'])]
+        for j in range(3)
+    ]
+
+
+    # Apply function
+    input_batch_, gt_batch_ = apply_transformations_to_batch(
+        input_batch=input_batch, gt_batch=gt_batch,
+        transformations=transformations
+    )
+
+    # Test number of elements in the batch
+    assert len(input_batch_) == len(input_batch)
+    assert len(gt_batch_) == len(gt_batch)
+
+    # Test number of features in the element
+    assert len(input_batch_[0]) == len(input_batch[0])
+    assert len(gt_batch_[0]) == len(gt_batch[0])
+
+    # Test transformation
+    expected_input_images, expected_output_images = rotate_images(
+        input_images=input_batch[0], gt_images=gt_batch[0],
+        angle_x=40
+    )
+    assert np.array(
+        (input_batch_[0][0].get_fdata() - expected_input_images[0].get_fdata())**2
+    ).sum() < 1
 
 
 @set_test_folders(
@@ -211,4 +254,29 @@ def test_crop_half_images(ressources_structure: dict) -> None:
                 (cropped_input_image.get_fdata() * cropped_gt_images[0].get_fdata()).sum() - \
                 (input_image.get_fdata() * gt_images[0].get_fdata()).sum()
             ).sum() < 0.05
+
+
+@set_test_folders(
+    ressources_root=RESSOURCES_ROOT,
+    current_module=MODULE
+)
+def test_convert_nifty_batch_to_torch_tensor(ressources_structure: dict) -> None:
+    """
+    Function that tests convert_nifty_batch_to_torch_tensor
+
+    #TODO test gpu and cpu options
+    :param ressources_structure: Dictionnary containing the path and objects contained in the ressource folder
+    :return: None
+    """
+    input = []
+    for i, patient_images in enumerate(ressources_structure.values()):
+        if not 'path' in patient_images.keys():
+            input.append([nib.load(patient_image['path']) for patient_image in patient_images.values()])
+
+    torch_output = convert_nifty_batch_to_torch_tensor(input, 'cpu')
+
+    array = torch_output.detach().numpy()
+
+    assert array.shape == (3, 5, 4, 4)
+    assert array.sum() == 300
 
