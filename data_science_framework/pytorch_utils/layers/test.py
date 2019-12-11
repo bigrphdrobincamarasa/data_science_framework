@@ -25,6 +25,9 @@ from data_science_framework.pytorch_utils.layers.DownConvolution3DLayer import \
 from data_science_framework.pytorch_utils.layers.UpConvolution3DLayer import \
     UpConvolution3DLayer
 
+from data_science_framework.pytorch_utils.layers.OutConvolution3DLayer import \
+    OutConvolution3DLayer
+
 
 def test_DoubleConvolution3DLayer() -> None:
     """
@@ -41,13 +44,13 @@ def test_DoubleConvolution3DLayer() -> None:
     )
 
     # Initialize input
-    input = np.arange(2 * 3 * 4 * 5).reshape(1, 2, 3, 4, 5)
+    input = np.arange(2 * 4 * 4 * 4).reshape(1, 2, 4, 4, 4)
     input_torch = torch.tensor(
         input, dtype=torch.float32,
     ).to('cpu')
 
     # Apply forward pass
-    assert double_convolution_3_d_layer(input_torch).shape == (1, 3, 3, 4, 5)
+    assert double_convolution_3_d_layer(input_torch).shape == (1, 3, 4, 4, 4)
 
 
 def test_DownConvolution3DLayer() -> None:
@@ -66,13 +69,13 @@ def test_DownConvolution3DLayer() -> None:
     )
 
     # Initialize input
-    input = np.arange(2 * 3 * 4 * 5).reshape(1, 2, 3, 4, 5)
+    input = np.arange(2 * 4 * 4 * 4).reshape(1, 2, 4, 4, 4)
     input_torch = torch.tensor(
         input, dtype=torch.float32,
     ).to('cpu')
 
     # Apply forward pass
-    assert down_convolution_3_d_layer(input_torch).shape == (1, 3, 1, 2, 2)
+    assert down_convolution_3_d_layer(input_torch).shape == (1, 3, 2, 2, 2)
 
 
 def test_UpConvolution3DLayer() -> None:
@@ -107,3 +110,29 @@ def test_UpConvolution3DLayer() -> None:
         x_left=input_left_torch
     ).shape == (1, 5, 8, 8, 8)
 
+
+def test_OutConvolution3DLayer() -> None:
+    """
+    Function that tests OutConvolution3DLayer
+
+    :return: None
+    """
+    # Initialize layer
+    out_convolution_3_d_layer = OutConvolution3DLayer(
+        in_channels=3,
+        out_channels=5,
+        kernel_size=3,
+        padding=1
+    )
+
+    # Initialize input
+    input = np.arange(3 * 4 * 4 * 4).reshape(1, 3, 4, 4, 4)
+
+    input_torch = torch.tensor(
+        input, dtype=torch.float32,
+    ).to('cpu')
+
+    # Apply forward pass
+    assert out_convolution_3_d_layer(
+        input_torch
+    ).shape == (1, 5, 4, 4, 4)
