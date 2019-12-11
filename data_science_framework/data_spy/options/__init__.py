@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** Module that contains the options helper **
+**Module that contains the options helper**
 """
 from .Parameter import Parameter
 

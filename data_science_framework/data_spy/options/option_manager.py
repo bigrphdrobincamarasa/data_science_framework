@@ -1,5 +1,5 @@
 """
-**Author** : Robin Camarasa 
+**Author** : Robin Camarasa
 
 **Institution** : Erasmus Medical Center
 
@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** File that contains the options manager **
+**File that contains the options manager**
 """
 import inspect
 from typing import Callable
@@ -23,8 +23,7 @@ def parameters_to_options(experiment_objects: dict) -> Callable:
     """
     This function manage the options of your experiments
 
-    :param experiment_objects: A dictionnary of list of optionable
-    objects used in your experiment
+    :param experiment_objects: Optionable objects describing your experiment
     :return: A decorator that can be applied on every fonction
     """
     def decorator(function):
@@ -42,7 +41,7 @@ def parameters_to_options(experiment_objects: dict) -> Callable:
 
 def get_parameters(optionable_class_object: object, object_key):
     """
-    Function that transforms your constructor items into
+    Function that transforms the constructor items that can be turned into options into
     a list of Parameter objects
 
     :param optionable_class_object: Object that is optionable (every constructor argument has default value)
@@ -76,8 +75,7 @@ def initialize_experiment_parameters(
     """
     Function that returns experiment objects initialized by option parser input
 
-    :param experiment_objects: Dictionnary of objects corresponding to the experiment
-    required objects
+    :param experiment_objects: Objects describing the experiment
     :param option_values: Dictionnary containing the values inputted as options
     :return: None
     """

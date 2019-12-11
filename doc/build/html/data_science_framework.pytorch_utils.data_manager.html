@@ -1,0 +1,361 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>data_science_framework.pytorch_utils.data_manager package &mdash; Data Science Framework  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="data_science_framework.pytorch_utils.layers package" href="data_science_framework.pytorch_utils.layers.html" />
+    <link rel="prev" title="data_science_framework.pytorch_utils package" href="data_science_framework.pytorch_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Data Science Framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">data_science_framework</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="data_science_framework.html">data_science_framework package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="data_science_framework.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="data_science_framework.data_spy.html">data_science_framework.data_spy package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="data_science_framework.pytorch_utils.html">data_science_framework.pytorch_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="data_science_framework.scripting.html">data_science_framework.scripting package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data_science_framework.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data_science_framework.html#module-data_science_framework.settings">data_science_framework.settings module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data_science_framework.html#module-data_science_framework">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Data Science Framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">data_science_framework</a> &raquo;</li>
+        
+          <li><a href="data_science_framework.html">data_science_framework package</a> &raquo;</li>
+        
+          <li><a href="data_science_framework.pytorch_utils.html">data_science_framework.pytorch_utils package</a> &raquo;</li>
+        
+      <li>data_science_framework.pytorch_utils.data_manager package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/data_science_framework.pytorch_utils.data_manager.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="data-science-framework-pytorch-utils-data-manager-package">
+<h1>data_science_framework.pytorch_utils.data_manager package<a class="headerlink" href="#data-science-framework-pytorch-utils-data-manager-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-data_science_framework.pytorch_utils.data_manager.data_conversion">
+<span id="data-science-framework-pytorch-utils-data-manager-data-conversion-module"></span><h2>data_science_framework.pytorch_utils.data_manager.data_conversion module<a class="headerlink" href="#module-data_science_framework.pytorch_utils.data_manager.data_conversion" title="Permalink to this headline">¶</a></h2>
+<p><strong>Author</strong> : Robin Camarasa</p>
+<p><strong>Institution</strong> : Erasmus Medical Center</p>
+<p><strong>Position</strong> : PhD student</p>
+<p><strong>Contact</strong> : <a class="reference external" href="mailto:r&#46;camarasa&#37;&#52;&#48;erasmusmc&#46;nl">r<span>&#46;</span>camarasa<span>&#64;</span>erasmusmc<span>&#46;</span>nl</a></p>
+<p><strong>Date</strong> : 2019-12-09</p>
+<p><strong>Project</strong> : src</p>
+<p><strong>File that contains the code to convert data to torch tensor</strong></p>
+<dl class="function">
+<dt id="data_science_framework.pytorch_utils.data_manager.data_conversion.convert_nifty_batch_to_torch_tensor">
+<code class="sig-prename descclassname">data_science_framework.pytorch_utils.data_manager.data_conversion.</code><code class="sig-name descname">convert_nifty_batch_to_torch_tensor</code><span class="sig-paren">(</span><em class="sig-param">patients_images: list</em>, <em class="sig-param">device: str</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/data_science_framework/pytorch_utils/data_manager/data_conversion.html#convert_nifty_batch_to_torch_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data_science_framework.pytorch_utils.data_manager.data_conversion.convert_nifty_batch_to_torch_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that converts a nifty batch to a torch tensor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>patients_images</strong> – List of list of nifty images loaded by nibabel</p></li>
+<li><p><strong>device</strong> – Name of the device (cpu or gpu)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Torch tensor attached to the required device</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-data_science_framework.pytorch_utils.data_manager.data_transformation">
+<span id="data-science-framework-pytorch-utils-data-manager-data-transformation-module"></span><h2>data_science_framework.pytorch_utils.data_manager.data_transformation module<a class="headerlink" href="#module-data_science_framework.pytorch_utils.data_manager.data_transformation" title="Permalink to this headline">¶</a></h2>
+<p><strong>Author</strong> : Robin Camarasa</p>
+<p><strong>Institution</strong> : Erasmus Medical Center</p>
+<p><strong>Position</strong> : PhD student</p>
+<p><strong>Contact</strong> : <a class="reference external" href="mailto:r&#46;camarasa&#37;&#52;&#48;erasmusmc&#46;nl">r<span>&#46;</span>camarasa<span>&#64;</span>erasmusmc<span>&#46;</span>nl</a></p>
+<p><strong>Date</strong> : 2019-12-09</p>
+<p><strong>Project</strong> : baseline_unet</p>
+<p><strong>File that contains the codes that implements data transformations</strong></p>
+<dl class="function">
+<dt id="data_science_framework.pytorch_utils.data_manager.data_transformation.apply_transformations_to_batch">
+<code class="sig-prename descclassname">data_science_framework.pytorch_utils.data_manager.data_transformation.</code><code class="sig-name descname">apply_transformations_to_batch</code><span class="sig-paren">(</span><em class="sig-param">input_batch: list</em>, <em class="sig-param">gt_batch: list</em>, <em class="sig-param">transformations: list</em><span class="sig-paren">)</span> &#x2192; Tuple<a class="reference internal" href="_modules/data_science_framework/pytorch_utils/data_manager/data_transformation.html#apply_transformations_to_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data_science_framework.pytorch_utils.data_manager.data_transformation.apply_transformations_to_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that applies transformations to a batch of images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_batch</strong> – Input images of the batch</p></li>
+<li><p><strong>gt_batch</strong> – Ground truth images of the</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the updated input batch and gt batch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="data_science_framework.pytorch_utils.data_manager.data_transformation.crop_half_images">
+<code class="sig-prename descclassname">data_science_framework.pytorch_utils.data_manager.data_transformation.</code><code class="sig-name descname">crop_half_images</code><span class="sig-paren">(</span><em class="sig-param">input_images: list</em>, <em class="sig-param">gt_images: list</em><span class="sig-paren">)</span> &#x2192; Tuple<a class="reference internal" href="_modules/data_science_framework/pytorch_utils/data_manager/data_transformation.html#crop_half_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data_science_framework.pytorch_utils.data_manager.data_transformation.crop_half_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that crop the half of the image containing non null ground truth</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_images</strong> – List of input nifty images</p></li>
+<li><p><strong>gt_images</strong> – List of ground truth nifty images</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The modified input images and the modified gt images</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="data_science_framework.pytorch_utils.data_manager.data_transformation.flip_images">
+<code class="sig-prename descclassname">data_science_framework.pytorch_utils.data_manager.data_transformation.</code><code class="sig-name descname">flip_images</code><span class="sig-paren">(</span><em class="sig-param">input_images: list</em>, <em class="sig-param">gt_images: list</em>, <em class="sig-param">flip_x=False</em>, <em class="sig-param">flip_y=False</em>, <em class="sig-param">flip_z=False</em>, <em class="sig-param">random: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data_science_framework/pytorch_utils/data_manager/data_transformation.html#flip_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data_science_framework.pytorch_utils.data_manager.data_transformation.flip_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that flip images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_images</strong> – List of input nifty images</p></li>
+<li><p><strong>gt_images</strong> – List of ground truth nifty images</p></li>
+<li><p><strong>random</strong> – Boolean that is true if the transformation is aleatoric</p></li>
+<li><p><strong>flip_x</strong> – Boolean that is true if function flips image along x axis</p></li>
+<li><p><strong>flip_y</strong> – Boolean that is true if function flips image along y axis</p></li>
+<li><p><strong>flip_z</strong> – Boolean that is true if function flips image along z axis</p></li>
+<li><p><strong>random</strong> – True if randomness is enabled</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The modified input images and the modified gt images</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="data_science_framework.pytorch_utils.data_manager.data_transformation.rotate_images">
+<code class="sig-prename descclassname">data_science_framework.pytorch_utils.data_manager.data_transformation.</code><code class="sig-name descname">rotate_images</code><span class="sig-paren">(</span><em class="sig-param">input_images: list</em>, <em class="sig-param">gt_images: list</em>, <em class="sig-param">angle_x: float = 0</em>, <em class="sig-param">angle_y: float = 0</em>, <em class="sig-param">angle_z: float = 0</em>, <em class="sig-param">random: bool = False</em><span class="sig-paren">)</span> &#x2192; Tuple<a class="reference internal" href="_modules/data_science_framework/pytorch_utils/data_manager/data_transformation.html#rotate_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data_science_framework.pytorch_utils.data_manager.data_transformation.rotate_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that apply the same rotation to the two set of images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_images</strong> – List of input nifty images</p></li>
+<li><p><strong>gt_images</strong> – List of ground truth nifty images</p></li>
+<li><p><strong>angle_x</strong> – If random is enabled it corresponds to the max rotation angle around x axis otherwise it corresponds to the value of the rotation angle</p></li>
+<li><p><strong>angle_y</strong> – If random is enabled it corresponds to the max rotation angle around y axis otherwise it corresponds to the value of the rotation angle</p></li>
+<li><p><strong>angle_z</strong> – If random is enabled it corresponds to the max rotation angle around z axis otherwise it corresponds to the value of the rotation angle</p></li>
+<li><p><strong>random</strong> – True if randomness is enabled. In this case, the angle of rotation follows a uniforme distribution between -angle and angle for each direction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The modified input images and the modified gt images</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-data_science_framework.pytorch_utils.data_manager.test">
+<span id="data-science-framework-pytorch-utils-data-manager-test-module"></span><h2>data_science_framework.pytorch_utils.data_manager.test module<a class="headerlink" href="#module-data_science_framework.pytorch_utils.data_manager.test" title="Permalink to this headline">¶</a></h2>
+<p><strong>Author</strong> : Robin Camarasa</p>
+<p><strong>Institution</strong> : Erasmus Medical Center</p>
+<p><strong>Position</strong> : PhD student</p>
+<p><strong>Contact</strong> : <a class="reference external" href="mailto:r&#46;camarasa&#37;&#52;&#48;erasmusmc&#46;nl">r<span>&#46;</span>camarasa<span>&#64;</span>erasmusmc<span>&#46;</span>nl</a></p>
+<p><strong>Date</strong> : 2019-12-09</p>
+<p><strong>Project</strong> : baseline_unet</p>
+<p>#TODO: test random</p>
+<p><strong>File that tests codes of data_manager module</strong></p>
+</div>
+<div class="section" id="module-data_science_framework.pytorch_utils.data_manager">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-data_science_framework.pytorch_utils.data_manager" title="Permalink to this headline">¶</a></h2>
+<p><strong>Author</strong> : Robin Camarasa</p>
+<p><strong>Institution</strong> : Erasmus Medical Center</p>
+<p><strong>Position</strong> : PhD student</p>
+<p><strong>Contact</strong> : <a class="reference external" href="mailto:r&#46;camarasa&#37;&#52;&#48;erasmusmc&#46;nl">r<span>&#46;</span>camarasa<span>&#64;</span>erasmusmc<span>&#46;</span>nl</a></p>
+<p><strong>Date</strong> : 2019-12-09</p>
+<p><strong>Project</strong> : baseline_unet</p>
+<p><strong>Module that contains the codes that handle data management</strong></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="data_science_framework.pytorch_utils.layers.html" class="btn btn-neutral float-right" title="data_science_framework.pytorch_utils.layers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="data_science_framework.pytorch_utils.html" class="btn btn-neutral float-left" title="data_science_framework.pytorch_utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Robin Camarasa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

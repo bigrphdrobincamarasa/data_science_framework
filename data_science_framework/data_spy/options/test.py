@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** File that the functions and classes of the data_spy.options module **
+**File that the functions and classes of the data_spy.options module**
 """
 
 from data_science_framework.data_spy.options import Parameter
@@ -22,7 +22,7 @@ import numpy as np
 
 def test_initialize_experiment_parameters() -> None:
     """
-    Function that test experiment initialize_experiment_parameters
+    Function that tests initialize_experiment_parameters
 
     :return: None
     """
@@ -55,7 +55,7 @@ def test_initialize_experiment_parameters() -> None:
 
 def test_manage_option() -> None:
     """
-    Function that test manage_option decorator
+    Function that tests manage_option
     #TODO: improve test
 
     :return: None
@@ -77,7 +77,7 @@ def test_manage_option() -> None:
 
 def test_Parameter() -> None:
     """
-    Function that test the creation and the methods of OptionObject
+    Function that tests Parameter
 
     :return: None
     """
@@ -107,7 +107,7 @@ def test_Parameter() -> None:
 
 def test_get_parameters() -> None:
     """
-    Function that test the OptionableObject methods
+    Function that tests get_parameters
 
     :return: None
     """

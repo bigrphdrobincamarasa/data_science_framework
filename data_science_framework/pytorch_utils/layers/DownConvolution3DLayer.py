@@ -11,7 +11,7 @@
 
 **Project** : src
 
-Class that implements DownConvolution3DLayer structure
+**Class that implements DownConvolution3DLayer structure**
 """
 import torch.nn as nn
 import torch
@@ -22,8 +22,8 @@ class DownConvolution3DLayer(nn.Module):
     """
     Class that implements DownConvolution3DLayer structure
 
-    :param n_channels: Number of channel of the input
-    :param n_classes: Number of channel of the output
+    :param in_channels: Number of channel of the input
+    :param out_channels: Number of channel of the output
     :param pool_size: Size of the max pooling windows
     :param kernel_size: Size of the kernel
     :param padding: Padding of the convolution

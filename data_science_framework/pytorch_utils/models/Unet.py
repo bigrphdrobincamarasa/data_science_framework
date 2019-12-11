@@ -11,7 +11,8 @@
 
 **Project** : src
 
-Class that implements Unet structure
+**Class that implements Unet structure**
+
 """
 import torch.nn as nn
 import torch

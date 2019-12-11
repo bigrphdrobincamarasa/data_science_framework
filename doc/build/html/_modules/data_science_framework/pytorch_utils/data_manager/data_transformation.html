@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>data_science_framework.pytorch_utils.data_manager.data_transformation &mdash; Data Science Framework  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Data Science Framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">data_science_framework</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Data Science Framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>data_science_framework.pytorch_utils.data_manager.data_transformation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for data_science_framework.pytorch_utils.data_manager.data_transformation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Author** : Robin Camarasa </span>
+
+<span class="sd">**Institution** : Erasmus Medical Center</span>
+
+<span class="sd">**Position** : PhD student</span>
+
+<span class="sd">**Contact** : r.camarasa@erasmusmc.nl</span>
+
+<span class="sd">**Date** : 2019-12-09</span>
+
+<span class="sd">**Project** : baseline_unet</span>
+
+<span class="sd">**File that contains the codes that implements data transformations**</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">rotate</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="apply_transformations_to_batch"><a class="viewcode-back" href="../../../../data_science_framework.pytorch_utils.data_manager.html#data_science_framework.pytorch_utils.data_manager.data_transformation.apply_transformations_to_batch">[docs]</a><span class="k">def</span> <span class="nf">apply_transformations_to_batch</span><span class="p">(</span>
+        <span class="n">input_batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">gt_batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">transformations</span><span class="p">:</span> <span class="nb">list</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that applies transformations to a batch of images</span>
+
+<span class="sd">    :param input_batch: Input images of the batch</span>
+<span class="sd">    :param gt_batch: Ground truth images of the</span>
+<span class="sd">    :return: the updated input batch and gt batch</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialise output</span>
+    <span class="n">input_batch_</span><span class="p">,</span> <span class="n">gt_batch_</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="c1"># Loop over the images</span>
+    <span class="k">for</span> <span class="n">input_images</span><span class="p">,</span> <span class="n">gt_images</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_batch</span><span class="p">,</span> <span class="n">gt_batch</span><span class="p">):</span>
+        <span class="n">input_images_</span><span class="p">,</span> <span class="n">gt_images_</span> <span class="o">=</span> <span class="n">input_images</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">gt_images</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Loop over the transformations</span>
+        <span class="k">for</span> <span class="n">transformation</span> <span class="ow">in</span> <span class="n">transformations</span><span class="p">:</span>
+            <span class="n">input_images_</span><span class="p">,</span> <span class="n">gt_images_</span> <span class="o">=</span> <span class="n">transformation</span><span class="p">(</span>
+                <span class="n">input_images_</span><span class="p">,</span> <span class="n">gt_images_</span>
+            <span class="p">)</span>
+        <span class="c1"># Add transformed images</span>
+        <span class="n">input_batch_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_images_</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">gt_batch_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gt_images_</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+    <span class="c1"># Return output</span>
+    <span class="k">return</span> <span class="n">input_batch_</span><span class="p">,</span> <span class="n">gt_batch_</span></div>
+
+
+<div class="viewcode-block" id="rotate_images"><a class="viewcode-back" href="../../../../data_science_framework.pytorch_utils.data_manager.html#data_science_framework.pytorch_utils.data_manager.data_transformation.rotate_images">[docs]</a><span class="k">def</span> <span class="nf">rotate_images</span><span class="p">(</span>
+        <span class="n">input_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">gt_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">angle_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">angle_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">angle_z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">random</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that apply the same rotation to the two set of images</span>
+
+<span class="sd">    :param input_images: List of input nifty images</span>
+<span class="sd">    :param gt_images: List of ground truth nifty images</span>
+<span class="sd">    :param angle_x: If random is enabled it corresponds to the max rotation angle around x axis otherwise it corresponds to the value of the rotation angle</span>
+<span class="sd">    :param angle_y: If random is enabled it corresponds to the max rotation angle around y axis otherwise it corresponds to the value of the rotation angle</span>
+<span class="sd">    :param angle_z: If random is enabled it corresponds to the max rotation angle around z axis otherwise it corresponds to the value of the rotation angle</span>
+<span class="sd">    :param random: True if randomness is enabled. In this case, the angle of rotation follows a uniforme distribution between -angle and angle for each direction</span>
+<span class="sd">    :return: The modified input images and the modified gt images</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Test randomness</span>
+    <span class="k">if</span> <span class="n">random</span><span class="p">:</span>
+        <span class="n">angle_x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">angle_x</span>
+        <span class="n">angle_y</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">angle_y</span>
+        <span class="n">angle_z</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">angle_z</span>
+
+    <span class="c1"># Define rotations</span>
+    <span class="n">rotate_x</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">reshape</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle_x</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">rotate_y</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">reshape</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle_y</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">rotate_z</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">reshape</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle_z</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">rotate_xyz</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">rotate_x</span><span class="p">(</span><span class="n">rotate_y</span><span class="p">(</span><span class="n">rotate_z</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">input_image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_images</span><span class="p">):</span>
+        <span class="n">input_images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span>
+            <span class="n">dataobj</span><span class="o">=</span><span class="n">rotate_xyz</span><span class="p">(</span><span class="n">input_image</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()),</span> <span class="n">affine</span><span class="o">=</span><span class="n">input_image</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">input_image</span><span class="o">.</span><span class="n">header</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gt_image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gt_images</span><span class="p">):</span>
+        <span class="n">gt_images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span>
+            <span class="n">dataobj</span><span class="o">=</span><span class="n">rotate_xyz</span><span class="p">(</span><span class="n">gt_image</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()),</span> <span class="n">affine</span><span class="o">=</span><span class="n">gt_image</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">gt_image</span><span class="o">.</span><span class="n">header</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">input_images</span><span class="p">,</span> <span class="n">gt_images</span></div>
+
+
+<div class="viewcode-block" id="crop_half_images"><a class="viewcode-back" href="../../../../data_science_framework.pytorch_utils.data_manager.html#data_science_framework.pytorch_utils.data_manager.data_transformation.crop_half_images">[docs]</a><span class="k">def</span> <span class="nf">crop_half_images</span><span class="p">(</span>
+        <span class="n">input_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">gt_images</span><span class="p">:</span> <span class="nb">list</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that crop the half of the image containing non null ground truth</span>
+
+<span class="sd">    :param input_images: List of input nifty images</span>
+<span class="sd">    :param gt_images: List of ground truth nifty images</span>
+<span class="sd">    :return: The modified input images and the modified gt images</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input_images_</span> <span class="o">=</span> <span class="n">input_images</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">gt_images_</span> <span class="o">=</span> <span class="n">gt_images</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Define new dimension</span>
+    <span class="n">updated_second_dimension</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gt_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Analyse ground truth</span>
+    <span class="n">left_sum</span> <span class="o">=</span> <span class="p">(</span><span class="n">gt_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()[:,</span> <span class="p">:</span><span class="n">updated_second_dimension</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">right_sum</span> <span class="o">=</span> <span class="p">(</span><span class="n">gt_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()[:,</span> <span class="n">updated_second_dimension</span><span class="p">:,</span> <span class="p">:])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="c1"># Define cropping functions</span>
+    <span class="n">crop</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:</span><span class="n">updated_second_dimension</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">left_sum</span> <span class="o">&gt;</span> <span class="n">right_sum</span> <span class="k">else</span> \
+        <span class="n">x</span><span class="p">[:,</span> <span class="n">updated_second_dimension</span><span class="p">:,</span> <span class="p">:]</span>
+
+    <span class="c1"># Crop ground truths</span>
+    <span class="n">gt_images_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span>
+        <span class="n">dataobj</span><span class="o">=</span><span class="n">crop</span><span class="p">(</span><span class="n">gt_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()),</span> <span class="n">affine</span><span class="o">=</span><span class="n">gt_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">gt_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Crop input images</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">input_image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_images</span><span class="p">):</span>
+        <span class="n">input_images_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span>
+            <span class="n">dataobj</span><span class="o">=</span><span class="n">crop</span><span class="p">(</span><span class="n">input_image</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()),</span> <span class="n">affine</span><span class="o">=</span><span class="n">input_image</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">input_image</span><span class="o">.</span><span class="n">header</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Return output</span>
+    <span class="k">return</span> <span class="n">input_images_</span><span class="p">,</span> <span class="n">gt_images_</span></div>
+
+
+<div class="viewcode-block" id="flip_images"><a class="viewcode-back" href="../../../../data_science_framework.pytorch_utils.data_manager.html#data_science_framework.pytorch_utils.data_manager.data_transformation.flip_images">[docs]</a><span class="k">def</span> <span class="nf">flip_images</span><span class="p">(</span>
+    <span class="n">input_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">gt_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">flip_x</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flip_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">flip_z</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that flip images</span>
+
+<span class="sd">    :param input_images: List of input nifty images</span>
+<span class="sd">    :param gt_images: List of ground truth nifty images</span>
+<span class="sd">    :param random: Boolean that is true if the transformation is aleatoric</span>
+<span class="sd">    :param flip_x: Boolean that is true if function flips image along x axis</span>
+<span class="sd">    :param flip_y: Boolean that is true if function flips image along y axis</span>
+<span class="sd">    :param flip_z: Boolean that is true if function flips image along z axis</span>
+<span class="sd">    :param random: True if randomness is enabled</span>
+<span class="sd">    :return: The modified input images and the modified gt images</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Test randomness</span>
+    <span class="k">if</span> <span class="n">random</span><span class="p">:</span>
+        <span class="n">flip_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">flip_x</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">flip_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">flip_y</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">flip_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">flip_z</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c1"># Define flips</span>
+    <span class="n">flip_x_transform</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">flip_x</span> <span class="k">else</span> <span class="n">x</span>
+    <span class="n">flip_y_transform</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">flip_y</span> <span class="k">else</span> <span class="n">x</span>
+    <span class="n">flip_z_transform</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">flip_z</span> <span class="k">else</span> <span class="n">x</span>
+    <span class="n">flip_xyz</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">flip_x_transform</span><span class="p">(</span><span class="n">flip_y_transform</span><span class="p">(</span><span class="n">flip_z_transform</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">input_image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_images</span><span class="p">):</span>
+        <span class="n">input_images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span>
+            <span class="n">dataobj</span><span class="o">=</span><span class="n">flip_xyz</span><span class="p">(</span><span class="n">input_image</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()),</span> <span class="n">affine</span><span class="o">=</span><span class="n">input_image</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">input_image</span><span class="o">.</span><span class="n">header</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gt_image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gt_images</span><span class="p">):</span>
+        <span class="n">gt_images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span>
+            <span class="n">dataobj</span><span class="o">=</span><span class="n">flip_xyz</span><span class="p">(</span><span class="n">gt_image</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()),</span> <span class="n">affine</span><span class="o">=</span><span class="n">gt_image</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">gt_image</span><span class="o">.</span><span class="n">header</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">input_images</span><span class="p">,</span> <span class="n">gt_images</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Robin Camarasa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

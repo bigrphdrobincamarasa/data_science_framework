@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** File that tests the module functions and decorators **
+**File that tests loggers functions and decorators**
 """
 import json
 import os
@@ -31,7 +31,7 @@ from data_science_framework.settings import PROJECT_ROOT, TEST_ROOT, RESSOURCES_
 
 def test_git_current_state() -> None:
     """
-    Function that test the current git status of a folder
+    Function that tests git_current_state
 
     :return: None
     """
@@ -103,7 +103,7 @@ def test_data_saver(output_folder: str) -> None:
 @set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
 def test_timer(output_folder):
     """
-    Test timer decorator generator
+    Function that test timer
 
     :param output_folder: Path to the output folder
     :return: None
@@ -139,7 +139,7 @@ def test_timer(output_folder):
 @set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
 def test_metric_logger(output_folder):
     """
-    Test metric logger decorator
+    Function that tests metric_logger
 
     :param output_folder: Path to the output folder
     :return: None
@@ -190,7 +190,7 @@ def test_metric_logger(output_folder):
 @set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
 def test_global_logger(output_folder: str) -> None:
     """
-    Function that test the global logger
+    Function that tests global_logger
 
     :param output_folder: Path to the output folder
     :return:None
@@ -233,7 +233,7 @@ def test_global_logger(output_folder: str) -> None:
 @set_test_folders(output_root=TEST_ROOT, current_module=MODULE)
 def test_clear_experiments(output_folder: str) -> None:
     """
-    Function that tests clear_experiments function
+    Function that tests clear_experiments
 
     :param output: Path to the output folder
     :return: None

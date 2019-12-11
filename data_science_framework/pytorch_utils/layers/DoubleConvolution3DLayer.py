@@ -11,7 +11,7 @@
 
 **Project** : src
 
-Class that implements DoubleConvolution3DLayer structure
+**Class that implements DoubleConvolution3DLayer structure**
 """
 import torch.nn as nn
 import torch
@@ -21,8 +21,8 @@ class DoubleConvolution3DLayer(nn.Module):
     """
     Class that implements DoubleConvolution3DLayer structure
 
-    :param n_channels: Number of channel of the input
-    :param n_classes: Number of channel of the output
+    :param in_channels: Number of channel of the input
+    :param out_channels: Number of channel of the output
     :param kernel_size: Size of the convolution kernel
     :param padding: Size of the padding
     """

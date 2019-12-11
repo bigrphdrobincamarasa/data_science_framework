@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** File that helps handle git **
+**File that helps handle git**
 """
 import os
 import pandas as pd

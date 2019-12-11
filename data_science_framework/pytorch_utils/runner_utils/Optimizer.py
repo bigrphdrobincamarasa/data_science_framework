@@ -11,7 +11,7 @@
 
 **Project** : src
 
-** Class that handles the optimizers **
+**Class that handles optimizers**
 """
 import torch
 from torch.optim.adadelta import Adadelta

@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** File that test scripting functions, classes, decorators ... **
+**File that test scripting module**
 """
 import os
 import shutil
@@ -61,7 +61,7 @@ def test_parse_function_docstring() -> None:
 
 def test_parse_class_docstring() -> None:
     """
-    Function that test class_docstring parser
+    Function that tests parse_class_docstring
 
     :param ressources: Folder parsed as a dictionnary
     :param output_path: Output save path
@@ -86,7 +86,7 @@ def test_set_test_folders(
         ressources_file_structure: dict, output_root: str
 ) -> None:
     """
-    Function that test test_file_structure decorator
+    Function that test set_test_folders
 
     :return: None
     """
@@ -129,7 +129,7 @@ def test_create_error_less_directory() -> None:
 
 def test_get_dir_structure() -> None:
     """
-    Function that test test_file_structure decorator
+    Function that test get_dir_structure
 
     :return: None
     """
@@ -153,7 +153,7 @@ def test_get_dir_structure() -> None:
 
 def test_get_file_structure() -> None:
     """
-    Function that test test_file_structure decorator
+    Function that test get_file_structure
     #TODO: test supported extensions
 
     :return: None

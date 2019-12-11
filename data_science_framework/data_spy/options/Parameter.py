@@ -21,18 +21,19 @@ from data_science_framework.scripting.doc_management import parse_class_docstrin
 
 
 class Parameter:
+    """
+    Class that represents a parameter
+
+    :param parameter: Parameter name
+    :param default: Default value of the option
+    :param object_key: Key of the object
+    :param documentation: Documentation of the function
+    """
     def __init__(
             self, parameter: str, default,
             object_key: str, documentation: str=''
     ):
-        """
-        Class that represents a parameter
 
-        :param parameter: Parameter name
-        :param default: Default value of the option
-        :param object_key: Key of the object
-        :param documentation: Documentation of the function
-        """
         # Set option name
         self.option_name = '-'.join(
             ['-', object_key, parameter.replace('_', '-')]
@@ -59,7 +60,7 @@ class Parameter:
 
     def render_click_option(self, f):
         """
-        Add click option to the click command interface
+        Add click option corresponding to the parameter to the click command interface
 
         :param f: The function under study
         :return: None

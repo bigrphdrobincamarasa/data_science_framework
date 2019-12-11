@@ -11,7 +11,7 @@
 
 **Project** : baseline_unet
 
-**Module that contains the codes that that handle pytorch developpement**
+**Module that contains the codes that helps pytorch developpement**
 """
 
 MODULE = ['data_science_framework', 'pytorch_utils']

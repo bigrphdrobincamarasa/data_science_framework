@@ -11,7 +11,7 @@
 
 **Project** : src
 
-Class that implements UpConvolution3DLayer structure
+**Class that implements UpConvolution3DLayer structure**
 """
 import torch.nn as nn
 import torch
@@ -24,8 +24,8 @@ class UpConvolution3DLayer(nn.Module):
     Class that implements UpConvolution3DLayer structure. This upconvimplementation only
     works with 2**n image dimension size
 
-    :param n_channels: Number of channel of the input
-    :param n_classes: Number of channel of the output
+    :param in_channels: Number of channel of the input
+    :param out_channels: Number of channel of the output
     :param kernel_size: Size of the kernel
     :param padding: Padding of the convolution
     """

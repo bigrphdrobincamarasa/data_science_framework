@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-**  **
+**File that contains the code related to the file structure management**
 """
 import json
 import os
@@ -47,10 +47,8 @@ def get_dir_structure(
     Function that transform a folder tree into a python dictionnary
 
     :param path_root: Path root of the folder under study
-    :param subfolder_tree_height: Height of the subfolders parsed by the
-    function
-    :param supported_extensions: Extension of the files that are transformed
-    into objects. (supported librairies : pandas, json, numpy)
+    :param subfolder_tree_height: Height of the subfolders parsed by the function
+    :param supported_extensions: Extension of the files that are transformed into objects. (supported librairies : pandas, json, numpy)
     :return: The path tree
     """
     if subfolder_tree_height == 0:
@@ -86,8 +84,7 @@ def get_file_structure(
     Function that transform a path into a dictionnary
 
     :param file_path: Path root of the file under study
-    :param supported_extensions: Extension of the files that are transformed
-    into objects. (supported librairies : pandas, json, numpy)
+    :param supported_extensions: Extension of the files that are transformed into objects. (supported librairies : pandas, json, numpy)
     :param csv_delimiters: Format used to read csv file
     :return: The path, the object (None if not applicable)
     """

@@ -11,6 +11,7 @@
 
 **Project** : data_science_framework
 
-**  ** """
+**Module that contains the code related to scripting**
+"""
 MODULE = ['data_science_framework', 'scripting']
 

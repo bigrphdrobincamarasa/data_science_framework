@@ -1,5 +1,5 @@
 """
-**Author** : Robin Camarasa 
+**Author** : Robin Camarasa
 
 **Institution** : Erasmus Medical Center
 
@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** Module that helps handle loggers **
+**Module that helps handle loggers**
 """
 MODULE=['data_science_framework', 'data_spy', 'loggers']
 

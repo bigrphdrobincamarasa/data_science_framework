@@ -11,7 +11,7 @@
 
 **Project** : baseline_unet
 
-** File that contains the codes that implements data transformations **
+**File that contains the codes that implements data transformations**
 """
 from typing import Tuple
 
@@ -61,14 +61,10 @@ def rotate_images(
 
     :param input_images: List of input nifty images
     :param gt_images: List of ground truth nifty images
-    :param angle_x: If random is enabled it corresponds to the max rotation angle around x axis
-    otherwise it corresponds to the value of the rotation angle
-    :param angle_y: If random is enabled it corresponds to the max rotation angle around y axis
-    otherwise it corresponds to the value of the rotation angle
-    :param angle_z: If random is enabled it corresponds to the max rotation angle around z axis
-    otherwise it corresponds to the value of the rotation angle
-    :param random: True if randomness is enabled. In this case, the angle of rotation follows a
-    a uniforme distribution between -angle and angle for each direction
+    :param angle_x: If random is enabled it corresponds to the max rotation angle around x axis otherwise it corresponds to the value of the rotation angle
+    :param angle_y: If random is enabled it corresponds to the max rotation angle around y axis otherwise it corresponds to the value of the rotation angle
+    :param angle_z: If random is enabled it corresponds to the max rotation angle around z axis otherwise it corresponds to the value of the rotation angle
+    :param random: True if randomness is enabled. In this case, the angle of rotation follows a uniforme distribution between -angle and angle for each direction
     :return: The modified input images and the modified gt images
     """
     # Test randomness

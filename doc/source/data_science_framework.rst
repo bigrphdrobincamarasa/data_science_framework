@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
    data_science_framework.data_spy
+   data_science_framework.pytorch_utils
    data_science_framework.scripting
 
 Submodules

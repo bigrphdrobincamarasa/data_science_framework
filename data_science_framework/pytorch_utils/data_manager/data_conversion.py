@@ -11,7 +11,7 @@
 
 **Project** : src
 
-** File that contains the code to convert data to torch tensor **
+**File that contains the code to convert data to torch tensor**
 """
 import torch
 import numpy as np

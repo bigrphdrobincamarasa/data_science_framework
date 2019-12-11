@@ -12,14 +12,6 @@ data\_science\_framework.data\_spy.options.Parameter module
    :undoc-members:
    :show-inheritance:
 
-data\_science\_framework.data\_spy.options.example\_parameters\_to\_options module
-----------------------------------------------------------------------------------
-
-.. automodule:: data_science_framework.data_spy.options.example_parameters_to_options
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 data\_science\_framework.data\_spy.options.option\_manager module
 -----------------------------------------------------------------
 

@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** Contains the global settings of the template **
+**Contains the global settings of the template**
 """
 import os
 

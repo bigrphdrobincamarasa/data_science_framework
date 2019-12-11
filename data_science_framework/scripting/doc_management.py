@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** File that contains the docstring management functions **
+**File that contains the docstring management functions**
 """
 
 
@@ -68,6 +68,3 @@ def parse_function_docstring(docstring: str) -> dict:
     except Exception as e:
         print('This function do not follow docstring convention')
         return {}
-
-
-

@@ -11,6 +11,5 @@
 
 **Project** : data_science_framework
 
-**  **
+**Contains the codes related to option parsing and logging**
 """
-

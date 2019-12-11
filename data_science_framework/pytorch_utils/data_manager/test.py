@@ -11,8 +11,9 @@
 
 **Project** : baseline_unet
 
-**File that tests codes of data_manager module**
 #TODO: test random
+
+**File that tests codes of data_manager module**
 """
 import nibabel as nib
 import numpy as np
@@ -23,7 +24,6 @@ from data_science_framework.pytorch_utils.data_manager import MODULE
 
 from data_science_framework.pytorch_utils.data_manager.data_transformation import rotate_images, flip_images, \
     crop_half_images, apply_transformations_to_batch
-from scipy.ndimage import rotate
 
 from data_science_framework.pytorch_utils.data_manager.data_conversion import \
     convert_nifty_batch_to_torch_tensor

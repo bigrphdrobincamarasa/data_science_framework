@@ -11,11 +11,13 @@
 
 **Project** : data_science_framework
 
-** File that contains the main loggers **
+**File that contains the main loggers**
 """
 import datetime
 import json
 import os
+from typing import Callable
+
 import pandas as pd
 import numpy as np
 import nibabel as nib
@@ -29,15 +31,15 @@ from data_science_framework.settings import FILENAME_TEMPLATE
 def global_logger(
         folder: str, project_root: str, tag: str = 'experiment',
         test: bool = False
-):
+) -> Callable:
     """
-    Function that return a decorator that logs the experiments parameters and the output of the experiment
+    Function that logs the experiments parameters and the output of the experiment
 
     :param folder: Path to the folder that contains the experiments
     :param project_root: Root of the project (for github logs)
     :param tag: Tag associated with the experiment
     :param test: Boolean that is true only if the experiment is a test
-    :return: Decorator
+    :return: Decorator to apply above the experiment function under study
     """
     def decorator(f):
         def wrapper(*args, **kwargs):
@@ -123,11 +125,11 @@ def global_logger(
     return decorator
 
 
-def metric_logger(f):
+def metric_logger(f: Callable) -> Callable:
     """
-    Decorator that logs a metric
+    Decorator that logs a metric function output
 
-    :param f: Decorated function
+    :param f: Function under study
     :return: Decorated function
     """
     def wrapper(*args, **kwargs):
@@ -270,11 +272,11 @@ def timer(f):
     return wrapper
 
 
-def data_saver(f):
+def data_saver(f: Callable) -> Callable:
     """
-    Decorator that saves data a function
+    Decorator that saves data of a function
 
-    :param f: Function to time
+    :param f: Function under study
     :return: Decorated function
     """
     def wrapper(*args, **kwargs):

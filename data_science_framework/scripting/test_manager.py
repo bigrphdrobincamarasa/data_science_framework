@@ -11,7 +11,7 @@
 
 **Project** : data_science_framework
 
-** File that contains the codes related to file management for test **
+**File that contains the codes related to file management for test**
 """
 import os
 from typing import Callable
