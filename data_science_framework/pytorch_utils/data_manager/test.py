@@ -23,10 +23,60 @@ from data_science_framework.settings import RESSOURCES_ROOT
 from data_science_framework.pytorch_utils.data_manager import MODULE
 
 from data_science_framework.pytorch_utils.data_manager.data_transformation import rotate_images, flip_images, \
-    crop_half_images, apply_transformations_to_batch
+    crop_half_images, apply_transformations_to_batch, tile_images
 
 from data_science_framework.pytorch_utils.data_manager.data_conversion import \
     convert_nifty_batch_to_torch_tensor
+
+
+
+def test_tile_images() -> None:
+    """
+    Function that tests tile_images
+
+    :return: None
+    """
+    # Initialize values
+    input_images = [
+        nib.Nifti1Image(
+            np.arange(127 * 65 * 16).reshape(127, 65, 16),
+            np.eye(4)
+        )
+        for i in range(5)
+    ]
+    gt_images = [
+        nib.Nifti1Image(
+            np.arange(127 * 65 * 16).reshape(127, 65, 16),
+            np.eye(4)
+        )
+        for i in range(5)
+    ]
+
+    for expansion_factor, ntiles in [(2, 120), (3, 242)]:
+        output_input_images, output_gt_images, output_gt_sum = tile_images(
+            input_images=input_images, gt_images=gt_images,
+            expansion_factor=expansion_factor
+        )
+        # Check output types
+        assert type(output_input_images) == list
+        assert type(output_gt_images) == list
+        assert type(output_gt_sum) == list
+
+        # Check number of modalities of input
+        assert len(output_input_images[0]) == len(input_images)
+
+        # Check number of modalities of ground truth
+        assert len(output_gt_images[0]) == len(gt_images)
+
+        # Check number of input tiles
+        assert len(output_input_images) == ntiles
+
+        # Check number of ground truth tiles
+        assert len(output_gt_images) == ntiles
+
+        # Check number of ground truth tiles
+        assert len(output_gt_sum) == ntiles
+
 
 
 @set_test_folders(

@@ -14,3 +14,4 @@ virtualenv==16.7.7
 pytest
 nibabel
 torch
+sphinx_rtd_theme
