@@ -112,10 +112,6 @@ def tile_images(
                 )
     return input_images_, gt_images_, gt_sum_
 
-
-
-
-
 def apply_transformations_to_batch(
         input_batch: list, gt_batch: list,
         transformations: list

@@ -28,6 +28,8 @@ from data_science_framework.pytorch_utils.data_manager.data_transformation impor
 from data_science_framework.pytorch_utils.data_manager.data_conversion import \
     convert_nifty_batch_to_torch_tensor
 
+from data_science_framework.pytorch_utils.data_manager.SegmentationTransformation import \
+    SegmentationTransformation
 
 
 def test_tile_images() -> None:
@@ -330,3 +332,15 @@ def test_convert_nifty_batch_to_torch_tensor(ressources_structure: dict) -> None
     assert array.shape == (3, 5, 4, 4)
     assert array.sum() == 300
 
+
+def test_SegmentationTransformation() -> None:
+    """
+    Function that tests SegmentationTransformation
+
+    :return: None
+    """
+    segmentation_transformation = SegmentationTransformation()
+    try:
+        segmentation_transformation.transform(None, None)
+    except:
+        assert False
