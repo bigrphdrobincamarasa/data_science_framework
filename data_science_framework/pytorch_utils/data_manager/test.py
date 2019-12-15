@@ -34,6 +34,10 @@ from data_science_framework.pytorch_utils.data_manager.SegmentationTransformatio
 from data_science_framework.pytorch_utils.data_manager.SegmentationPatientTransformation import \
     SegmentationPatientTransformation
 
+from data_science_framework.pytorch_utils.data_manager.SegmentationImageTransformation import \
+    SegmentationImageTransformation
+
+
 def test_tile_images() -> None:
     """
     Function that tests tile_images
@@ -364,3 +368,17 @@ def test_SegmentationPatientTransformation() -> None:
     assert tuple(output[0]) == (4, 4, 4)
     assert tuple(output[1]) == (4, 6, 8)
 
+
+def test_SegmentationImageTransformation() -> None:
+    """
+    Function that tests SegmentationImageTransformation
+
+    :return: None
+    """
+    segmentation_image_transformaton = SegmentationImageTransformation()
+    segmentation_image_transformaton.get_transformation = lambda x, y: (x**2, y**3)
+    output = segmentation_image_transformaton.transform_patient(
+        [4, 5, 6], [0, 1, 2]
+    )
+    assert tuple(output[0]) == (16, 25, 36)
+    assert tuple(output[1]) == (0, 1, 8)
