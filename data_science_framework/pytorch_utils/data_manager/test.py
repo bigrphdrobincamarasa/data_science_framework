@@ -31,6 +31,8 @@ from data_science_framework.pytorch_utils.data_manager.data_conversion import \
 from data_science_framework.pytorch_utils.data_manager.SegmentationTransformation import \
     SegmentationTransformation
 
+from data_science_framework.pytorch_utils.data_manager.SegmentationPatientTransformation import \
+    SegmentationPatientTransformation
 
 def test_tile_images() -> None:
     """
@@ -341,6 +343,24 @@ def test_SegmentationTransformation() -> None:
     """
     segmentation_transformation = SegmentationTransformation()
     try:
-        segmentation_transformation.transform(None, None)
-    except:
+        segmentation_transformation.get_transformation()
+        segmentation_transformation.transform_batch(None, None)
+        segmentation_transformation.transform_patient(None, None)
+    except Exception as e:
         assert False
+
+
+def test_SegmentationPatientTransformation() -> None:
+    """
+    Function that tests SegmentationPatientTransformation
+
+    :return: None
+    """
+    segmentation_patient_transformation = SegmentationPatientTransformation()
+    segmentation_patient_transformation.transform_patient = lambda x, y: (x-y, x+y)
+    output = segmentation_patient_transformation.transform_batch(
+        [4, 5, 6], [0, 1, 2]
+    )
+    assert tuple(output[0]) == (4, 4, 4)
+    assert tuple(output[1]) == (4, 6, 8)
+

@@ -15,10 +15,13 @@ Class that implements SegmentationTransformation
 """
 from typing import Tuple
 
+from data_science_framework.pytorch_utils.data_manager.SegmentationTransformation import \
+    SegmentationTransformation
 
-class SegmentationTransformation:
+
+class SegmentationPatientTransformation(SegmentationTransformation):
     """
-    Class that implements SegmentationTransformation
+    Class that implements SegmentationPatientTransformation
     """
     def transform_batch(self, input, gt) -> Tuple:
         """
@@ -31,7 +34,12 @@ class SegmentationTransformation:
         :param gt: List of patient gt formatted items
         :return: Tuple of transformed values
         """
-        pass
+        output = ([], [])
+        for item in zip(input, gt):
+            input_item_, output_item_ = self.transform_patient(*item)
+            output[0].append(input_item_)
+            output[1].append(output_item_)
+        return output
 
     def transform_patient(self, input, gt) -> Tuple:
         """
