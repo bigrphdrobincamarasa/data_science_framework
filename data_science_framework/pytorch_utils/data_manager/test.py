@@ -47,6 +47,9 @@ from data_science_framework.pytorch_utils.data_manager.SegmentationFlip import \
 from data_science_framework.pytorch_utils.data_manager.SegmentationCropHalf import \
     SegmentationCropHalf
 
+from data_science_framework.pytorch_utils.data_manager.SegmentationNormalization import \
+    SegmentationNormalization
+
 
 def test_tile_images() -> None:
     """
@@ -309,3 +312,49 @@ def test_SegmentationCropHalf(ressources_structure: dict, output_folder: str) ->
         assert len(input) == len(input_transformed)
         assert input_transformed[0].shape == (25, 60, 70)
         assert gt_transformed[0].shape == (25, 60, 70)
+
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    ressources_root=RESSOURCES_ROOT,
+    current_module=MODULE
+)
+def test_SegmentationNormalization(ressources_structure: dict, output_folder: str) -> None:
+    """
+    Function that tests SegmentationNormalization
+
+    :param output_folder: Path to the output folder
+    :param ressources_structure: Dictionnary containing the path and objects contained in the ressource folder
+    :return: None
+    """
+    # Generate data
+    template_image = nib.load(
+        ressources_structure['patient_0']['image_3.nii.gz']['path']
+    )
+    input_data = np.arange(50 * 60 * 70).reshape(50, 60, 70)
+    input = [
+        nib.Nifti1Image(
+            dataobj=i * input_data,
+            affine=template_image.affine,
+            header=template_image.header
+        ) for i in range(5)
+    ]
+    for i in range(5):
+        nib.save(
+            input[i], os.path.join(
+                output_folder, 'input_{}.nii.gz'.format(i)
+            )
+        )
+    # Get segmentation normalization
+    segmentation_normalization = SegmentationNormalization()
+    output = segmentation_normalization.transform_patient(input, [])
+
+    assert len(output[1]) == 0
+    for i, input_transformed in enumerate(output[0]):
+        assert input_transformed.shape == input[0].shape
+        nib.save(
+            input_transformed,
+            os.path.join(
+                output_folder, 'input_transformed_{}.nii.gz'.format(i)
+            )
+        )
