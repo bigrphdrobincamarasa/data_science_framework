@@ -41,6 +41,10 @@ from data_science_framework.pytorch_utils.data_manager.SegmentationImageTransfor
 from data_science_framework.pytorch_utils.data_manager.SegmentationRotation import \
     SegmentationRotation
 
+from data_science_framework.pytorch_utils.data_manager.SegmentationFlip import \
+    SegmentationFlip
+
+
 def test_tile_images() -> None:
     """
     Function that tests tile_images
@@ -221,15 +225,15 @@ def test_SegmentationFlip(ressources_structure: dict, output_folder: str,) -> No
     nib.save(
         input, os.path.join(output_folder, 'input.nii.gz')
     )
-    for angle_x, angle_y, angle_z in [(45, 0, 0), (0, 45, 0), (0, 0, 45)]:
-        segmentation_rotation_transformation = SegmentationRotation(
-            angle_x=angle_x,
-            angle_y=angle_y,
-            angle_z=angle_z
+    for flip_x, flip_y, flip_z in [(True, False, False), (False, True, False), (False, False, True)]:
+        segmentation_rotation_transformation = SegmentationFlip(
+            flip_x=flip_x,
+            flip_y=flip_y,
+            flip_z=flip_z
         )
         output = segmentation_rotation_transformation.get_transformation()(input)
         nib.save(
             output,
-            os.path.join(output_folder, 'x_{}_y_{}_z_{}.nii.gz'.format(angle_x, angle_y, angle_z))
+            os.path.join(output_folder, 'x_{}_y_{}_z_{}.nii.gz'.format(flip_x, flip_y, flip_z))
         )
         assert input.shape == output.shape

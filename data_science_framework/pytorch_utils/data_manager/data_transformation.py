@@ -232,10 +232,7 @@ def flip_images(
     :param input_images: List of input nifty images
     :param gt_images: List of ground truth nifty images
     :param random: Boolean that is true if the transformation is aleatoric
-    :param flip_x: Boolean that is true if function flips image along x axis
-    :param flip_y: Boolean that is true if function flips image along y axis
-    :param flip_z: Boolean that is true if function flips image along z axis
-    :param random: True if randomness is enabled
+
     :return: The modified input images and the modified gt images
     """
     # Test randomness

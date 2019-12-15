@@ -29,7 +29,7 @@ class SegmentationRotation(SegmentationImageTransformation):
     :param angle_x: If random is enabled it corresponds to the max rotation angle around x axis otherwise it corresponds to the value of the rotation angle
     :param angle_y: If random is enabled it corresponds to the max rotation angle around y axis otherwise it corresponds to the value of the rotation angle
     :param angle_z: If random is enabled it corresponds to the max rotation angle around z axis otherwise it corresponds to the value of the rotation angle
-    :param random: True if randomness is enabled. In this case, the angle of rotation follows a uniforme distribution between -angle and angle for each direction
+    :param random: True if randomness is enabled
     """
     def __init__(
             self, angle_x: float = 0, angle_y: float = 0,
