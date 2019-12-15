@@ -44,6 +44,9 @@ from data_science_framework.pytorch_utils.data_manager.SegmentationRotation impo
 from data_science_framework.pytorch_utils.data_manager.SegmentationFlip import \
     SegmentationFlip
 
+from data_science_framework.pytorch_utils.data_manager.SegmentationCropHalf import \
+    SegmentationCropHalf
+
 
 def test_tile_images() -> None:
     """
@@ -188,12 +191,12 @@ def test_SegmentationRotation(ressources_structure: dict, output_folder: str) ->
         input, os.path.join(output_folder, 'input.nii.gz')
     )
     for angle_x, angle_y, angle_z in [(45, 0, 0), (0, 45, 0), (0, 0, 45)]:
-        segmentation_rotation_transformation = SegmentationRotation(
+        segmentation_rotation = SegmentationRotation(
             angle_x=angle_x,
             angle_y=angle_y,
             angle_z=angle_z
         )
-        output = segmentation_rotation_transformation.get_transformation()(input)
+        output = segmentation_rotation.get_transformation()(input)
         nib.save(
             output,
             os.path.join(output_folder, 'x_{}_y_{}_z_{}.nii.gz'.format(angle_x, angle_y, angle_z))
@@ -226,14 +229,83 @@ def test_SegmentationFlip(ressources_structure: dict, output_folder: str,) -> No
         input, os.path.join(output_folder, 'input.nii.gz')
     )
     for flip_x, flip_y, flip_z in [(True, False, False), (False, True, False), (False, False, True)]:
-        segmentation_rotation_transformation = SegmentationFlip(
+        segmentation_flip = SegmentationFlip(
             flip_x=flip_x,
             flip_y=flip_y,
             flip_z=flip_z
         )
-        output = segmentation_rotation_transformation.get_transformation()(input)
+        output = segmentation_flip.get_transformation()(input)
         nib.save(
             output,
             os.path.join(output_folder, 'x_{}_y_{}_z_{}.nii.gz'.format(flip_x, flip_y, flip_z))
         )
         assert input.shape == output.shape
+
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    ressources_root=RESSOURCES_ROOT,
+    current_module=MODULE
+)
+def test_SegmentationCropHalf(ressources_structure: dict, output_folder: str) -> None:
+    """
+    Function that tests SegmentationCropHalf
+
+    :param output_folder: Path to the output folder
+    :param ressources_structure: Dictionnary containing the path and objects contained in the ressource folder
+    :return: None
+    """
+    # Generate data
+    template_image = nib.load(
+        ressources_structure['patient_0']['image_3.nii.gz']['path']
+    )
+    input_data = np.arange(50 * 60 * 70).reshape(50, 60, 70)
+    input = [
+        nib.Nifti1Image(
+            dataobj=i * input_data,
+            affine=template_image.affine,
+            header=template_image.header
+        ) for i in range(5)
+    ]
+
+    for i, input_ in enumerate(input):
+        nib.save(
+            input_, os.path.join(output_folder, 'input_{}.nii.gz'.format(i))
+        )
+    for side in ['left', 'right']:
+        if side == 'left':
+            gt = [
+                nib.Nifti1Image(
+                    dataobj=input_data > input_data.mean(),
+                    affine=template_image.affine,
+                    header=template_image.header
+                ) for i in range(4)
+            ]
+        else:
+            gt = [
+                nib.Nifti1Image(
+                    dataobj=input_data < input_data.mean(),
+                    affine=template_image.affine,
+                    header=template_image.header
+                ) for i in range(4)
+            ]
+
+        segmentation_crop_half = SegmentationCropHalf()
+        input_transformed, gt_transformed = segmentation_crop_half.transform_patient(input, gt)
+
+        # Save data
+        for i, input_transformed_ in enumerate(input_transformed):
+            nib.save(
+                input_transformed_, os.path.join(output_folder, 'input_transformed_{}_{}.nii.gz'.format(side, i))
+            )
+        for i, (gt_, gt_transformed_) in enumerate(zip(gt, gt_transformed)):
+            nib.save(
+                gt_, os.path.join(output_folder, 'gt_{}_{}.nii.gz'.format(side, i))
+            )
+            nib.save(
+                gt_transformed_, os.path.join(output_folder, 'gt_transformed_{}_{}.nii.gz'.format(side, i))
+            )
+        assert len(gt) == len(gt_transformed)
+        assert len(input) == len(input_transformed)
+        assert input_transformed[0].shape == (25, 60, 70)
+        assert gt_transformed[0].shape == (25, 60, 70)

@@ -61,8 +61,8 @@ class SegmentationFlip(SegmentationImageTransformation):
         flip_y_transform = lambda x: x[:, ::-1, :] if flip_y else x
         flip_z_transform = lambda x: x[:, :, ::-1] if flip_z else x
         flip_xyz = lambda x: flip_x_transform(flip_y_transform(flip_z_transform(x)))
-        transform_image = lambda x: nib.Nifti1Image(
+
+        return lambda x: nib.Nifti1Image(
             flip_xyz(x.get_fdata()), affine=x.affine,
             header=x.header
         )
-        return transform_image

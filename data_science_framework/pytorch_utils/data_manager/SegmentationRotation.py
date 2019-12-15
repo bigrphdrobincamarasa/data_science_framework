@@ -61,8 +61,7 @@ class SegmentationRotation(SegmentationImageTransformation):
         rotate_y = lambda x: rotate(x, reshape=False, angle=angle_y, axes=(2, 0))
         rotate_z = lambda x: rotate(x, reshape=False, angle=angle_z, axes=(0, 1))
         rotate_xyz = lambda x: rotate_x(rotate_y(rotate_z(x)))
-        transform_image = lambda x: nib.Nifti1Image(
+        return lambda x: nib.Nifti1Image(
             rotate_xyz(x.get_fdata()), affine=x.affine,
             header=x.header
         )
-        return transform_image
