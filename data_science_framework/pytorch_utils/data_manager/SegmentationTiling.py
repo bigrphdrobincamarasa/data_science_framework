@@ -69,7 +69,37 @@ class SegmentationTiling(SegmentationTransformation):
         :param gt: List of gt images
         :return: Tuple of transformed values
         """
-        pass
+        # Initialise output
+        output = ([], [])
+
+        # Get grid
+        grid = self.compute_grid(input[0].shape)
+
+        # Get gt coordinates
+        gt_coordinates = self.get_gt_coordinates(gt)
+
+        # Get transformation
+        tile = self.get_transformation()
+
+        # Tile generation loop
+        for image_coordinates in grid:
+            if not self.is_background(
+                    gt_coordinates=gt_coordinates,
+                    image_coordinates=image_coordinates
+            ) or np.random.rand() < self.background_rate:
+                # Initialize tiles input and gt lists
+                tile_input_ = []
+                tile_gt_ = []
+                for input_ in input:
+                    tile_input_.append(tile(input_, image_coordinates))
+                for gt_ in gt:
+                    tile_gt_.append(tile(gt_, image_coordinates))
+                # Add tile
+                output[0].append(tile_input_.copy())
+                output[1].append(tile_gt_.copy())
+        return output
+
+
 
     def get_transformation(self):
         """

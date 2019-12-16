@@ -384,3 +384,30 @@ def test_SegmentationTiling(ressources_structure: dict, output_folder: str) -> N
     expected_value = array[10:26, 20:36, 30:46]
     assert expected_value.shape == output.shape
     assert tuple(list(expected_value.ravel())) == tuple(list(output.get_fdata().ravel()))
+
+    # Test transform patient
+    segmentation_tiling = SegmentationTiling(expansion_factor=2, shape_x=4, shape_y=4, shape_z=4)
+    input = [
+        nib.Nifti1Image(
+            dataobj=np.zeros((10, 20, 30)),
+            affine=np.eye(4)
+        )
+        for _ in range(3)
+    ]
+    gt = [
+        nib.Nifti1Image(
+            dataobj=np.arange(10 * 20 * 30).reshape(10, 20, 30),
+            affine=np.eye(4)
+        )
+        for _ in range(4)
+    ]
+    input_, gt_ = segmentation_tiling.transform_patient(
+        input=input,
+        gt=gt
+    )
+    assert len(input_) == 504
+    assert len(gt_) == 504
+    assert len(input_[0]) == 3
+    assert len(gt_[0]) == 4
+    assert input_[0][0].shape == (4, 4, 4)
+    assert gt_[0][0].shape == (4, 4, 4)
