@@ -77,7 +77,17 @@ class SegmentationTiling(SegmentationTransformation):
 
         :return: Function that corresponds to the transformation
         """
-        pass
+        tile = lambda image_array, coordinates: image_array[
+                                                coordinates[0]:coordinates[0] + self.tile_shape[0],
+                                                coordinates[1]:coordinates[1] + self.tile_shape[1],
+                                                coordinates[2]:coordinates[2] + self.tile_shape[2],
+                                                ]
+        transform = lambda image, coordinates: nib.Nifti1Image(
+            dataobj=tile(image.get_fdata(), coordinates),
+            affine=image.affine,
+            header=image.header
+        )
+        return transform
 
     def get_gt_coordinates(self, gt: list) -> tuple:
         """

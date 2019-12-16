@@ -374,3 +374,13 @@ def test_SegmentationTiling(ressources_structure: dict, output_folder: str) -> N
     output = segmentation_tiling.get_gt_coordinates(gts)
     assert output == ((10, 29), (20, 59), (30, 89))
 
+    # Test get_transformation
+    array = np.arange(50 * 100 * 200).reshape(50, 100, 200)
+    output = segmentation_tiling.get_transformation()(
+        nib.Nifti1Image(
+            dataobj=array, affine=np.eye(4)
+        ), (10, 20, 30)
+    )
+    expected_value = array[10:26, 20:36, 30:46]
+    assert expected_value.shape == output.shape
+    assert tuple(list(expected_value.ravel())) == tuple(list(output.get_fdata().ravel()))
