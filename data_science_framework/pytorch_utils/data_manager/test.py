@@ -389,14 +389,14 @@ def test_SegmentationTiling(ressources_structure: dict, output_folder: str) -> N
     segmentation_tiling = SegmentationTiling(expansion_factor=2, shape_x=4, shape_y=4, shape_z=4)
     input = [
         nib.Nifti1Image(
-            dataobj=np.zeros((10, 20, 30)),
+            dataobj=np.zeros((8, 12, 20)),
             affine=np.eye(4)
         )
         for _ in range(3)
     ]
     gt = [
         nib.Nifti1Image(
-            dataobj=np.arange(10 * 20 * 30).reshape(10, 20, 30),
+            dataobj=np.arange(8 * 12 * 20).reshape(8, 12, 20),
             affine=np.eye(4)
         )
         for _ in range(4)
@@ -405,9 +405,43 @@ def test_SegmentationTiling(ressources_structure: dict, output_folder: str) -> N
         input=input,
         gt=gt
     )
-    assert len(input_) == 504
-    assert len(gt_) == 504
+    assert len(input_) == 135
+    assert len(gt_) == 135
     assert len(input_[0]) == 3
     assert len(gt_[0]) == 4
     assert input_[0][0].shape == (4, 4, 4)
     assert gt_[0][0].shape == (4, 4, 4)
+
+    # Test transform batch
+    input = [
+        [
+            nib.Nifti1Image(
+                dataobj=np.zeros((8, 12, 20)),
+                affine=np.eye(4)
+            )
+            for _ in range(3)
+        ]
+        for _ in range(5)
+    ]
+    gt = [
+        [
+            nib.Nifti1Image(
+                dataobj=np.arange(8 * 12 * 20).reshape(8, 12, 20),
+                affine=np.eye(4)
+            )
+            for _ in range(4)
+        ]
+        for _ in range(5)
+    ]
+    input_, gt_ = segmentation_tiling.transform_batch(
+        input=input, gt=gt
+    )
+    assert len(input_) == 675
+    assert len(gt_) == 675
+    assert len(input_[0]) == 3
+    assert len(gt_[0]) == 4
+    assert input_[0][0].shape == (4, 4, 4)
+    assert gt_[0][0].shape == (4, 4, 4)
+    assert True
+
+

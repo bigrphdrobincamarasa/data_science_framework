@@ -56,7 +56,12 @@ class SegmentationTiling(SegmentationTransformation):
         :param gt: List of patient gt formatted items
         :return: Tuple of transformed values
         """
-        pass
+        transformed_input, transformed_gt = [], []
+        for input_, gt_ in zip(input, gt):
+            transformed_input_, transformed_gt_ = self.transform_patient(input_, gt_)
+            transformed_input += transformed_input_
+            transformed_gt += transformed_gt_
+        return transformed_input, transformed_gt
 
     def transform_patient(self, input, gt) -> Tuple:
         """
