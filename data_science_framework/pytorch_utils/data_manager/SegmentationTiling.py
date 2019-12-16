@@ -78,6 +78,21 @@ class SegmentationTiling(SegmentationTransformation):
         """
         pass
 
+    def is_background(self, gt_coordinates: tuple, image_coordinates: tuple) -> bool:
+        """
+        Method that states if a tile is part of backgroud
+
+        :param gt_coordinates: Tuple of Tuple of min and max gt coordinates in each direction
+        :param image_coordinates: Tile coordinates of image
+        :return: Boolean true if the image is part of background
+        """
+        for (gt_min_coor, gt_max_coor), image_coor, tile_dim in zip(
+                list(gt_coordinates), image_coordinates, list(self.tile_shape)
+        ):
+            if image_coor > gt_max_coor or image_coor + tile_dim < gt_min_coor:
+                return True
+        return False
+
     def compute_grid(self, image_shape: tuple) -> list:
         """
         Method that computes tiling grid from image shape
@@ -125,97 +140,3 @@ class SegmentationTiling(SegmentationTransformation):
         output += [image_dimension - tile_dimension]
         output.sort()
         return list(set(output))
-
-
-def tile_images(
-        input_images: list, gt_images: list,
-        shape=(16, 16, 16), expansion_factor: int = 2
-) -> Tuple:
-    """
-    Function that tiles input images and gt_images the same way (all images must have the same size)
-
-    :param input_images: Untiled nifty images
-    :param gt_images: Untiled nifty images
-    :param shape: Shape of the tiled images
-    :param expansion_factor: Expansion factor linked to the overlap value
-    :return: Tuple of tiled input_images, tiled gt_images and sum of the gt on the tile
-    """
-    # Get images shapes
-    image_shape = input_images[0].shape
-    tile_start_points = []
-
-    # Get tiles start points on each dimension
-    for dimension in range(3):
-        tmp_ = []
-        for k in range(expansion_factor):
-            # Get dimension indices
-            tmp_ += [
-                        i
-                        for i in range(
-                        int((k * shape[dimension]) / expansion_factor),
-                        image_shape[dimension],
-                        shape[dimension]
-                        )
-                    ][:-1]
-
-        # Append border
-        tmp_.append(image_shape[dimension] - shape[dimension])
-
-        # Remove duplicates
-        tmp_ = list(set(tmp_))
-
-        # Sort
-        tmp_.sort()
-        tile_start_points.append(
-            tmp_.copy()
-        )
-
-    # Initialize output
-    input_images_, gt_images_, gt_sum_ = [], [], []
-
-    # Loop over start points on each dimension
-    for i in tile_start_points[0]:
-        for j in tile_start_points[1]:
-            for k in tile_start_points[2]:
-                input_images_.append(
-                    [
-                        nib.Nifti1Image(
-                            dataobj=input_image.get_fdata()[
-                                i:i+shape[0],
-                                j:j+shape[1],
-                                k:k+shape[2],
-                            ],
-                            affine=input_image.affine,
-                            header=input_image.header
-                        )
-                        for input_image in input_images
-                    ]
-                )
-                gt_images_.append(
-                    [
-                        nib.Nifti1Image(
-                            dataobj=gt_image.get_fdata()[
-                                    i:i+shape[0],
-                                    j:j+shape[1],
-                                    k:k+shape[2],
-                                    ],
-                            affine=gt_image.affine,
-                            header=gt_image.header
-                        )
-                        for gt_image in gt_images
-                    ]
-                )
-                gt_sum_.append(
-                    np.array(
-                        [
-                            gt_image.get_fdata()[
-                                i:i + shape[0],
-                                j:j + shape[1],
-                                k:k + shape[2]
-                            ]
-                            for gt_image in gt_images
-                        ]
-                    ).sum()
-                )
-    return input_images_, gt_images_, gt_sum_
-

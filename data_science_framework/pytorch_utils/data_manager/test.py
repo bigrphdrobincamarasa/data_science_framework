@@ -340,3 +340,18 @@ def test_SegmentationTiling(ressources_structure: dict, output_folder: str) -> N
         (0, 17, 0), (0, 17, 1)
     )
 
+    # Test is background
+    gt_coordinates = ((50, 100), (50, 100), (50, 100))
+    image_coordinates_list = [
+        (i, j, k)
+        for i in [75, 33, 101]
+        for j in [75, 33, 101]
+        for k in [75, 33, 101]
+    ]
+    labels = [False] + 26 * [True]
+    for image_coordinates, label in zip(image_coordinates_list, labels):
+        output = segmentation_tiling.is_background(
+            gt_coordinates=gt_coordinates,
+            image_coordinates=image_coordinates
+        )
+        assert label == output
