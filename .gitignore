@@ -12,3 +12,6 @@
 # Tox
 .tox
 data_science_framework.egg-info
+
+# Test
+test

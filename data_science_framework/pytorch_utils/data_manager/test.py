@@ -23,9 +23,6 @@ from data_science_framework.settings import RESSOURCES_ROOT, TEST_ROOT
 
 from data_science_framework.pytorch_utils.data_manager import MODULE
 
-from data_science_framework.pytorch_utils.data_manager.data_transformation import rotate_images, flip_images, \
-    crop_half_images, apply_transformations_to_batch, tile_images
-
 from data_science_framework.pytorch_utils.data_manager.data_conversion import \
     convert_nifty_batch_to_torch_tensor
 
@@ -50,53 +47,7 @@ from data_science_framework.pytorch_utils.data_manager.SegmentationCropHalf impo
 from data_science_framework.pytorch_utils.data_manager.SegmentationNormalization import \
     SegmentationNormalization
 
-
-def test_tile_images() -> None:
-    """
-    Function that tests tile_images
-
-    :return: None
-    """
-    # Initialize values
-    input_images = [
-        nib.Nifti1Image(
-            np.arange(127 * 65 * 16).reshape(127, 65, 16),
-            np.eye(4)
-        )
-        for i in range(5)
-    ]
-    gt_images = [
-        nib.Nifti1Image(
-            np.arange(127 * 65 * 16).reshape(127, 65, 16),
-            np.eye(4)
-        )
-        for i in range(5)
-    ]
-
-    for expansion_factor, ntiles in [(2, 120), (3, 242)]:
-        output_input_images, output_gt_images, output_gt_sum = tile_images(
-            input_images=input_images, gt_images=gt_images,
-            expansion_factor=expansion_factor
-        )
-        # Check output types
-        assert type(output_input_images) == list
-        assert type(output_gt_images) == list
-        assert type(output_gt_sum) == list
-
-        # Check number of modalities of input
-        assert len(output_input_images[0]) == len(input_images)
-
-        # Check number of modalities of ground truth
-        assert len(output_gt_images[0]) == len(gt_images)
-
-        # Check number of input tiles
-        assert len(output_input_images) == ntiles
-
-        # Check number of ground truth tiles
-        assert len(output_gt_images) == ntiles
-
-        # Check number of ground truth tiles
-        assert len(output_gt_sum) == ntiles
+from data_science_framework.pytorch_utils.data_manager.SegmentationTiling import SegmentationTiling
 
 
 @set_test_folders(
@@ -358,3 +309,34 @@ def test_SegmentationNormalization(ressources_structure: dict, output_folder: st
                 output_folder, 'input_transformed_{}.nii.gz'.format(i)
             )
         )
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    ressources_root=RESSOURCES_ROOT,
+    current_module=MODULE
+)
+def test_SegmentationTiling(ressources_structure: dict, output_folder: str) -> None:
+    """
+    Function that tests SegmentationTiling
+
+    :param ressources_structure: Dictionnary containing the path and objects contained in the ressource folder
+    :param output_folder: Path to the output folder
+    :return: None
+    """
+    segmentation_tiling = SegmentationTiling(expansion_factor=3)
+
+    # Test split dimension
+    output = segmentation_tiling.split_dimension(image_dimension=128, tile_dimension=16)
+    assert tuple(output) == (
+        0, 5, 10, 16, 21, 26, 32, 37, 42, 48, 53, 58, 64, 69,
+        74, 80, 85, 90, 96, 101, 106, 112
+    )
+
+    # Test compute grid
+    output = segmentation_tiling.compute_grid(image_shape=(16, 33, 17))
+    assert tuple(output) == (
+        (0, 0, 0), (0, 0, 1), (0, 5, 0), (0, 5, 1),
+        (0, 10, 0), (0, 10, 1), (0, 16, 0), (0, 16, 1),
+        (0, 17, 0), (0, 17, 1)
+    )
+
