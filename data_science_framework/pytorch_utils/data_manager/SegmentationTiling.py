@@ -19,6 +19,7 @@ from data_science_framework.pytorch_utils.data_manager.SegmentationTransformatio
     SegmentationTransformation
 
 import nibabel as nib
+import numpy as np
 
 
 class SegmentationTiling(SegmentationTransformation):
@@ -77,6 +78,29 @@ class SegmentationTiling(SegmentationTransformation):
         :return: Function that corresponds to the transformation
         """
         pass
+
+    def get_gt_coordinates(self, gt: list) -> tuple:
+        """
+        Method that computes the background box of gt images
+
+        :param gt: List of groundtruth images
+        :return: tuple of tuple of min and max coordinates of non null pixel of gt in each direction
+        """
+        # Initialize values
+        gt_mask = np.zeros(gt[0].shape)
+
+        # Create gt mask
+        for gt_item in gt:
+            gt_mask += gt_item.get_fdata()
+
+        # Get non zeros indices
+        non_zeros_indices = gt_mask.nonzero()
+        return tuple(
+            [
+                (non_zeros_indices_dim.min(), non_zeros_indices_dim.max())
+                for non_zeros_indices_dim in list(non_zeros_indices)
+            ]
+        )
 
     def is_background(self, gt_coordinates: tuple, image_coordinates: tuple) -> bool:
         """

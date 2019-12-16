@@ -355,3 +355,22 @@ def test_SegmentationTiling(ressources_structure: dict, output_folder: str) -> N
             image_coordinates=image_coordinates
         )
         assert label == output
+
+    # Test get_gt_coordinates
+    gts = []
+    for i in range(10, 30, 10):
+        # Create array
+        gt = np.zeros((100, 150, 200))
+        gt[i:i+10, 2*i:2*i+20, 3*i:3*i+30] = 1
+
+        # Create image
+        image_gt = nib.Nifti1Image(
+            gt,
+            np.eye(4)
+        )
+
+        # Append image
+        gts.append(image_gt)
+    output = segmentation_tiling.get_gt_coordinates(gts)
+    assert output == ((10, 29), (20, 59), (30, 89))
+
