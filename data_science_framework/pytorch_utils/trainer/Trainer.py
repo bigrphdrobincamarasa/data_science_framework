@@ -37,27 +37,30 @@ class Trainer(object):
         for key, value in kwargs.items():
             self.__setattr__(key, value)
 
-    def run_epoch(self) -> None:
+    def run_epoch(self, epoch: int) -> None:
         """
         Run an entire epoch
 
+        :param epoch: Number of the current epoch
         :return: None
         """
         pass
 
-    def run_validation(self) -> None:
+    def run_validation(self, epoch: int) -> None:
         """
         Run validation
 
+        :param epoch: Number of the current epoch
         :return: None
         """
         pass
 
     @timer
-    def run_training_batch(self) -> None:
+    def run_training_batch(self, epoch: int) -> None:
         """
         Run training batch
 
+        :param epoch: Number of the current epoch
         :return: None
         """
         pass
