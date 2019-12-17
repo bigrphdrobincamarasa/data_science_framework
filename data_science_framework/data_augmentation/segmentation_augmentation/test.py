@@ -25,7 +25,7 @@ from data_science_framework.data_augmentation.segmentation_augmentation import M
 
 from data_science_framework.data_augmentation.segmentation_augmentation import SegmentationTransformation, \
 SegmentationPatientTransformation, SegmentationImageTransformation, SegmentationRotation, SegmentationFlip, \
-SegmentationCropHalf, SegmentationNormalization, SegmentationTiling, SegmentationGTExpander
+SegmentationCropHalf, SegmentationNormalization, SegmentationTiling, SegmentationGTExpander, SegmentationInputExpander
 
 
 def test_SegmentationTransformation() -> None:
@@ -429,3 +429,26 @@ def test_SegmentationGTExpander() -> None:
         and gt_[2].get_fdata().sum() == gt_[0].get_fdata().sum()
     for i in range(3, 10):
         assert gt_[i].get_fdata().sum() == 0
+
+
+def test_SegmentationExpandInput() -> None:
+    """
+    Function that tests SegmentationExpandInput
+
+    :return: None
+    """
+    # Test initialisation
+    segmentation_input_expander = SegmentationInputExpander()
+    input = nib.Nifti1Image(
+        dataobj=np.ones((16, 15, 17)),
+        affine=np.eye(4)
+    )
+
+    # Get transformation
+    transformation = segmentation_input_expander.get_transformation()
+
+    # Compute output
+    output = transformation(input)
+
+    assert output.shape == (16, 16, 17)
+    assert output.get_fdata().sum() == 16*15*17

@@ -26,3 +26,4 @@ from .SegmentationRotation import SegmentationRotation
 from .SegmentationTiling import SegmentationTiling
 from .SegmentationToTorch import SegmentationToTorch
 from .SegmentationTransformation import SegmentationTransformation
+from .SegmentationInputExpander import SegmentationInputExpander

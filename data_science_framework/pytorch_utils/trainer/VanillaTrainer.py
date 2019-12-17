@@ -87,7 +87,6 @@ class VanillaTrainer(Trainer):
         # Test validation
         self.run_validation(epoch=epoch, **kwargs)
 
-
     @timer
     def run_validation_batch(self, epoch, **kwargs) -> None:
         """
