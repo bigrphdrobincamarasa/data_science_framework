@@ -14,6 +14,7 @@
 **Class that implements trainer**
 """
 from data_science_framework.data_spy.loggers.experiment_loggers import timer
+from data_science_framework.pytorch_utils.optimizer import Optimizer
 from data_science_framework.pytorch_utils.trainer import Trainer
 import torch
 import time
@@ -38,7 +39,7 @@ class VanillaTrainer(Trainer):
 
         # Parameters
         self.model = None
-        self.loss = None
+        self.loss_function = None
         self.optimizer = None
         self.validation_generator = None
         self.trainning_generator = None
@@ -123,3 +124,11 @@ class VanillaTrainer(Trainer):
         # Optimizer step
         self.optimizer.step()
         return loss_value
+
+    def set_optimizer(self, optimizer: Optimizer) -> None:
+        """
+        Set optimizer
+
+        :return: None
+        """
+        self.optimizer = optimizer.get_torch()(self.model)

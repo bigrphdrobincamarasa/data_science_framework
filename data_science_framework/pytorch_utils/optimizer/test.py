@@ -13,6 +13,9 @@
 
 **File that tests codes of optimizers module**
 """
+from torch.optim import Adadelta
+
+from data_science_framework.pytorch_utils.models.Unet import Unet
 from data_science_framework.pytorch_utils.optimizer import AdadeltaOptimizer
 
 
@@ -25,4 +28,6 @@ def test_Adadelta() -> None:
     # Initialize optimizer
     adadelta_optimizer = AdadeltaOptimizer()
 
-    # Test get_torch
+    # Test get torch
+    model = Unet()
+    adadelta_optimizer.get_torch()(model)

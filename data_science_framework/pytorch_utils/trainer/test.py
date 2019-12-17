@@ -13,6 +13,8 @@
 
 **File that tests codes of trainer module**
 """
+from data_science_framework.pytorch_utils.models.Unet import Unet
+from data_science_framework.pytorch_utils.optimizer import AdadeltaOptimizer
 from data_science_framework.pytorch_utils.trainer import Trainer
 
 from data_science_framework.pytorch_utils.trainer.VanillaTrainer import VanillaTrainer
@@ -61,3 +63,16 @@ def test_VanillaTrainer_run_epoch() -> None:
     trainer.run_validation = lambda epoch: time.sleep(0.8)
     trainer.run_epoch(epoch=5)
     assert True
+
+
+def test_VanillaRunner_set_optimizer() -> None:
+    """
+    Function that tests VanillaRunner_set_optimizer
+
+    :return: None
+    """
+    # Initialize trainer
+    trainer = VanillaTrainer(nb_epochs=1)
+    trainer.set_objects_attributes(model=Unet())
+    trainer.set_optimizer(AdadeltaOptimizer())
+

@@ -14,6 +14,7 @@
 **Class that implements trainer**
 """
 from data_science_framework.data_spy.loggers.experiment_loggers import timer
+from data_science_framework.pytorch_utils.optimizer import Optimizer
 
 
 class Trainer(object):
@@ -55,7 +56,6 @@ class Trainer(object):
         """
         pass
 
-    @timer
     def run_training_batch(self, epoch: int) -> None:
         """
         Run training batch
@@ -64,3 +64,4 @@ class Trainer(object):
         :return: None
         """
         pass
+

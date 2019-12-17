@@ -30,8 +30,8 @@ class AdadeltaOptimizer(Optimizer):
     :param epsilon: Term added to the denominator to improve numerical stability
     """
     def __init__(
-            self, name: str='adadelta', learning_rate: float=1, rho: float=1,
-            epsilon: float= 1
+            self, name: str = 'adadelta', learning_rate: float = 1,
+            rho: float = 0.9, epsilon: float = 10**(-6)
     ):
         self.name = name
         self.rho = rho

@@ -35,9 +35,9 @@ class Unet(nn.Module):
     :param padding: Padding of the convolution
     """
     def __init__(
-            self, in_channels: int, out_channels: int,
-            depth: int, n_features: int, kernel_size: int,
-            pool_size: int, padding: int
+            self, in_channels: int=1, out_channels: int=1,
+            depth: int=3, n_features: int=8, kernel_size: int=3,
+            pool_size: int=2, padding: int=1
     ):
         super(Unet, self).__init__()
 
@@ -50,23 +50,20 @@ class Unet(nn.Module):
         self.padding = padding
         self.depth = depth
 
-        self.down_path = []
-        self.up_path = []
-
         # Initialize the number of features in the layer
         layer_n_features_ = n_features
 
         # Initialize down path
-        self.down_path = [
-            DoubleConvolution3DLayer(
-                in_channels=self.in_channels,
-                out_channels=layer_n_features_,
-                kernel_size=self.kernel_size,
-                padding=self.padding,
-            )
-        ]
-        for i in range(self.depth):
-            self.down_path.append(
+        self.down_path_0 = DoubleConvolution3DLayer(
+            in_channels=self.in_channels,
+            out_channels=layer_n_features_,
+            kernel_size=self.kernel_size,
+            padding=self.padding,
+        )
+
+        for i in range(1, self.depth + 1):
+            self.__setattr__(
+                'down_path_{}'.format(i),
                 DownConvolution3DLayer(
                     in_channels=layer_n_features_,
                     out_channels=layer_n_features_ * self.pool_size,
@@ -80,7 +77,8 @@ class Unet(nn.Module):
         # Initialize up path
         for i in range(self.depth):
             layer_n_features_ = int(layer_n_features_ / self.pool_size)
-            self.up_path.append(
+            self.__setattr__(
+                'up_path_{}'.format(i),
                 UpConvolution3DLayer(
                     in_channels=layer_n_features_,
                     out_channels=layer_n_features_,
@@ -89,7 +87,8 @@ class Unet(nn.Module):
                     padding=self.padding
                 )
             )
-        self.up_path.append(
+        self.__setattr__(
+            'up_path_{}'.format(i+1),
             OutConvolution3DLayer(
                 in_channels=self.n_features,
                 out_channels=self.out_channels,
@@ -106,21 +105,21 @@ class Unet(nn.Module):
         :return: Tensor value after forward pass
         """
         # Initialize down path storage value list
-        x = self.down_path[0](x)
+        x = self.down_path_0(x)
         x_down_path = [x.clone()]
 
         # Loop to compute down path
-        for i, down_step in enumerate(self.down_path[1:]):
-            x = down_step(x)
-            if i != self.depth - 1:
+        for i in range(1, self.depth + 1):
+            x = self.__getattr__('down_path_{}'.format(i))(x)
+            if i != self.depth:
                 x_down_path.append(x.clone())
 
         # Loop to compute up path
-        for i, up_step in enumerate(self.up_path[:-1]):
-            x = up_step(
+        for i in range(self.depth):
+            x = self.__getattr__('up_path_{}'.format(i))(
                 x_down=x,
                 x_left=x_down_path[-i-1]
             )
-        x = self.up_path[-1](x)
+        x = self.__getattr__('up_path_{}'.format(self.depth))(x)
 
         return x

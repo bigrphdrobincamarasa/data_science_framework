@@ -35,10 +35,6 @@ def test_Unet() -> None:
         padding=1,
     )
 
-    # Test initialisation
-    assert len(unet.down_path) == 4
-    assert len(unet.up_path) == 4
-
     # Define input
     input = np.arange(5 * 16 * 16 * 16).reshape(1, 5, 16, 16, 16)
     input_torch = torch.tensor(
