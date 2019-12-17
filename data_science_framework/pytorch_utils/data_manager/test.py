@@ -49,6 +49,8 @@ from data_science_framework.pytorch_utils.data_manager.SegmentationNormalization
 
 from data_science_framework.pytorch_utils.data_manager.SegmentationTiling import SegmentationTiling
 
+from data_science_framework.pytorch_utils.data_manager.SegmentationGTExpander import SegmentationGTExpander
+
 
 @set_test_folders(
     ressources_root=RESSOURCES_ROOT,
@@ -445,4 +447,34 @@ def test_SegmentationTiling(ressources_structure: dict, output_folder: str) -> N
     assert True
 
 
+def test_SegmentationGTExpander() -> None:
+    """
+    Function that tests SegmentationGTExpander
 
+    :return: None
+    """
+    # Test initialisation
+    segmentation_gt_expander = SegmentationGTExpander(10)
+    assert segmentation_gt_expander.nb_classes == 10
+
+    # Test patient transformation
+    segmentation_gt_expander = SegmentationGTExpander(10)
+    segmentation_gt_expander.get_transformation = lambda: lambda y: y**2
+    input_, gt_ = segmentation_gt_expander.transform_patient('input', [5, 4, 3])
+    assert len(gt_) == 3
+    assert input_ == input_
+    assert tuple(gt_) == (25, 16, 9)
+
+    # Test get_transformation
+    segmentation_gt_expander = SegmentationGTExpander(10)
+    transformation = segmentation_gt_expander.get_transformation()
+    gt = nib.Nifti1Image(
+        dataobj=np.arange(3 * 4 * 5).reshape(3, 4, 5) % 3,
+        affine=np.eye(4)
+    )
+    gt_ = transformation(gt)
+    assert len(gt_) == 10
+    assert gt_[0].get_fdata().sum() != 0 and gt_[1].get_fdata().sum() == gt_[0].get_fdata().sum() \
+        and gt_[2].get_fdata().sum() == gt_[0].get_fdata().sum()
+    for i in range(3, 10):
+        assert gt_[i].get_fdata().sum() == 0
