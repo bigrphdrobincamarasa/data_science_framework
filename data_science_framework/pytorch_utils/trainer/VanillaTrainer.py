@@ -63,7 +63,7 @@ class VanillaTrainer(Trainer):
         :param epoch: Number of the current epoch
         :return: None
         """
-        # Initialize loss value
+        # Initialize losses value
         loss_value = 0
 
         # Initialize progressbar
@@ -73,15 +73,15 @@ class VanillaTrainer(Trainer):
                 total=len(self.trainning_generator),
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{remaining}{postfix}]',
                 postfix={
-                    'loss': loss_value
+                    'losses': loss_value
                 }
         )
 
         # Loop over each epoch
         for i, (data, target) in progress_bar:
-            # Update loss value
+            # Update losses value
             loss_value = ((i * loss_value) + self.run_training_batch(data, target))/(i+1)
-            progress_bar.set_postfix({'loss': loss_value})
+            progress_bar.set_postfix({'losses': loss_value})
             progress_bar.update(1)
 
         # Test validation
@@ -113,7 +113,7 @@ class VanillaTrainer(Trainer):
         # Forward pass
         output = self.model(data)
 
-        # Compute loss
+        # Compute losses
         loss = self.loss_function(output, target)
         loss_value = loss.item()
 

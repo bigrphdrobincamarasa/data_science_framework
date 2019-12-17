@@ -13,22 +13,20 @@
 
 **Class that implements Loss**
 """
-import torch
 
 
 class Loss:
     """
     Class that implements Loss
 
-    :param name: Name of the loss
+    :param name: Name of the losses
     """
     def __init__(self, name='loss'):
         self.name = name
 
-
-    def get_function(self):
+    def get_torch(self):
         """
-        Generate loss function
+        Generate torch loss function
 
         :return: Loss function
         """

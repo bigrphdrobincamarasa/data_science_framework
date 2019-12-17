@@ -11,24 +11,25 @@
 
 **Project** : baseline_unet
 
-**Class that implements binary cross entropy loss function**
+**Class that implements binary cross entropy losses function**
 """
-from data_science_framework.pytorch_utils.loss.Loss import Loss
+from data_science_framework.pytorch_utils.losses import Loss
 import torch.nn.functional as F
 
 
 class BinaryCrossEntropyLoss(Loss):
     """
-    Class that implements binary cross entropy loss function
+    Class that implements binary cross entropy losses function
 
-    :param name: Name of the loss
+    :param name: Name of the losses
     """
-    def __init__(self, name='binary_cross_entropy'):
-        self.name = name
 
-    def get_function(self):
+    def __init__(self, name='binary_cross_entropy'):
+        super().__init__(name)
+
+    def get_torch(self):
         """
-        Generate loss function
+        Generate torch loss function
 
         :return: Loss function
         """

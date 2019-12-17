@@ -11,10 +11,11 @@
 
 **Project** : baseline_unet
 
-**File that tests codes of loss module**
+**File that tests codes of losses module**
 """
-from data_science_framework.pytorch_utils.loss.BinaryCrossEntropyLoss import BinaryCrossEntropyLoss
 import torch.nn.functional as F
+
+from data_science_framework.pytorch_utils.losses import BinaryCrossEntropyLoss
 
 
 def test_BinaryCrossEntropyLoss() -> None:
@@ -26,6 +27,6 @@ def test_BinaryCrossEntropyLoss() -> None:
     binary_cross_entropy_loss = BinaryCrossEntropyLoss()
 
     # Test get function
-    output = binary_cross_entropy_loss.get_function()
+    output = binary_cross_entropy_loss.get_torch()
 
-    return type(output) == type(F.binary_cross_entropy)
+    assert type(output) == type(F.binary_cross_entropy)

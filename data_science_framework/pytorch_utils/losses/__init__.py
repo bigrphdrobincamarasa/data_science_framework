@@ -14,4 +14,7 @@
 **Module that contains the codes that implements losses**
 """
 
-MODULE = ['loss']
+MODULE = ['losses']
+
+from .Loss import Loss
+from .BinaryCrossEntropyLoss import BinaryCrossEntropyLoss

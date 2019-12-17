@@ -11,7 +11,10 @@
 
 **Project** : baseline_unet
 
-TODO: doc
-** $FUNCTION$ **
+**Module that contains the codes that implements optimizers**
 """
 
+MODULE = ['optimizers']
+
+from .Optimizer import Optimizer
+from .AdadeltaOptimizer import AdadeltaOptimizer
