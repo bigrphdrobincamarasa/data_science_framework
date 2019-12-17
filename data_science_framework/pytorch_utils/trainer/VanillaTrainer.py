@@ -16,6 +16,8 @@
 from data_science_framework.data_spy.loggers.experiment_loggers import timer
 from data_science_framework.pytorch_utils.trainer import Trainer
 import torch
+import time
+from tqdm import tqdm
 import numpy as np
 
 
@@ -28,12 +30,10 @@ class VanillaTrainer(Trainer):
     :param trainning_dataset: Trainning dataset
     """
     def __init__(
-            self, nb_epochs: int = 250,
-            batch_size: int = 2, device: str = 'cpu'
+            self, nb_epochs: int = 250, device: str = 'cpu'
     ):
         # Parameters
         self.nb_epochs = nb_epochs
-        self.batch_size = batch_size
         self.device = device
 
         # Parameters
@@ -52,9 +52,7 @@ class VanillaTrainer(Trainer):
         :return: None
         """
         for epoch in range(self.nb_epochs):
-            print(
-                'Epoch {} / {}'.format(epoch + 1, self.nb_epochs)
-            )
+
             self.run_epoch(epoch=epoch, **kwargs)
 
     @timer
@@ -65,39 +63,33 @@ class VanillaTrainer(Trainer):
         :param epoch: Number of the current epoch
         :return: None
         """
-        # TODO: make it a method of the Dataset
-        start_batch_indices = list(range(0, len(self.trainning_generator), self.batch_size))[:-1]
+        # Initialize loss value
+        loss_value = 0
+
+        # Initialize progressbar
+        progress_bar = tqdm(
+                enumerate(self.trainning_generator),
+                desc='Epoch {} / {}'.format(epoch + 1, self.nb_epochs),
+                total=len(self.trainning_generator),
+                bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{remaining}{postfix}]',
+                postfix={
+                    'loss': loss_value
+                }
+        )
 
         # Loop over each epoch
-        batch_losses = []
-        for start_batch_index in start_batch_indices:
-            # Get values from batch
-            data, target = self.trainning_generator[
-                           start_batch_index: start_batch_index + self.batch_size
-                           ]
-
-            # Clear gradient
-            self.optimizer.zero_grad()
-
-            # Forward pass
-            output = self.model(data)
-
-            # Compute loss
-            loss = self.loss_function(output, target)
-            loss_value = loss.item()
-
-            # Backward pass
-            loss.backward()
-
-            # Optimizer step
-            self.optimizer.step()
+        for i, (data, target) in progress_bar:
+            # Update loss value
+            loss_value = ((i * loss_value) + self.run_training_batch(data, target))/(i+1)
+            progress_bar.set_postfix({'loss': loss_value})
+            progress_bar.update(1)
 
         # Test validation
         self.run_validation(epoch=epoch, **kwargs)
 
 
     @timer
-    def run_validation(self, epoch, **kwargs) -> None:
+    def run_validation_batch(self, epoch, **kwargs) -> None:
         """
         Run validation
 
@@ -106,10 +98,29 @@ class VanillaTrainer(Trainer):
         pass
 
     @timer
-    def run_training_batch(self) -> None:
+    def run_training_batch(
+            self, data: torch.Tensor, target: torch.Tensor
+    ) -> None:
         """
         Run training batch
 
+        :param data: Input data
+        :param target:
         :return: None
         """
-        pass
+        # Clear gradient
+        self.optimizer.zero_grad()
+
+        # Forward pass
+        output = self.model(data)
+
+        # Compute loss
+        loss = self.loss_function(output, target)
+        loss_value = loss.item()
+
+        # Backward pass
+        loss.backward()
+
+        # Optimizer step
+        self.optimizer.step()
+        return loss_value

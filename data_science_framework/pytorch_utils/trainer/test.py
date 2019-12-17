@@ -16,6 +16,7 @@
 from data_science_framework.pytorch_utils.trainer import Trainer
 
 from data_science_framework.pytorch_utils.trainer.VanillaTrainer import VanillaTrainer
+import time
 
 
 def test_Trainer() -> None:
@@ -45,3 +46,18 @@ def test_VanillaTrainer_run() -> None:
         assert False
 
 
+def test_VanillaTrainer_run_epoch() -> None:
+    """
+    Function that tests VanillaTrainer run_epoch method
+
+    :return: None
+    """
+    # Initialize trainer
+    trainer = VanillaTrainer(nb_epochs=1)
+    trainer.run_training_batch = lambda data, target: data - target
+
+    # Reset trainning generator
+    trainer.trainning_generator = [(2*i, i)for i in range(10)]
+    trainer.run_validation = lambda epoch: time.sleep(0.8)
+    trainer.run_epoch(epoch=5)
+    assert True
