@@ -11,7 +11,7 @@
 
 **Project** : baseline_unet
 
-TODO: doc
-** $FUNCTION$ **
+**Module that contains the codes that splits data**
 """
 
+MODULE = ['data_splitter']
