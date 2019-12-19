@@ -15,3 +15,6 @@ pytest
 nibabel
 torch
 sphinx_rtd_theme
+flake8
+autopep8
+tox
