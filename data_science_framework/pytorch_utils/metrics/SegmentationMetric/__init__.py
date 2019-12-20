@@ -15,7 +15,3 @@
 """
 
 MODULE = ['pytorch_utils', 'metrics']
-
-
-from .Metric import Metric
-from .SegmentationAccuracyMetric import SegmentationAccuracyMetric
