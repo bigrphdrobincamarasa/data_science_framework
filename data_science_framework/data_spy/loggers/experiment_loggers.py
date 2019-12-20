@@ -127,7 +127,7 @@ def global_logger(
 
 def metric_logger(f: Callable) -> Callable:
     """
-    Decorator that logs a metrics function output
+    Decorator that logs a metric function output
 
     :param f: Function under study
     :return: Decorated function
@@ -151,8 +151,8 @@ def metric_logger(f: Callable) -> Callable:
                     metric_dataframe = pd.read_csv(csv_metric_file).set_index('index')
                 else:
                     metric_dataframe = pd.DataFrame(
-                        columns=list(kwargs['meta']) + ['index']
-                    ).set_index('index')
+                        columns=list(kwargs['meta'])
+                    )
 
                 # Add value in the dataframe
                 if index in metric_dataframe.index:
@@ -160,13 +160,13 @@ def metric_logger(f: Callable) -> Callable:
                     row_to_update = {
                         key: value
                         for key, value in metric_dataframe.loc[index].to_dict().items()
-                        if key != kwargs['metrics']
+                        if key != kwargs['metric']
                     }
                     metric_dataframe = metric_dataframe.loc[metric_dataframe.index != index]
                     metric_dataframe = metric_dataframe.reset_index().append(
                         {
                             'index': index,
-                            kwargs['metrics']: output,
+                            kwargs['metric']: output,
                             **row_to_update
                         },
                         ignore_index=True
@@ -175,7 +175,7 @@ def metric_logger(f: Callable) -> Callable:
                     metric_dataframe = metric_dataframe.reset_index().append(
                         {
                             'index': index,
-                            kwargs['metrics']: output,
+                            kwargs['metric']: output,
                             **kwargs['meta']
                         },
                         ignore_index=True
@@ -183,7 +183,7 @@ def metric_logger(f: Callable) -> Callable:
                 metric_dataframe.to_csv(csv_metric_file, index=False)
             else:
                 output = f(*args, **kwargs)
-        except:
+        except Exception as e:
             output = f(*args, **kwargs)
         return output
     return wrapper
