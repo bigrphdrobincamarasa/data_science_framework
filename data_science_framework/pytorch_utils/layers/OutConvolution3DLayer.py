@@ -37,11 +37,13 @@ class OutConvolution3DLayer(nn.Module):
         self.kernel_size = kernel_size
         self.padding = padding
 
-        self.conv = nn.Conv3d(
-            in_channels, out_channels,
-            kernel_size=kernel_size, padding=self.padding
+        self.conv = nn.Sequential(
+            nn.Conv3d(
+                in_channels, out_channels,
+                kernel_size=kernel_size, padding=self.padding
+            ),
+            nn.Sigmoid() 
         )
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Method that computes forward pass

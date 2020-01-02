@@ -15,6 +15,7 @@
 """
 from data_science_framework.data_spy.loggers.experiment_loggers import timer
 from data_science_framework.pytorch_utils.optimizer import Optimizer
+from data_science_framework.pytorch_utils.losses import Loss
 from data_science_framework.pytorch_utils.trainer import Trainer
 import torch
 import time
@@ -105,7 +106,7 @@ class VanillaTrainer(Trainer):
         Run training batch
 
         :param data: Input data
-        :param target:
+        :param target: Targetted data
         :return: None
         """
         # Clear gradient
@@ -115,7 +116,7 @@ class VanillaTrainer(Trainer):
         output = self.model(data)
 
         # Compute losses
-        loss = self.loss_function(output, target)
+        loss = self.loss_function(input=output, target=target)
         loss_value = loss.item()
 
         # Backward pass
@@ -132,3 +133,11 @@ class VanillaTrainer(Trainer):
         :return: None
         """
         self.optimizer = optimizer.get_torch()(self.model)
+
+    def set_loss(self, loss: Loss) -> None:
+        """
+        Set optimizer
+
+        :return: None
+        """
+        self.loss_function = loss.get_torch()
