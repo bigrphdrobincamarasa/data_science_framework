@@ -14,13 +14,15 @@
 **Module that contains the codes that implements callbacks**
 """
 from torch.utils.tensorboard import SummaryWriter
-from data_science_framework.pytorch_utils.callbacks import Callback, MetricsWritter, ModelCheckpoint
+from data_science_framework.pytorch_utils.callbacks import Callback, MetricsWritter, ModelCheckpoint,\
+        ModelPlotter
 from data_science_framework.pytorch_utils.models.Unet import Unet
 from data_science_framework.pytorch_utils import MODULE
 from data_science_framework.scripting.test_manager import set_test_folders
 from data_science_framework.settings import TEST_ROOT
 from data_science_framework.pytorch_utils.metrics import Metric
 import numpy as np
+import torch
 
 
 @set_test_folders(
@@ -147,3 +149,32 @@ def test_ModelCheckpoint(output_folder: str) -> None:
         for i in range(epoch):
             model_checkpoint(3, 4, training=False)
         model_checkpoint.on_epoch_end(epoch, model)
+
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    current_module=MODULE
+)
+def test_ModelPlotter(output_folder: str) -> None:
+    """
+    Function that tests ModelPlotter
+
+    :param output_folder: Path to the output folder
+    :return: None
+    """
+    # Initialize callback
+    model = Unet(
+        in_channels=5,
+        out_channels=3,
+        depth=3,
+        n_features=2,
+        kernel_size=3,
+        pool_size=2,
+        padding=1,
+    )
+
+    ModelPlotter(
+        writer=SummaryWriter(log_dir=output_folder),
+        model=model
+    )
+

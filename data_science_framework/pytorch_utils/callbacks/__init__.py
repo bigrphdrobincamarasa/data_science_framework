@@ -17,6 +17,7 @@
 from .Callback import Callback
 from .MetricsWritter import MetricsWritter
 from .ModelCheckpoint import ModelCheckpoint
+from .ModelPlotter import ModelPlotter
 
 MODULE = ['pytorch_utils', 'callbacks']
 
