@@ -19,3 +19,4 @@ flake8
 autopep8
 tox
 tqdm
+tensorboard

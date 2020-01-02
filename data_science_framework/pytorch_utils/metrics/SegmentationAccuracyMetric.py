@@ -39,7 +39,6 @@ class SegmentationAccuracyMetric(Metric):
         :return: Cumulated accuracy over the batch and the batchsize
         """
         # Get classification version of tensors
-        import ipdb; ipdb.set_trace() ###!!!BREAKPOINT!!!
         output_classification = output.max(1)[1]
         target_classification = target.max(1)[1]
 
