@@ -14,6 +14,7 @@
 **Class that implements Callback superclass**
 """
 import torch
+import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -34,19 +35,21 @@ class Callback:
         """
         pass
 
-    def on_epoch_start(self, epoch: int):
+    def on_epoch_start(self, epoch: int, model: nn.Module):
         """
         Method called on epoch start
         
         :param epoch: Epoch value
+        :param model: Model under study
         """
         pass
 
-    def save(self, epoch: int):
+    def save(self, epoch: int, model: nn.Module):
         """
         Method that save results to summary writter
         
         :param epoch: Epoch value
+        :param model: Model under study
         """
         pass
 

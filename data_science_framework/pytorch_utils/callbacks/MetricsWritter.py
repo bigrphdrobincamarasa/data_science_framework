@@ -11,53 +11,64 @@
 
 **Project** : data_science_framework
 
-**Module that contains the codes that implements metric callback**
+**Module that contains the codes that implements metric saver callback**
 """
 from torch.utils.tensorboard import SummaryWriter
 from .Callback import Callback
 import torch
+import torch.nn as nn
+import os
 
 
 class MetricsWritter(Callback):
     """
-    Class that implements 
+    Class that implements MetricsWritter
 
     :param writer: Tensorboad summary writter file
     :param metrics: List of metrics
     """
-    def __init__(self, writer: SummaryWriter, metrics: list = []) -> None:
+    def __init__(
+            self, writer: SummaryWriter, metrics: list = [],
+            monitored_metric: str=None
+        ) -> None:
         super(MetricsWritter, self).__init__(writer=writer)
         self.metrics = metrics
-        self.on_epoch_start(0)
+        self.on_epoch_start(0, None)
 
-    def on_epoch_end(self, epoch: int):
+    def on_epoch_end(self, epoch: int, model: nn.Module):
         """
         Method called on epoch end
         
         :param epoch: Epoch value
+        :param model: Model under study
         """
-
         # Save results
         print('\n\t- Save metrics results')
-        self.save(epoch=epoch)
 
         # Loop over metrics
         for metric_object, acc_train, value_train, acc_val, value_val in self.metric_values:
-            print('\t\t- Save {} : '.format(metric_object.name))
+            print(
+                '\t\t- Save {} results : training {}, validation {}'.format(
+                    metric_object.name,
+                    value_train / (acc_train + 0.0001),
+                    value_val / (acc_val + 0.0001)
+                )
+            )
             self.writer.add_scalars(
                 metric_object.name,
                 {
                     'training': value_train / (acc_train + 0.0001),
-                    'validation': value_val / (acc_train + 0.0001),
+                    'validation': value_val / (acc_val + 0.0001),
                 },
                 epoch
             )
 
-    def on_epoch_start(self, epoch: int):
+    def on_epoch_start(self, epoch: int, model: nn.Module):
         """
         Method called on epoch start
         
         :param epoch: Epoch value
+        :param model: Model under study
         """
         self.metric_values = list(zip(
             self.metrics,
