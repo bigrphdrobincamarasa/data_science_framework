@@ -44,7 +44,8 @@ class VanillaTrainer(Trainer):
         self.optimizer = None
         self.validation_generator = None
         self.trainning_generator = None
-        self.callbacks = None
+        self.callbacks = []
+        self.writer = None
 
     @timer
     def run(self, **kwargs) -> None:
@@ -54,7 +55,6 @@ class VanillaTrainer(Trainer):
         :return: None
         """
         for epoch in range(self.nb_epochs):
-
             self.run_epoch(epoch=epoch, **kwargs)
 
     @timer
@@ -65,55 +65,115 @@ class VanillaTrainer(Trainer):
         :param epoch: Number of the current epoch
         :return: None
         """
-        # Initialize losses value
-        loss_value = 0
+        # Initialize callbacks'epoch
+        for callback in self.callbacks:
+            callback.on_epoch_start(epoch=epoch, model=self.model)
 
-        # Initialize progressbar
+        # Initialize losses values
+        loss_training = 0
+        loss_validation = 0
+
+        # Initialize training progressbar
         progress_bar = tqdm(
                 enumerate(self.trainning_generator),
                 desc='Epoch {} / {}'.format(epoch + 1, self.nb_epochs),
                 total=len(self.trainning_generator),
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{remaining}{postfix}]',
                 postfix={
-                    'losses': loss_value
+                    'losses': loss_training
                 }
         )
 
-        # Loop over each epoch
+        # Loop over each training batch
         for i, (data, target) in progress_bar:
-            # Update losses value
-            loss_value = ((i * loss_value) + self.run_training_batch(data, target))/(i+1)
-            progress_bar.set_postfix({'losses': loss_value})
+
+            # Update losse training value
+            loss_training = (
+                (i * loss_training) + self.run_training_batch(
+                    data, target, **kwargs
+                )
+            )/(i+1)
+            progress_bar.set_postfix({'losses': loss_training})
+            progress_bar.update(1)
+        
+        # Initialize validation progressbar
+        progress_bar = tqdm(
+                enumerate(self.validation_generator),
+                desc='Epoch {} / {}'.format(epoch + 1, self.nb_epochs),
+                total=len(self.trainning_generator),
+                bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{remaining}{postfix}]',
+                postfix={
+                    'losses': loss_validation
+                }
+        )
+
+        # Loop over each validation batch
+        for i, (data, target) in progress_bar:
+
+            # Update losse training value
+            loss_validation = (
+                (i * loss_validation) + self.run_validation_batch(
+                    data, target, **kwargs
+                )
+            )/(i+1)
+            progress_bar.set_postfix({'losses': loss_validation})
             progress_bar.update(1)
 
-        # Test validation
-        self.run_validation(epoch=epoch, **kwargs)
+        # Initialize callbacks'epoch
+        for callback in self.callbacks:
+            callback.on_epoch_end(epoch=epoch, model=self.model)
+        self.writer.add_scalars(
+            'loss', {
+                'training': loss_training,
+                'validation': loss_validation,
+            },
+            epoch
+        )
 
     @timer
-    def run_validation_batch(self, epoch, **kwargs) -> None:
+    def run_validation_batch(
+            self, data: torch.Tensor, target: torch.Tensor,
+            **kwargs
+        ) -> None:
         """
         Run validation
 
-        :return: None
+        :param data: Input data
+        :param target: Targetted data
+        :return: Value of the loss on the batch
         """
-        pass
+        # Disable gradient
+        output = self.model(data)
+
+        # Compute callbacks
+        for callback in self.callbacks:
+            callback(output, target, training=False)
+
+        # Compute loss
+        loss_value = self.loss_function(input=output, target=target).item
+        return loss_value
 
     @timer
     def run_training_batch(
-            self, data: torch.Tensor, target: torch.Tensor
-    ) -> None:
+            self, data: torch.Tensor, target: torch.Tensor,
+            **kwargs
+    ) -> float:
         """
         Run training batch
 
         :param data: Input data
         :param target: Targetted data
-        :return: None
+        :return: Value of the loss on the batch
         """
         # Clear gradient
         self.optimizer.zero_grad()
 
         # Forward pass
         output = self.model(data)
+
+        # Compute callbacks
+        for callback in self.callbacks:
+            callback(output, target, training=True)
 
         # Compute losses
         loss = self.loss_function(input=output, target=target)
@@ -124,6 +184,7 @@ class VanillaTrainer(Trainer):
 
         # Optimizer step
         self.optimizer.step()
+
         return loss_value
 
     def set_optimizer(self, optimizer: Optimizer) -> None:

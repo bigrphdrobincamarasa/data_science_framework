@@ -85,7 +85,7 @@ class MetricsWritter(Callback):
         """
         Method call
 
-        :param training: True if  metric is computed on test
+        :param training: True if metric is computed on test
         """
         # Loop over the metrics
         for i in range(len(self.metric_values)):
