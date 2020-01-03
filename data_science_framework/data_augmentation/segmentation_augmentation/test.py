@@ -532,3 +532,55 @@ def test_SegmentationROISelector(ressources_structure: dict, output_folder: str)
     assert input_transformed[0].shape == (16, 16, 16)
     assert gt_transformed[0].shape == (16, 16, 16)
 
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    ressources_root=RESSOURCES_ROOT,
+    current_module=MODULE
+)
+def test_SegmentationToTorch(ressources_structure: dict, output_folder: str) -> None:
+    """
+    Function that tests SegmentationToTorch
+
+    :param output_folder: Path to the output folder
+    :param ressources_structure: Dictionnary containing the path and objects contained in the ressource folder
+    :return: None
+    """
+    # Get template image
+    template_image = nib.load(
+        ressources_structure['patient_0']['image_3.nii.gz']['path']
+    )
+
+    # Get transformation
+    segmentation_to_torch = SegmentationToTorch(
+        device='cpu'
+    )
+
+    # Generate data
+    input = [
+        [
+            nib.Nifti1Image(
+            dataobj=np.arange(3 * 4 * 5).reshape(3, 4, 5),
+            affine=template_image.affine,
+            header=template_image.header
+            ) for i in range(5)
+        ] for j in range(2)
+    ]
+    gt = [
+        [
+            nib.Nifti1Image(
+            dataobj=np.arange(3 * 4 * 5).reshape(3, 4, 5),
+            affine=template_image.affine,
+            header=template_image.header
+            ) for i in range(4)
+        ] for j in range(2)
+    ]
+
+    # Perform transformation
+    input_transformed, gt_transformed = segmentation_to_torch.transform_batch(
+        input, gt
+    )
+
+    assert input_transformed.shape == (2, 5, 3, 4, 5)
+    assert gt_transformed.shape == (2, 4, 3, 4, 5)
+    

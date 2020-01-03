@@ -54,7 +54,7 @@ class SegmentationToTorch(SegmentationTransformation):
         to_torch = lambda x: torch.tensor(
             x, dtype=torch.float32
         ).to(self.device)
-        to_array = lambda patient_folder: np.array(
+        to_array = lambda patient_folders: np.array(
             [
                 [
                     patient_image.get_fdata()
@@ -64,5 +64,5 @@ class SegmentationToTorch(SegmentationTransformation):
             ]
         )
         transformation = lambda x: to_torch(to_array(x))
-
+        return transformation
 
