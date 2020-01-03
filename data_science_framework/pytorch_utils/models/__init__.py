@@ -15,3 +15,5 @@
 """
 
 MODULE = ['data_science_framework', 'pytorch_utils', 'models']
+
+from .Unet import Unet

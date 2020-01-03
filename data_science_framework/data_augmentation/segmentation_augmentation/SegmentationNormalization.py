@@ -35,10 +35,8 @@ class SegmentationNormalization(SegmentationPatientTransformation):
 
     def transform_patient(self, input: list, gt: list) -> Tuple:
         """
-        Apply the transformation to the input and the ground truth that are patient formatted
+        Apply the transformation to the input that is patient formatted
         (nfeature, shape)
-
-        Apply a transformation to the input and the ground truth
 
         :param input: List of input images
         :param gt: List of gt images

@@ -15,7 +15,7 @@
 """
 import torch
 import numpy as np
-from data_science_framework.pytorch_utils.models.Unet import Unet
+from data_science_framework.pytorch_utils.models import Unet
 
 
 def test_Unet() -> None:

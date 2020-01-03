@@ -25,7 +25,8 @@ from data_science_framework.data_augmentation.segmentation_augmentation import M
 
 from data_science_framework.data_augmentation.segmentation_augmentation import SegmentationTransformation, \
 SegmentationPatientTransformation, SegmentationImageTransformation, SegmentationRotation, SegmentationFlip, \
-SegmentationCropHalf, SegmentationNormalization, SegmentationTiling, SegmentationGTExpander, SegmentationInputExpander
+SegmentationCropHalf, SegmentationNormalization, SegmentationTiling, SegmentationGTExpander, SegmentationInputExpander, \
+SegmentationROISelector, SegmentationToTorch
 
 
 def test_SegmentationTransformation() -> None:
@@ -452,3 +453,82 @@ def test_SegmentationExpandInput() -> None:
 
     assert output.shape == (16, 16, 17)
     assert output.get_fdata().sum() == 16*15*17
+
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    ressources_root=RESSOURCES_ROOT,
+    current_module=MODULE
+)
+def test_SegmentationROISelector(ressources_structure: dict, output_folder: str) -> None:
+    """
+    Function that tests SegmentationROISelector
+
+    :param output_folder: Path to the output folder
+    :param ressources_structure: Dictionnary containing the path and objects contained in the ressource folder
+    :return: None
+    """
+    # Generate data
+    template_image = nib.load(
+        ressources_structure['patient_0']['image_3.nii.gz']['path']
+    )
+    input_data = np.arange(50 * 60 * 70).reshape(50, 60, 70)
+    input = [
+        nib.Nifti1Image(
+            dataobj=i * input_data,
+            affine=template_image.affine,
+            header=template_image.header
+        ) for i in range(5)
+    ]
+    gt = [
+        nib.Nifti1Image(
+            dataobj=input_data > input_data.mean(),
+            affine=template_image.affine,
+            header=template_image.header
+        ) for i in range(4)
+    ]
+
+    segmentation_roi_selector = SegmentationROISelector(
+            shape_x=16,
+            shape_y=16,
+            shape_z=16
+    )
+
+    for i, input_ in enumerate(input):
+        nib.save(
+            input_, os.path.join(output_folder, 'input_{}.nii.gz'.format(i))
+        )
+        
+    input_transformed, gt_transformed = segmentation_roi_selector\
+            .transform_patient(input, gt)
+
+    # Save data
+    for i, (input_, input_transformed_) in enumerate(
+            zip(input, input_transformed)
+        ):
+        nib.save(
+            input_,
+            os.path.join(output_folder, 'input_{}.nii.gz'.format(i))
+        )
+        nib.save(
+            input_transformed_,
+            os.path.join(output_folder, 'input_transformed_{}.nii.gz'.format(i))
+        )
+
+    for i, (gt_, gt_transformed_) in enumerate(zip(gt, gt_transformed)):
+        nib.save(
+            gt_,
+            os.path.join(output_folder, 'gt_{}.nii.gz'.format(i))
+        )
+        nib.save(
+            gt_transformed_,
+            os.path.join(
+                output_folder,
+                'gt_transformed_{}.nii.gz'.format(i)
+            )
+        )
+    assert len(gt) == len(gt_transformed)
+    assert len(input) == len(input_transformed)
+    assert input_transformed[0].shape == (16, 16, 16)
+    assert gt_transformed[0].shape == (16, 16, 16)
+

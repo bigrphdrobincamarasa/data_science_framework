@@ -65,3 +65,4 @@ class SegmentationToTorch(SegmentationTransformation):
         )
         transformation = lambda x: to_torch(to_array(x))
 
+
