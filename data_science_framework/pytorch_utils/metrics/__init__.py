@@ -19,3 +19,4 @@ MODULE = ['pytorch_utils', 'metrics']
 
 from .Metric import Metric
 from .SegmentationAccuracyMetric import SegmentationAccuracyMetric
+from .SegmentationBCEMetric import SegmentationBCEMetric
