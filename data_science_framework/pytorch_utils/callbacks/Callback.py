@@ -20,7 +20,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 class Callback:
     """
-    Class that implements 
+    Class that implements
 
     :param writer: Tensorboad summary writter file
     """
@@ -30,7 +30,7 @@ class Callback:
     def on_epoch_end(self, epoch: int, model: nn.Module):
         """
         Method called on epoch end
-        
+
         :param epoch: Epoch value
         """
         pass
@@ -38,7 +38,7 @@ class Callback:
     def on_epoch_start(self, epoch: int, model: nn.Module):
         """
         Method called on epoch start
-        
+
         :param epoch: Epoch value
         :param model: Model under study
         """
@@ -47,7 +47,7 @@ class Callback:
     def save(self, epoch: int, model: nn.Module):
         """
         Method that save results to summary writter
-        
+
         :param epoch: Epoch value
         :param model: Model under study
         """
@@ -56,7 +56,7 @@ class Callback:
     def __call__(
             self, output: torch.Tensor, target: torch.Tensor,
             training=True
-        ) -> None: 
+        ) -> None:
         """
         Method call
         """

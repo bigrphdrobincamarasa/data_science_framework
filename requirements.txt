@@ -22,3 +22,4 @@ tqdm
 tensorboard
 neovim
 ipdb
+pillow

@@ -14,6 +14,7 @@
 **Class that implements metric super class**
 """
 import torch
+from typing import Tuple
 
 
 class Metric(object):
@@ -24,7 +25,7 @@ class Metric(object):
     """
     def __init__(self, name: str):
         self.name = name
-        
+
     def compute(
             self, output: torch.Tensor, target: torch.Tensor
         ) -> float:
@@ -33,5 +34,6 @@ class Metric(object):
 
         :param output: Output value of the Neural Network
         :param target: Target value of the Neural Network
+        :return: Cumulated accuracy over the batch and the batchsize
         """
         pass

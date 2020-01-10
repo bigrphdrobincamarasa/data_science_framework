@@ -15,7 +15,7 @@
 """
 from torch.utils.tensorboard import SummaryWriter
 from data_science_framework.pytorch_utils.callbacks import Callback, MetricsWritter, ModelCheckpoint,\
-        ModelPlotter
+        ModelPlotter, DataDisplayer
 from data_science_framework.pytorch_utils.models.Unet import Unet
 from data_science_framework.pytorch_utils import MODULE
 from data_science_framework.scripting.test_manager import set_test_folders
@@ -41,7 +41,7 @@ def test_Callback(output_folder: str) -> None:
         writer=SummaryWriter(log_dir=output_folder)
     )
     assert type(callback.writer) == SummaryWriter
-        
+
 
 @set_test_folders(
     output_root=TEST_ROOT,
@@ -141,7 +141,7 @@ def test_ModelCheckpoint(output_folder: str) -> None:
     model_checkpoint(3, 4, training=False)
     assert model_checkpoint.metric_values[1] != 0
     assert model_checkpoint.metric_values[2] != 0
-    
+
     # Test on epoch end
     model = Unet()
     for epoch in range(10):
@@ -177,4 +177,51 @@ def test_ModelPlotter(output_folder: str) -> None:
         writer=SummaryWriter(log_dir=output_folder),
         model=model
     )
+
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    current_module=MODULE
+)
+def test_DataDisplayer(output_folder: str) -> None:
+    """
+    Function that tests DataDisplayer
+
+    :param output_folder: Path to the output folder
+    :return: None
+    """
+    # Create vanilla metric
+    class VanillaMetric(Metric):
+        def __init__(self, name):
+            self.name = name
+        def compute(self, output, target):
+            return 1, np.random.rand()
+
+    # Initialize model checkpoint
+    data_displayer = DataDisplayer(
+        writer=SummaryWriter(log_dir=output_folder),
+    )
+    assert data_displayer.saved_image_training == False
+    assert data_displayer.saved_image_validation == False
+
+    # Test on epoch start
+    data_displayer.on_epoch_start(0, None)
+    assert data_displayer.saved_image_training == False
+    assert data_displayer.saved_image_validation == False
+
+    # Test call method
+    for training_, saved_image_training_, saved_image_validation_ in zip(
+        [True, True, False, False],
+        [True, True, True, True],
+        [False, False, True, True],
+    ):
+        output_ = torch.rand((1, 2, 3, 4, 5))
+        target_ = torch.rand((1, 2, 3, 4, 5))
+        data_displayer(
+            output=output_,
+            target=target_,
+            training=training_
+        )
+        assert data_displayer.saved_image_training == saved_image_training_
+        assert data_displayer.saved_image_validation == saved_image_validation_
 
