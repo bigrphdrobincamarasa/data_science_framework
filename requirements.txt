@@ -21,3 +21,4 @@ tox
 tqdm
 tensorboard
 neovim
+ipdb

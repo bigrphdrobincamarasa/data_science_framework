@@ -117,22 +117,24 @@ def test_OutConvolution3DLayer() -> None:
 
     :return: None
     """
-    # Initialize layer
-    out_convolution_3_d_layer = OutConvolution3DLayer(
-        in_channels=3,
-        out_channels=5,
-        kernel_size=3,
-        padding=1
-    )
+    for activation in ['sigmoid', 'softmax']:
+        # Initialize layer
+        out_convolution_3_d_layer = OutConvolution3DLayer(
+            in_channels=3,
+            out_channels=5,
+            kernel_size=3,
+            padding=1,
+            activation='softmax'
+        )
 
-    # Initialize input
-    input = np.arange(3 * 4 * 4 * 4).reshape(1, 3, 4, 4, 4)
+        # Initialize input
+        input = np.arange(3 * 4 * 4 * 4).reshape(1, 3, 4, 4, 4)
 
-    input_torch = torch.tensor(
-        input, dtype=torch.float32,
-    ).to('cpu')
+        input_torch = torch.tensor(
+            input, dtype=torch.float32,
+        ).to('cpu')
 
-    # Apply forward pass
-    assert out_convolution_3_d_layer(
-        input_torch
-    ).shape == (1, 5, 4, 4, 4)
+        # Apply forward pass
+        assert out_convolution_3_d_layer(
+            input_torch
+        ).shape == (1, 5, 4, 4, 4)

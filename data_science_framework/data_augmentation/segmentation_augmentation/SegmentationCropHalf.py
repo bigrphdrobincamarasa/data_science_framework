@@ -63,7 +63,7 @@ class SegmentationCropHalf(SegmentationPatientTransformation):
         gt_x_half_shape = int(gt_mask.shape[0]/2)
 
         # Create gt mask
-        for gt_item in gt:
+        for gt_item in gt[1:]:
             gt_mask += gt_item.get_fdata()
 
         if gt_mask[:gt_x_half_shape, :, :].sum() < gt_mask[gt_x_half_shape:, :, :].sum():

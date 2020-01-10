@@ -28,18 +28,19 @@ def test_Unet() -> None:
     unet = Unet(
         in_channels=5,
         out_channels=3,
-        depth=3,
+        depth=4,
         n_features=2,
         kernel_size=3,
         pool_size=2,
         padding=1,
+        activation='softmax'
     )
 
     # Define input
-    input = np.arange(5 * 16 * 16 * 16).reshape(1, 5, 16, 16, 16)
+    input = np.arange(5 * 32 * 32 * 32).reshape(1, 5, 32, 32, 32)
     input_torch = torch.tensor(
         input, dtype=torch.float32,
     ).to('cpu')
 
     # Define unet
-    assert unet(input_torch).shape == (1, 3, 16, 16, 16)
+    assert unet(input_torch).shape == (1, 3, 32, 32, 32)

@@ -27,7 +27,7 @@ class Callback:
     def __init__(self, writer: SummaryWriter) -> None:
         self.writer = writer
 
-    def on_epoch_end(self, epoch: int):
+    def on_epoch_end(self, epoch: int, model: nn.Module):
         """
         Method called on epoch end
         
@@ -54,7 +54,8 @@ class Callback:
         pass
 
     def __call__(
-            self, output: torch.Tensor, target: torch.Tensor
+            self, output: torch.Tensor, target: torch.Tensor,
+            training=True
         ) -> None: 
         """
         Method call

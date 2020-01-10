@@ -41,6 +41,7 @@ def test_Trainer() -> None:
     trainer.set_objects_attributes(test=['a', 'b'])
     assert tuple(trainer.test) == ('a', 'b')
 
+
 @set_test_folders(
     output_root=TEST_ROOT,
     current_module=MODULE

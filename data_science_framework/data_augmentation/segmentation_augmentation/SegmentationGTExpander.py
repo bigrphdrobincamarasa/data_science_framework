@@ -41,14 +41,8 @@ class SegmentationGTExpander(SegmentationPatientTransformation):
         :param gt: List of gt images
         :return: Tuple of transformed values
         """
-        output = (input, [])
         transformation = self.get_transformation()
-
-        # Apply transformation to gt
-        for gt_item_ in gt:
-            gt_item_ = transformation(gt_item_)
-            output[1].append(gt_item_)
-        return output
+        return input, transformation(gt[0])
 
     def get_transformation(self):
         """

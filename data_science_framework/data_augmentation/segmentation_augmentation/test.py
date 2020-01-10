@@ -411,11 +411,13 @@ def test_SegmentationGTExpander() -> None:
 
     # Test patient transformation
     segmentation_gt_expander = SegmentationGTExpander(10)
-    segmentation_gt_expander.get_transformation = lambda: lambda y: y**2
-    input_, gt_ = segmentation_gt_expander.transform_patient('input', [5, 4, 3])
-    assert len(gt_) == 3
+
+    # Create a vanilla transformation
+    segmentation_gt_expander.get_transformation = lambda: lambda y: [1 for i in range(y)]
+    input_, gt_ = segmentation_gt_expander.transform_patient('input', [5])
+
+    assert tuple(gt_) == (1, 1, 1, 1, 1)
     assert input_ == input_
-    assert tuple(gt_) == (25, 16, 9)
 
     # Test get_transformation
     segmentation_gt_expander = SegmentationGTExpander(10)

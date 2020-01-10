@@ -76,7 +76,7 @@ class VanillaTrainer(Trainer):
         # Initialize training progressbar
         progress_bar = tqdm(
                 enumerate(self.trainning_generator),
-                desc='Epoch {} / {}'.format(epoch + 1, self.nb_epochs),
+                desc='Train epoch {} / {}'.format(epoch + 1, self.nb_epochs),
                 total=len(self.trainning_generator),
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{remaining}{postfix}]',
                 postfix={
@@ -99,8 +99,8 @@ class VanillaTrainer(Trainer):
         # Initialize validation progressbar
         progress_bar = tqdm(
                 enumerate(self.validation_generator),
-                desc='Epoch {} / {}'.format(epoch + 1, self.nb_epochs),
-                total=len(self.trainning_generator),
+                desc='Validation {} / {}'.format(epoch + 1, self.nb_epochs),
+                total=len(self.validation_generator),
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{remaining}{postfix}]',
                 postfix={
                     'losses': loss_validation
@@ -150,7 +150,7 @@ class VanillaTrainer(Trainer):
             callback(output, target, training=False)
 
         # Compute loss
-        loss_value = self.loss_function(input=output, target=target).item
+        loss_value = self.loss_function(input=output, target=target).item()
         return loss_value
 
     @timer

@@ -46,5 +46,5 @@ class SegmentationAccuracyMetric(Metric):
         accuracy_per_batch = output_classification.eq(
             target_classification
         ).sum(0)/(1.0 * output[0, 0, :, :].flatten().shape[0])
-        return accuracy_per_batch.sum(), output.shape[0]
+        return output.shape[0], accuracy_per_batch.sum()
 

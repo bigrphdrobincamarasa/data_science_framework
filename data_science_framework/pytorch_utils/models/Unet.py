@@ -33,11 +33,12 @@ class Unet(nn.Module):
     :param kernel_size: Size of the convolution kernel
     :param pool_size: Scaling factor in Down Convolution layer
     :param padding: Padding of the convolution
+    :param activation: Type of activation function (either 'sigmoid' or 'softmax')
     """
     def __init__(
             self, in_channels: int=1, out_channels: int=1,
             depth: int=3, n_features: int=8, kernel_size: int=3,
-            pool_size: int=2, padding: int=1
+            pool_size: int=2, padding: int=1, activation: str='softmax'
     ):
         super(Unet, self).__init__()
 
@@ -49,6 +50,7 @@ class Unet(nn.Module):
         self.pool_size = pool_size
         self.padding = padding
         self.depth = depth
+        self.activation = activation
 
         # Initialize the number of features in the layer
         layer_n_features_ = n_features
@@ -93,7 +95,8 @@ class Unet(nn.Module):
                 in_channels=self.n_features,
                 out_channels=self.out_channels,
                 kernel_size=self.kernel_size,
-                padding=self.padding
+                padding=self.padding,
+                activation=self.activation
             )
         )
 

@@ -29,7 +29,7 @@ class SegmentationNormalization(SegmentationPatientTransformation):
     :param max_percentile: Percentile in the distribution of the max value
     """
 
-    def __init__(self, min_percentile: float = 0.005, max_percentile: float = 0.95):
+    def __init__(self, min_percentile: float = 0.05, max_percentile: float = 0.95):
         self.min_percentile = min_percentile
         self.max_percentile = max_percentile
 
@@ -58,7 +58,7 @@ class SegmentationNormalization(SegmentationPatientTransformation):
 
         :return: Function that corresponds to the transformation
         """
-        def normarlisation(input):
+        def normalization(input):
             # Sort image values
             input_array = np.array(input.get_fdata(), dtype=float)
             sorted_input_array = np.sort(input.get_fdata().ravel())
@@ -78,5 +78,5 @@ class SegmentationNormalization(SegmentationPatientTransformation):
             return nib.Nifti1Image(
                 dataobj=input_array, affine=input.affine, header=input.header
             )
-        return normarlisation
+        return normalization
 

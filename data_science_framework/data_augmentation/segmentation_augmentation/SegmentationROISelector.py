@@ -52,35 +52,35 @@ class SegmentationROISelector(SegmentationPatientTransformation):
         # Initialise output
         input_, gt_ = [], []
 
-        # Get gt coordinates
-        gt_centers = self.get_gt_centers(gt)
-        tile = self.get_transformation()
+        # Get transfomation
+        tile = self.get_transformation(gt)
 
         # Transform input
         for input_item in input:
-            input_.append(tile(input_item, gt_centers))
+            input_.append(tile(input_item))
 
         # Transform gt
         for gt_item in gt:
-            gt_.append(tile(gt_item, gt_centers))
+            gt_.append(tile(gt_item))
 
         return (input_, gt_)
 
-    def get_transformation(self):
+    def get_transformation(self, gt: tuple):
         """
         Get the transformation
 
+        :param gt: List of groundtruth images
         :return: Function that corresponds to the transformation
         """
-        # Get a random start of the tile that contains the center
-        # of the tile and fits into the image
-        get_tile_start = lambda image_shape, gt_center: tuple(
+        # Get the ground truth center
+        gt_centers = self.get_gt_centers(gt)
+        tile_start = tuple(
             [
                 np.random.randint(
-                    low=max(0, gt_center[i] - self.tile_shape[i]),
-                    high=min(gt_center[i], image_shape[i] - self.tile_shape[i])
+                    low=max(0, gt_centers[i] - self.tile_shape[i]),
+                    high=min(gt_centers[i], gt[0].shape[i] - self.tile_shape[i])+1
                 )
-                for i in range(len(list(image_shape)))
+                for i in range(len(list(gt[0].shape)))
             ]
         )
 
@@ -92,10 +92,10 @@ class SegmentationROISelector(SegmentationPatientTransformation):
         ]
 
         # Apply the full transformation
-        transform = lambda image, gt_center: nib.Nifti1Image(
+        transform = lambda image: nib.Nifti1Image(
             dataobj=tile(
                 image.get_fdata(),
-                get_tile_start(image.shape, gt_center)
+                tile_start
             ),
             affine=image.affine,
             header=image.header
@@ -113,14 +113,15 @@ class SegmentationROISelector(SegmentationPatientTransformation):
         gt_mask = np.zeros(gt[0].shape)
 
         # Create gt mask
-        for gt_item in gt:
+        # The first channel is for the background
+        for gt_item in gt[1:]:
             gt_mask += gt_item.get_fdata()
 
         # Get non zeros indices
         non_zeros_indices = gt_mask.nonzero()
         return tuple(
             [
-                (non_zeros_indices_dim.min() + non_zeros_indices_dim.max())/2
+                non_zeros_indices_dim.mean()
                 for non_zeros_indices_dim in list(non_zeros_indices)
             ]
         )

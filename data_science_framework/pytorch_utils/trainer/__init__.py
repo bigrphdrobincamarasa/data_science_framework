@@ -16,3 +16,4 @@
 MODULE = ['pytorch_utils', 'trainer']
 
 from .Trainer import Trainer
+from .VanillaTrainer import VanillaTrainer
