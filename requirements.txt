@@ -23,3 +23,5 @@ tensorboard
 neovim
 ipdb
 pillow
+matplotlib
+scikit-learn

@@ -14,7 +14,7 @@
 **Module that contains the codes that Metrics**
 """
 
-MODULE = ['pytorch_utils', 'metrics']
+MODULE = ['data_science_framework', 'pytorch_utils', 'metrics']
 
 
 from .Metric import Metric

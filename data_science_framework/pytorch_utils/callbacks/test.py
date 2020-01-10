@@ -13,11 +13,12 @@
 
 **Module that contains the codes that implements callbacks**
 """
+import os
 from torch.utils.tensorboard import SummaryWriter
 from data_science_framework.pytorch_utils.callbacks import Callback, MetricsWritter, ModelCheckpoint,\
-        ModelPlotter, DataDisplayer
+        ModelPlotter, DataDisplayer, ConfusionMatrixCallback
 from data_science_framework.pytorch_utils.models.Unet import Unet
-from data_science_framework.pytorch_utils import MODULE
+from data_science_framework.pytorch_utils.callbacks import MODULE
 from data_science_framework.scripting.test_manager import set_test_folders
 from data_science_framework.settings import TEST_ROOT
 from data_science_framework.pytorch_utils.metrics import Metric
@@ -190,13 +191,6 @@ def test_DataDisplayer(output_folder: str) -> None:
     :param output_folder: Path to the output folder
     :return: None
     """
-    # Create vanilla metric
-    class VanillaMetric(Metric):
-        def __init__(self, name):
-            self.name = name
-        def compute(self, output, target):
-            return 1, np.random.rand()
-
     # Initialize model checkpoint
     data_displayer = DataDisplayer(
         writer=SummaryWriter(log_dir=output_folder),
@@ -224,4 +218,68 @@ def test_DataDisplayer(output_folder: str) -> None:
         )
         assert data_displayer.saved_image_training == saved_image_training_
         assert data_displayer.saved_image_validation == saved_image_validation_
+
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    current_module=MODULE
+)
+def test_ConfusionMatrixCallback(output_folder: str) -> None:
+    """
+    Function that tests ConfusionMatrixCallback
+
+    :param output_folder: Path to the output folder
+    :return: None
+    """
+    # Initialize model checkpoint
+    confusion_matrix_callback = ConfusionMatrixCallback(
+        writer=SummaryWriter(log_dir=output_folder),
+    )
+    assert confusion_matrix_callback.training_confusion_matrices == []
+    assert confusion_matrix_callback.validation_confusion_matrices == []
+
+    # Test on epoch start
+    confusion_matrix_callback.on_epoch_start(0, None)
+    assert len(
+        confusion_matrix_callback.training_confusion_matrices
+    ) == 0
+    assert len(
+        confusion_matrix_callback.validation_confusion_matrices
+    ) == 0
+
+    # Test call method
+    for training_, training_length_, validation_length_ in zip(
+        [True, False],
+        [2, 2],
+        [0, 2]
+    ):
+        for _ in range(2):
+            output_ = torch.rand((1, 10, 3, 4, 5))
+            target_ = torch.rand((1, 10, 3, 4, 5))
+            confusion_matrix_callback(
+                output=output_,
+                target=target_,
+                training=training_
+            )
+        assert len(
+            confusion_matrix_callback.training_confusion_matrices
+        ) == training_length_
+        assert len(
+            confusion_matrix_callback.validation_confusion_matrices
+        ) == validation_length_
+
+    # Test plot method
+    figure = confusion_matrix_callback.generate_plot(
+        title='title',
+        confusion_matrices=np.array(
+            confusion_matrix_callback.training_confusion_matrices
+        )
+    )
+    figure.savefig(os.path.join(output_folder, 'figure.png'))
+
+    # Test on epoch end
+    confusion_matrix_callback.on_epoch_end(
+        epoch=0,
+        model=None
+    )
 

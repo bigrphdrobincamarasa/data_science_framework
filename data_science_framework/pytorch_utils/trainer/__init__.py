@@ -13,7 +13,7 @@
 
 **Module that contains the codes the different trainers**
 """
-MODULE = ['pytorch_utils', 'trainer']
+MODULE = ['data_science_framework', 'pytorch_utils', 'trainer']
 
 from .Trainer import Trainer
 from .VanillaTrainer import VanillaTrainer

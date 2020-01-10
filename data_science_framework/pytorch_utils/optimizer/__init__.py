@@ -14,7 +14,7 @@
 **Module that contains the codes that implements optimizers**
 """
 
-MODULE = ['optimizers']
+MODULE = ['data_science_framework', 'pytorch_utils', 'optimizers']
 
 from .Optimizer import Optimizer
 from .AdadeltaOptimizer import AdadeltaOptimizer
