@@ -72,9 +72,8 @@ class SegmentationNormalization(SegmentationPatientTransformation):
             ]
 
             # Process array
-            input_array = (input_array - min_values_) / (max_values_ - min_values_) *\
-                          (input_array > min_values_) * (input_array < max_values_) +\
-                          (input_array > max_values_)
+            input_array = (input_array - min_values_) / (max_values_ - min_values_)
+
             return nib.Nifti1Image(
                 dataobj=input_array, affine=input.affine, header=input.header
             )
