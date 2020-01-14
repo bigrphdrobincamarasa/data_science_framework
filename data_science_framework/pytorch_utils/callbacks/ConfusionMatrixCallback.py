@@ -29,7 +29,6 @@ class ConfusionMatrixCallback(Callback):
     Class that implements ConfusionMatrixCallback
 
     :param writer: Tensorboad summary writter file
-    :param nb_classes: Number of classes of the confusion_matrix
     """
     def __init__(
             self, writer: SummaryWriter,
@@ -57,6 +56,9 @@ class ConfusionMatrixCallback(Callback):
 
         :param training: True if metric is computed on test
         """
+        # Get nb classes
+        nb_classes = output.shape[1]
+
         # Get output classification 
         output_classification = output.max(1)[1]\
                 .cpu().detach().numpy().ravel()
@@ -65,10 +67,9 @@ class ConfusionMatrixCallback(Callback):
         target_classification = target.max(1)[1]\
                 .cpu().detach().numpy().ravel()
 
-        # Compute confusion matrix
         confusion_matrix_ = confusion_matrix(
             target_classification, output_classification,
-            normalize='true'
+            normalize='true', labels=list(range(nb_classes))
         )
 
         # Sum confusion matrix

@@ -253,9 +253,12 @@ def test_ConfusionMatrixCallback(output_folder: str) -> None:
         [2, 2],
         [0, 2]
     ):
-        for _ in range(2):
-            output_ = torch.rand((1, 10, 3, 4, 5))
-            target_ = torch.rand((1, 10, 3, 4, 5))
+        for i in range(2):
+            output_ = torch.rand((2, 10, 3, 4, 5))
+            target_ = torch.rand((2, 10, 3, 4, 5))
+            if i == 1:
+                output_[:, -1 , :, :] = 0
+                target_[:, -1 , :, :] = 0
             confusion_matrix_callback(
                 output=output_,
                 target=target_,
