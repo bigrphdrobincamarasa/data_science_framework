@@ -42,12 +42,12 @@ class DiceLoss(Loss):
 
         :return: Loss function
         """
-        def dice_loss(output, target):
+        def dice_loss(input, target):
             # Compute intersection feature wise
-            intersection = (output * target).sum(self.dim_to_sum_along)
+            intersection = (input * target).sum(self.dim_to_sum_along)
 
             # Compute cardinals feature wise
-            output_cardinal = output.sum(self.dim_to_sum_along)
+            output_cardinal = input.sum(self.dim_to_sum_along)
             target_cardinal = target.sum(self.dim_to_sum_along)
 
             # Return dice loss
