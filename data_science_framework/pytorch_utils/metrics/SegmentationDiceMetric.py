@@ -50,8 +50,8 @@ class SegmentationDiceMetric(Metric):
         # Compute the accuracy per batch
         for i in range(output.shape[0]):
             acc += self.dice_function(
-                torch.Tensor([output[0].detach().numpy()]),
-                torch.Tensor([target[0].detach().numpy()])
+                torch.Tensor([output[0].cpu().detach().numpy()]),
+                torch.Tensor([target[0].cpu().detach().numpy()])
             ).item()
         return output.shape[0], acc
 
