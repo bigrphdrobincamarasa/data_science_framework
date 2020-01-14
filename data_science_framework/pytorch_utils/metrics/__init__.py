@@ -20,3 +20,4 @@ MODULE = ['data_science_framework', 'pytorch_utils', 'metrics']
 from .Metric import Metric
 from .SegmentationAccuracyMetric import SegmentationAccuracyMetric
 from .SegmentationBCEMetric import SegmentationBCEMetric
+from .SegmentationDiceMetric import SegmentationDiceMetric
