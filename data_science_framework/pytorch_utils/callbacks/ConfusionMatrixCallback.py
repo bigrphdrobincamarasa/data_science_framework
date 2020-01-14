@@ -59,11 +59,11 @@ class ConfusionMatrixCallback(Callback):
         """
         # Get output classification 
         output_classification = output.max(1)[1]\
-                .detach().numpy().ravel()
+                .cpu().detach().numpy().ravel()
 
         # Get classification version of the target tensor
         target_classification = target.max(1)[1]\
-                .detach().numpy().ravel()
+                .cpu().detach().numpy().ravel()
 
         # Compute confusion matrix
         confusion_matrix_ = confusion_matrix(
