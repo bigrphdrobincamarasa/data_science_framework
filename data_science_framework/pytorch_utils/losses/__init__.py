@@ -18,3 +18,4 @@ MODULE = ['data_science_framework', 'pytorch_utils', 'losses']
 
 from .Loss import Loss
 from .BinaryCrossEntropyLoss import BinaryCrossEntropyLoss
+from .DiceLoss import DiceLoss
