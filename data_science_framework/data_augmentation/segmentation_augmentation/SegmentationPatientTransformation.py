@@ -41,23 +41,3 @@ class SegmentationPatientTransformation(SegmentationTransformation):
             output[1].append(output_item_)
         return output
 
-    def transform_patient(self, input, gt) -> Tuple:
-        """
-        Apply the transformation to the input and the ground truth that are patient formatted
-        (nfeature, shape)
-
-        Apply a transformation to the input and the ground truth
-
-        :param input: List of input images
-        :param gt: List of gt images
-        :return: Tuple of transformed values
-        """
-        pass
-
-    def get_transformation(self):
-        """
-        Get the transformation
-
-        :return: Function that corresponds to the transformation
-        """
-        pass

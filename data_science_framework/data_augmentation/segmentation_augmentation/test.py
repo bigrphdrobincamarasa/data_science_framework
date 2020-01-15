@@ -26,7 +26,7 @@ from data_science_framework.data_augmentation.segmentation_augmentation import M
 from data_science_framework.data_augmentation.segmentation_augmentation import SegmentationTransformation, \
 SegmentationPatientTransformation, SegmentationImageTransformation, SegmentationRotation, SegmentationFlip, \
 SegmentationCropHalf, SegmentationNormalization, SegmentationTiling, SegmentationGTExpander, SegmentationInputExpander, \
-SegmentationROISelector, SegmentationToTorch
+SegmentationROISelector, SegmentationToTorch, SegmentationGTDropClasses
 
 
 def test_SegmentationTransformation() -> None:
@@ -585,4 +585,30 @@ def test_SegmentationToTorch(ressources_structure: dict, output_folder: str) -> 
 
     assert input_transformed.shape == (2, 5, 3, 4, 5)
     assert gt_transformed.shape == (2, 4, 3, 4, 5)
-    
+
+
+def test_SegmentationGTDropClasses() -> None:
+    """
+    Function that tests SegmentationGTDropClasses
+
+    :return: None
+    """
+    # Test initialisation
+    segmentation_gt_drop_classes = SegmentationGTDropClasses()
+    assert tuple(segmentation_gt_drop_classes.dropped_classes) == tuple(
+        list(range(2, 10, 2))
+    )
+
+    # Test patient transformation
+    segmentation_gt_drop_classes = SegmentationGTDropClasses()
+    segmentation_gt_drop_classes.get_transformation = lambda : lambda x:x**2
+    input, gt = 3, 4
+    input_, gt_ = segmentation_gt_drop_classes.transform_patient(input, gt)
+    assert (input_, gt_) == (3, 16)
+
+    # Test transformation
+    segmentation_gt_drop_classes = SegmentationGTDropClasses()
+    transformation = segmentation_gt_drop_classes.get_transformation()
+    gt_ = transformation(list(range(10)))
+    assert tuple(gt_) == (0, 1, 3, 5, 7, 9)
+

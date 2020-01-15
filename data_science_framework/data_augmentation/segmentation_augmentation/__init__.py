@@ -28,3 +28,4 @@ from .SegmentationTransformation import SegmentationTransformation
 from .SegmentationInputExpander import SegmentationInputExpander
 from .SegmentationROISelector import SegmentationROISelector
 from .SegmentationToTorch import SegmentationToTorch
+from .SegmentationGTDropClasses import SegmentationGTDropClasses
