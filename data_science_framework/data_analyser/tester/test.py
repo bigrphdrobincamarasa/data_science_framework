@@ -1,0 +1,28 @@
+"""
+**Author** : Robin Camarasa 
+
+**Institution** : Erasmus Medical Center
+
+**Position** : PhD student
+
+**Contact** : r.camarasa@erasmusmc.nl
+
+**Date** : 2019-12-17
+
+**Project** : baseline_unet
+
+**File that tests codes of trainer module**
+"""
+from data_science_framework.data_analyser.tester import Tester
+
+
+def test_Tester() -> None:
+    """
+    Function that tests Tester
+
+    :return: None
+    """
+    tester = Tester()
+
+    pass
+

@@ -67,6 +67,7 @@ class ConfusionMatrixCallback(Callback):
         target_classification = target.max(1)[1]\
                 .cpu().detach().numpy().ravel()
 
+        # Compute confusion matrix
         confusion_matrix_ = confusion_matrix(
             target_classification, output_classification,
             normalize='true', labels=list(range(nb_classes))
