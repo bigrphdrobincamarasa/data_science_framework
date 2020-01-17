@@ -20,3 +20,4 @@ from .Loss import Loss
 from .BinaryCrossEntropyLoss import BinaryCrossEntropyLoss
 from .DiceLoss import DiceLoss
 from .WeightedDiceLoss import WeightedDiceLoss
+from .WeightedCrossEntropy import WeightedCrossEntropy
