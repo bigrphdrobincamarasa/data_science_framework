@@ -27,16 +27,18 @@ class WeightedDiceLoss(Loss):
     :param epsilon: Value added to not divide by zero
     :param weights: Weights applied to each classes
     :param nb_dimension: Number of dimension of single (without  feature dimension and batchsize dimension)
+    :param device: Device used by torch
     """
     def __init__(
             self, name='weigthed_dice_loss', epsilon=0.001,
             weights=[0.11, 0.11, 0.22, 0.22, 0.22, 0.11],
-            nb_dimension=3
+            nb_dimension=3, device='cuda'
         ):
         super().__init__(name)
         self.epsilon = epsilon
         self.nb_dimension = nb_dimension
         self.weights = weights
+        self.device = device
         self.dim_to_sum_along =  tuple(
             [0] + list(range(2, self.nb_dimension + 2))
         )
@@ -63,7 +65,9 @@ class WeightedDiceLoss(Loss):
             )
 
             # Weights the dice
-            weighted_dice = dice_per_class * torch.Tensor(self.weights)
+            weighted_dice = dice_per_class * torch.Tensor(self.weights).to(
+                device=self.device
+            )
 
             # Return dice loss
             return 1. - weighted_dice.sum()

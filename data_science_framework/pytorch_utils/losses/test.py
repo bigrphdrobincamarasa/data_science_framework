@@ -71,7 +71,7 @@ def test_WeightedDiceLoss() -> None:
     :return: None
     """
     weighted_dice_loss = WeightedDiceLoss(
-        weights=[0.11, 0.88, 0.11]
+        weights=[0.11, 0.88, 0.11], device='cpu'
     )
 
     # Test get function

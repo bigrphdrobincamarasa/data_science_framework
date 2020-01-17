@@ -40,3 +40,5 @@ FILENAME_TEMPLATE = {
         'directory': '#dlogger_{}'
     }
 }
+
+DEVICE = 'cpu'
