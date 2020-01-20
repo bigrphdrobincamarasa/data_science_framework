@@ -71,6 +71,6 @@ class GeneralizedDiceLoss(Loss):
             ).sum()
 
             # Return generalized dice value
-            return (coefficients * intersection / norm_constant).sum()
+            return 1 - (coefficients * intersection / norm_constant).sum()
 
         return generalized_dice_loss
