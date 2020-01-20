@@ -21,6 +21,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
 import torch
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class ConfusionMatrixPlotter(Plotter):
@@ -34,9 +35,7 @@ class ConfusionMatrixPlotter(Plotter):
             self, title: str,
             cmap='jet'
         )  -> None:
-        super(Plotter, self).__init__(
-            
-        )
+        super(Plotter, self).__init__(title)
         self.cmap = cmap
 
     def initialise_figure(self) -> None:

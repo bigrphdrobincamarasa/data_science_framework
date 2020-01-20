@@ -52,7 +52,7 @@ class Analyser(object):
         """
         pass
 
-    def initialize_data() -> None:
+    def initialize_data(self) -> None:
         """initialize_data
 
         Initialize the data
@@ -61,7 +61,7 @@ class Analyser(object):
         """
         pass
 
-    def save_data() -> None:
+    def save_data(self) -> None:
         """save_data
 
         Saves the data to log files

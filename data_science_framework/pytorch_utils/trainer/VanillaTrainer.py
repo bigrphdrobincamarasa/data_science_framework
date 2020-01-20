@@ -95,7 +95,7 @@ class VanillaTrainer(Trainer):
             )/(i+1)
             progress_bar.set_postfix({'losses': loss_training})
             progress_bar.update(1)
-        
+
         # Initialize validation progressbar
         progress_bar = tqdm(
                 enumerate(self.validation_generator),
@@ -143,7 +143,8 @@ class VanillaTrainer(Trainer):
         :return: Value of the loss on the batch
         """
         # Disable gradient
-        output = self.model(data)
+        with torch.no_grad():
+            output = self.model(data)
 
         # Compute callbacks
         for callback in self.callbacks:

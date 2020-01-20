@@ -91,7 +91,7 @@ class MetricsAnalyser(Analyser):
         np.save(
             os.path.join(
                 self.save_path, '{}.npy'.format(self.subset_name)
-            )
+            ),
             np.array(self.confusion_matrix)
         )
 

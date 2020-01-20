@@ -15,8 +15,8 @@
 
 """
 from data_science_framework.data_spy.loggers.experiment_loggers import timer
-from data_science_framework.pytorch_utils.optimizer import optimizer
 from torch.utils.tensorboard import SummaryWriter
+import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
 import torch
 

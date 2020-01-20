@@ -40,6 +40,7 @@ class Tester(object):
         self.result_folder = result_folder
         self.writer = writer
         self.dataset = dataset
+        self.model = model
         self.analysers = analysers
 
     def __call__(self) -> None:
@@ -49,11 +50,15 @@ class Tester(object):
 
         :rtype: None
         """
-        with torch.no_grad:
-            for output, target, meta in dataset:
+        # Apply analysis
+        with torch.no_grad():
+            for input, target, meta in self.dataset:
                 for analyser in self.analysers:
-                    analyser(output, target, meta)
+                    analyser(
+                        self.model(input), target, meta=meta
+                    )
 
+        # Save results
         for analyser in self.analysers:
             analyser.save_data()
             analyser.save_to_tensorboard()
