@@ -18,7 +18,7 @@ import numpy as np
 import torch
 
 from data_science_framework.pytorch_utils.losses import BinaryCrossEntropyLoss, DiceLoss,\
-        WeightedDiceLoss, WeightedCrossEntropy
+        WeightedDiceLoss, WeightedCrossEntropy, GeneralizedDiceLoss
 
 
 def test_BinaryCrossEntropyLoss() -> None:
@@ -120,5 +120,34 @@ def test_WeigthedCrossEntropy() -> None:
             )
     )
     loss_value = weighted_cross_entropy(output, target)
+    assert loss_value.detach().numpy().shape == ()
+
+
+def test_GeneralizedDiceLoss() -> None:
+    """
+    Function that tests GeneralizedDiceLoss
+
+    :return: None
+    """
+    generalized_dice_loss = GeneralizedDiceLoss(device='cpu')
+
+    # Test get function
+    generalized_dice_loss = generalized_dice_loss.get_torch()
+
+    # Test the returned loss function
+    filled_array = np.arange(4 * 5 * 6).reshape(4, 5, 6)
+    output = torch.rand((1, 3, 4, 5, 6))
+    target = torch.from_numpy(
+            np.array(
+                [
+                    [
+                        (filled_array % 3) == 0,
+                        (filled_array % 3) == 1,
+                        (filled_array % 3) == 2
+                    ]
+                ]
+            )
+    )
+    loss_value = generalized_dice_loss(output, target)
     assert loss_value.detach().numpy().shape == ()
 
