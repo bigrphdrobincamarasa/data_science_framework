@@ -15,11 +15,11 @@
 
 """
 from data_science_framework.data_spy.loggers.experiment_loggers import timer
-from data_science_framework.pytorch_utils.optimizer import optimizer
 from data_science_framework.data_analyser.plotter import Plotter
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
 import torch
+import matplotlib.pyplot as plt
 
 
 class MetricPlotter(Plotter):
@@ -30,7 +30,6 @@ class MetricPlotter(Plotter):
             self, title
         )  -> None:
         self.figure = plt.gcf()
-        super(Pl)
 
     def initialise_figure(self) -> None:
         """initialise_figure
