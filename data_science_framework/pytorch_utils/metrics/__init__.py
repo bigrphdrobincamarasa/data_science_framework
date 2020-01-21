@@ -26,3 +26,4 @@ from .AccuracyPerClass import AccuracyPerClass
 from .SensitivityPerClass import SensitivityPerClass
 from .SpecificityPerClass import SpecificityPerClass
 from .PrecisionPerClass import PrecisionPerClass
+from .DicePerClass import DicePerClass

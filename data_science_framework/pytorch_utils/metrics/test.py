@@ -15,7 +15,7 @@
 """
 from data_science_framework.pytorch_utils.metrics import SegmentationAccuracyMetric,\
         SegmentationBCEMetric, SegmentationDiceMetric, MetricPerClass, AccuracyPerClass,\
-        SensitivityPerClass, SpecificityPerClass, PrecisionPerClass
+        SensitivityPerClass, SpecificityPerClass, PrecisionPerClass, DicePerClass
 import numpy as np
 import torch
 
@@ -258,3 +258,22 @@ def test_PrecisionPerClass() -> None:
         target=np.array([1, 0, 1, 1])
     )
     assert output == 1
+
+
+def test_DicePerClass() -> None:
+    """test_DicePerClass
+
+    Function that tests test_DicePerClass
+
+    :rtype: None
+    """
+    # Test initialisation
+    metric_per_class = DicePerClass()
+    assert metric_per_class.name == 'dice_per_class'
+
+    # Test compute
+    output = metric_per_class.metric_function(
+        output=np.array([1, 0, 1, 0]),
+        target=np.array([1, 0, 1, 1])
+    )
+    assert output == 0.8
