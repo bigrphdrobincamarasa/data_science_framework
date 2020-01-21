@@ -14,9 +14,10 @@
 **File that tests codes of trainer module**
 """
 from data_science_framework.data_analyser.plotter import Plotter, ConfusionMatrixPlotter,\
-        MODULE
+        MODULE, BoxPlotter
 from data_science_framework.scripting.test_manager import set_test_folders
 from data_science_framework.settings import TEST_ROOT
+import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -72,7 +73,9 @@ def test_ConfusionMatrixPlotter(output_folder: str) -> None:
     figure = plotter.generate_figure(
         confusion_matrices_mean, confusion_matrices_std
     )
-    plotter.figure.savefig(os.path.join(output_folder, 'confusion_matrix.png'))
+    plotter.figure.savefig(
+        os.path.join(output_folder, 'confusion_matrix.png')
+    )
 
     # Test clear figure
     plotter.clear_figure()
@@ -81,4 +84,45 @@ def test_ConfusionMatrixPlotter(output_folder: str) -> None:
     # Test call
     figure = plotter(np.arange(100).reshape(4, 5, 5))
     plt.savefig(os.path.join(output_folder, 'call.png'))
+
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    current_module=MODULE
+)
+def test_BoxPlotter(output_folder: str) -> None:
+    """
+    Function that tests test_BoxPlotter
+
+    :param output: Path to the output folder
+    :return: None
+    """
+    plotter = BoxPlotter('test title')
+
+    # Test figure initialisation
+    plotter.initialise_figure()
+    plt.savefig(os.path.join(output_folder, 'init.png'))
+
+    # Test generate figure
+    data = {
+        'a': [i for i in range(5)],
+        'b': [i for i in range(5, 10)],
+        'c': [i for i in range(-1, 4)],
+    }
+
+    plotter.generate_figure(data)
+    plotter.figure.savefig(
+        os.path.join(output_folder, 'boxplot.png')
+    )
+
+    # Test call
+    figure = plotter(pd.DataFrame(data))
+
+    plotter.figure.savefig(
+        os.path.join(output_folder, 'boxplot_call.png')
+    )
+
+   
+
+
 

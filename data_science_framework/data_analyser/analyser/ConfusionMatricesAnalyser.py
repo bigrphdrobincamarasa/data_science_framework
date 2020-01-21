@@ -92,7 +92,6 @@ class ConfusionMatricesAnalyser(Analyser):
         :rtype: None
         """
         # Save data
-        import ipdb; ipdb.set_trace() ###!!!BREAKPOINT!!!
         np.save(
             os.path.join(
                 self.save_path, 'confusion_matrices_{}.npy'.format(self.subset_name)
