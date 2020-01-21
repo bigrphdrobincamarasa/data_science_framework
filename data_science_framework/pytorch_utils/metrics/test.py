@@ -14,7 +14,8 @@
 **File that test the module Metric**
 """
 from data_science_framework.pytorch_utils.metrics import SegmentationAccuracyMetric,\
-        SegmentationBCEMetric, SegmentationDiceMetric, MetricPerClass, AccuracyPerClass
+        SegmentationBCEMetric, SegmentationDiceMetric, MetricPerClass, AccuracyPerClass,\
+        SensitivityPerClass
 import numpy as np
 import torch
 
@@ -184,7 +185,7 @@ def test_MetricPerClass() -> None:
 
 
 def test_AccuracyPerClass() -> None:
-    """test_MetricPerClass
+    """test_AccuracyPerClass
 
     Function that tests test_AccuracyPerClass
 
@@ -200,3 +201,22 @@ def test_AccuracyPerClass() -> None:
         target=np.array([1, 0, 1, 1])
     )
     assert output == 0.75
+
+
+def test_SensitivityPerClass() -> None:
+    """test_SensitivityPerClass
+
+    Function that tests test_SensitivityPerClass
+
+    :rtype: None
+    """
+    # Test initialisation
+    metric_per_class = SensitivityPerClass()
+    assert metric_per_class.name == 'sensitivity_per_class'
+
+    # Test compute
+    output = metric_per_class.metric_function(
+        output=np.array([1, 0, 1, 0]),
+        target=np.array([1, 0, 1, 1])
+    )
+    assert (output - 0.66) ** 2 < 0.0001
