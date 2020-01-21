@@ -25,9 +25,8 @@ class MetricPerClass(Metric):
 
     ;param name: Name of the metric
     """
-    def __init__(self, name: str):
+    def __init__(name='accuracy_per_class'):
         super().__init__(name=name)
-
     def compute(
             self, output: torch.Tensor, target: torch.Tensor
         ) -> List:
@@ -40,7 +39,8 @@ class MetricPerClass(Metric):
         """
         return [
                 self.metric_function(
-                    output[:, i, :].cpu().detach().numpy().ravel(),
+                    1.0 * output[:, i, :]\
+                            .cpu().detach().numpy().ravel() > 0.5,
                     target[:, i, :].cpu().detach().numpy().ravel()
                 )
             for i in range(output.shape[1])
@@ -56,3 +56,4 @@ class MetricPerClass(Metric):
         :param target: class target of the network as 1D numpy array
         :type target: np.ndarray
         """
+        pass
