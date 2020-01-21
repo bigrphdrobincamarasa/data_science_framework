@@ -24,3 +24,4 @@ from .SegmentationDiceMetric import SegmentationDiceMetric
 from .MetricPerClass import MetricPerClass
 from .AccuracyPerClass import AccuracyPerClass
 from .SensitivityPerClass import SensitivityPerClass
+from .SpecificityPerClass import SpecificityPerClass
