@@ -28,8 +28,9 @@ import numpy as np
 )
 def test_Plotter(output_folder: str) -> None:
     """
-    Function that tests Tester
+    Function that tests test_Plotter
 
+    :param output: Path to the output folder
     :return: None
     """
     # Test object creation
@@ -51,8 +52,9 @@ def test_Plotter(output_folder: str) -> None:
 )
 def test_ConfusionMatrixPlotter(output_folder: str) -> None:
     """
-    Function that tests Tester
+    Function that tests test_ConfusionMatrixPlotter
 
+    :param output: Path to the output folder
     :return: None
     """
     # Test object creation

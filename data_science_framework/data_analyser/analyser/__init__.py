@@ -17,4 +17,5 @@
 MODULE=['data_science_framework', 'data_analyser', 'analyser']
 
 from .Analyser import Analyser
+from .ConfusionMatricesAnalyser import ConfusionMatricesAnalyser
 from .MetricsAnalyser import MetricsAnalyser

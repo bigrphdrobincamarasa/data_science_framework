@@ -29,6 +29,7 @@ def test_Tester(output_folder: str) -> None:
     """
     Function that tests Tester
 
+    :param output: Path to the output folder
     :return: None
     """
     class FooAnalyser(Analyser):
