@@ -29,13 +29,16 @@ class ConfusionMatrixPlotter(Plotter):
     Class that implements Trainer
 
     :param title: Title of the figure
+    :param nb_classes: Number of classes studied
     :param cmap: Colorbar settings
     """
     def __init__(
             self, title: str,
+            nb_classes,
             cmap='jet'
         )  -> None:
-        super(Plotter, self).__init__(title)
+        super().__init__(title)
+        self.nb_classes = nb_classes
         self.cmap = cmap
 
     def initialise_figure(self) -> None:
@@ -46,8 +49,8 @@ class ConfusionMatrixPlotter(Plotter):
         :rtype: None
         """
         plt.figure(figsize=(22, 16), dpi=65)
-        plt.xticks(range(nb_classes))
-        plt.yticks(range(nb_classes -1, -1, -1))
+        plt.xticks(range(self.nb_classes))
+        plt.yticks(range(self.nb_classes -1, -1, -1))
         plt.title(self.title)
 
     def __call__(self, confusion_matrices: np.ndarray) -> plt.figure:
@@ -59,15 +62,14 @@ class ConfusionMatrixPlotter(Plotter):
         self.initialise_figure()
         self.generate_figure(
             confusion_matrix_mean=confusion_matrices.mean(axis=0),
-            confusion_matrices_std= confusion_matrices.std(axis=0)
+            confusion_matrix_std=confusion_matrices.std(axis=0)
 
         )
-        self.clear_figure()
         return self.figure
 
     def generate_figure(
             self, confusion_matrix_mean: np.ndarray,
-            confusion_matrices_std: np.array
+            confusion_matrix_std: np.array
         ) -> None:
         """generate_figure
 
@@ -78,13 +80,13 @@ class ConfusionMatrixPlotter(Plotter):
         :rtype: None
         """
         plt.imshow(confusion_matrix_mean, cmap=self.cmap)
-        for i in range(nb_classes):
-            for j in range(nb_classes):
+        for i in range(self.nb_classes):
+            for j in range(self.nb_classes):
                 plt.text(
                     i, j,
                     '{}\n±\n{}'.format(
-                        confusion_matrix_mean[i, j].__round__(3),
-                        confusion_matrix_std[i, j].__round__(3),
+                        confusion_matrix_mean[j, i].__round__(3),
+                        confusion_matrix_std[j, i].__round__(3),
                     ),
                 )
         plt.colorbar()
