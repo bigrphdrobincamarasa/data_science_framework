@@ -14,7 +14,7 @@
 **File that test the module Metric**
 """
 from data_science_framework.pytorch_utils.metrics import SegmentationAccuracyMetric,\
-        SegmentationBCEMetric, SegmentationDiceMetric
+        SegmentationBCEMetric, SegmentationDiceMetric, MetricPerClass
 import numpy as np
 import torch
 
@@ -164,3 +164,23 @@ def test_SegmentationDiceMetric() -> None:
     )
     assert batch_size == 2
     assert (cumulated_accuracy - 2.)**2 < 0.01
+
+
+def test_MetricPerClass() -> None:
+    """test_MetricPerClass
+
+    Function that tests test_MetricPerClass
+
+    :rtype: None
+    """
+    # Test initialisation
+    metric_per_class = MetricPerClass(name = 'test')
+    assert metric_per_class.name == 'test'
+
+    # Test compute
+    metric_per_class.metric_function = lambda x, y: (x.shape + y.shape)
+    output = torch.rand((2, 3, 4, 5))
+    target = torch.rand((2, 3, 4, 5))
+    output_ = metric_per_class.compute(output, target)
+    assert len(output_) == 3
+    assert output_[0] == (40, 40)

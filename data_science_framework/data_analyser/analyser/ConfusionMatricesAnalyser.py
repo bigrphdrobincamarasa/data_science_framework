@@ -38,9 +38,9 @@ class ConfusionMatricesAnalyser(Analyser):
             save_path: str, subset_name: str
         ) -> None:
         super().__init__(
-            writer=writer, save_path=save_path
+            writer=writer, save_path=save_path,
+            subset_name=subset_name
         )
-        self.subset_name = subset_name
         self.confusion_matrix_plotter = None
         self.confusion_matrices = []
         self.nb_classes = None

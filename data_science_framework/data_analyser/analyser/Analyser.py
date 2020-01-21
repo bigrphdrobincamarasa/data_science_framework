@@ -30,11 +30,14 @@ class Analyser(object):
     :param writer: Tensorboad summary writter file
     :param plotter: Plots in use for the analyse
     :param save_path: Path to the save folder
+    :param subset_name: Name of the datasubset
+    :param subset_name
     """
     def __init__(
             self, writer: SummaryWriter,
-            save_path: str
+            save_path: str, subset_name: str
         ) -> None:
+        self.subset_name = subset_name
         self.writer = writer
         self.save_path = save_path
 

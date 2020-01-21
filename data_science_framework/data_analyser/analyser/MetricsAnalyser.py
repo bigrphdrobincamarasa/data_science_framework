@@ -11,10 +11,10 @@
 
 **Project** : data_science_framework
 
-**Class that implements ConfusionMatricesAnalyser**
+**Class that implements MetricsAnalyser**
 """
-from data_science_framework.data_analyser.plotter import ConfusionMatrixPlotter
 from data_science_framework.data_analyser.analyser import Analyser
+from data_science_framework.pytorch_utils.metrics import Metric
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
 from typing import List
@@ -26,7 +26,7 @@ import numpy as np
 
 class MetricsAnalyser(Analyser):
     """
-    Class that implements ConfusionMatricesAnalyser
+    Class that implements MetricsAnalyser
 
     :param writer: Tensorboad summary writter file
     :param plotter: Plots in use for the analyse
@@ -36,17 +36,13 @@ class MetricsAnalyser(Analyser):
     def __init__(
             self, writer: SummaryWriter,
             save_path: str, subset_name: str,
-            MetricsAnalyser
+            metrics: List[Metric]
         ) -> None:
         super(Analyser, self).__init__(
-            writer=writer, save_path=save_path
+            writer=writer, save_path=save_path,
+            subset_name=subset_name
         )
-        self.subset_name = subset_name
-        self.confusion_matrix_plotter = ConfusionMatrixPlotter(
-                title='Confusion matrix per image on {} dataset'.format(
-                    self.subset_name
-                )
-        )
+        self.metrics = metrics
 
     def __call__(
             self, output: torch.Tensor,
@@ -60,25 +56,7 @@ class MetricsAnalyser(Analyser):
         :type target: torch.Tensor
         :rtype: None
         """
-        # Get nb classes
-        nb_classes = output.shape[1]
-
-        # Get output classification 
-        output_classification = output.max(1)[1]\
-                .cpu().detach().numpy().ravel()
-
-        # Get classification version of the target tensor
-        target_classification = target.max(1)[1]\
-                .cpu().detach().numpy().ravel()
-
-        # Compute confusion matrix
-        confusion_matrix_ = confusion_matrix(
-            target_classification, output_classification,
-            normalize='true', labels=list(range(nb_classes))
-        )
-
-        # Append confusion matrix
-        self.confusion_matrices.append(confusion_matrix)
+        pass
 
     def save_data(self) -> None:
         """save_data
@@ -87,13 +65,7 @@ class MetricsAnalyser(Analyser):
 
         :rtype: None
         """
-        # Save data
-        np.save(
-            os.path.join(
-                self.save_path, '{}.npy'.format(self.subset_name)
-            ),
-            np.array(self.confusion_matrix)
-        )
+        pass
 
     def save_to_tensorboard(self) -> None:
         """save_to_tensorboard
@@ -102,10 +74,4 @@ class MetricsAnalyser(Analyser):
 
         :rtype: None
         """
-        self.writer.add_figure(
-            'test/confusion_matrix_{}'.format(subset_name),
-            self.confusion_matrix_plotter(
-                self.confusion_matrix_plotter
-            )
-        )
 
