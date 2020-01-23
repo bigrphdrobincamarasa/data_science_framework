@@ -201,21 +201,17 @@ def test_global_logger(output_folder: str) -> None:
         assert testa ** 2 == testb
         return {'result': testa * testb}
 
-    # Launch 5 experiments
     for i in range(5):
         g(testa=i, testb=i ** 2)
 
     # Delete an experiment
     df = pd.read_csv(os.path.join(output_folder, '#glogger_training.csv'))
-    df[df.index != 3].to_csv(
+    df[[df.index != 3]].to_csv(
         os.path.join(output_folder, '#glogger_training.csv'),
-        index=False
+        ''
     )
 
-    # Launch 5 experiments
-    for i in range(5):
-        g(testa=i, testb=i ** 2)
-
+    assert os.path.isfile(os.path.join(output_folder, '#glogger_training.csv'))
 
     # Test input logger
     df_test = get_file_structure(
@@ -223,7 +219,6 @@ def test_global_logger(output_folder: str) -> None:
             os.path.join(output_folder, '#glogger_training.csv')
         )
     )['object']
-    assert os.path.isfile(os.path.join(output_folder, '#glogger_training.csv'))
     assert 'index' in list(df_test)
     assert 'comment' in list(df_test)
     assert 'branch' in list(df_test)

@@ -48,13 +48,19 @@ def global_logger(
                 tag_ = tag + '_test'
             else:
                 tag_ = tag
+
             # Manage dataframe
             csv_path = os.path.join(folder, FILENAME_TEMPLATE['glogger']['input'].format(tag_))
-            if os.path.isfile(csv_path):
-                df = pd.read_csv(csv_path).set_index('index')
-            else:
-                df = pd.DataFrame(columns=['index']).set_index('index')
 
+            # Create parent directory of the csv file
+            create_error_less_directory(os.path.dirname(os.path.abspath(csv_path)))
+
+            if os.path.isfile(csv_path):
+                df = pd.read_csv(csv_path)
+                index = int(df['index'].max() + 1)
+            else:
+                df = pd.DataFrame()
+                index = 0
 
             # Get git values
             git_values = get_git_current_state(project_root)
@@ -65,62 +71,24 @@ def global_logger(
 
             # Append experiments input values
             df = df.append(
-                {'comment': '',  'time': start_time, **git_values, **kwargs},
+                {'index': index, 'comment': '',  'time': start_time, **git_values, **kwargs},
                 ignore_index=True
             )
 
             # Save csv file
-            df.reset_index().to_csv(csv_path, index=False)
-
-            # Get the added row
-            row_with_id = df.reset_index().iloc[-1].to_dict()
+            df.to_csv(csv_path, index=False)
 
             # Create experiment folder
-            experiment_folder = os.path.join(folder, '#{}_{}'.format(tag_, row_with_id['index']))
+            experiment_folder = os.path.join(folder, '#{}_{}'.format(tag_, index))
             create_error_less_directory(experiment_folder)
 
             #Apply fonction
-            print(Figlet().renderText('{} {}'.format(tag_, row_with_id['index'])))
-            output = f(
+            print(Figlet().renderText('{} {}'.format(tag_, index)))
+            return f(
                 *args, **kwargs, experiment_folder=experiment_folder,
-                index=row_with_id['index']
+                index=index
             )
 
-            # Create parent directory of the csv file
-            create_error_less_directory(os.path.dirname(os.path.abspath(csv_path)))
-
-            # Get csv output path
-            csv_output_path = os.path.join(folder, FILENAME_TEMPLATE['glogger']['output'].format(tag_))
-
-            # Log output of the function
-            if os.path.isfile(csv_output_path):
-                df = pd.read_csv(csv_output_path)
-            else:
-                df = pd.DataFrame(columns=['index'])
-
-            if type(output) == None:
-                df = df.append(
-                    {
-                        'index': row_with_id['index'],
-                        'total_time': (
-                                datetime.datetime.now().timestamp() - start_time.timestamp()
-                        ).__round__(4),
-                        **output
-                    },
-                    ignore_index=True
-                )
-            else:
-                df = df.append(
-                    {
-                        'index': row_with_id['index'],
-                        'total_time': (
-                                datetime.datetime.now().timestamp() - start_time.timestamp()
-                        ).__round__(4)
-                    },
-                    ignore_index=True
-                )
-            df.to_csv(csv_output_path, index=False)
-            return output
         return wrapper
     return decorator
 

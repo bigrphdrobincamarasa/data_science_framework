@@ -65,14 +65,8 @@ def clear_experiments(folder: str) -> None:
             folder, FILENAME_TEMPLATE['glogger']['input'].format(item)
         )
 
-        # Get csv output
-        csv_output = os.path.join(
-            folder, FILENAME_TEMPLATE['glogger']['output'].format(item)
-        )
-
         # Input dataframe
         df_input = pd.read_csv(csv_input)
-        df_output = pd.read_csv(csv_output)
 
         # Get commented experiments
         df_input = df_input.fillna('')
@@ -80,10 +74,7 @@ def clear_experiments(folder: str) -> None:
 
         # Update dataframes
         df_input = df_input[df_input['index'].isin(commented_ids)]
-        df_output = df_output[df_output['index'].isin(commented_ids)]
 
         # Save updated dataframes
         df_input.to_csv(csv_input, index=False)
-        df_output.to_csv(csv_output, index=False)
-
 
