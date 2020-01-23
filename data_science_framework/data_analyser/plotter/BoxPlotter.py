@@ -22,6 +22,7 @@ from typing import Dict, List
 import torch
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 class BoxPlotter(Plotter):
     """
@@ -56,6 +57,12 @@ class BoxPlotter(Plotter):
         :rtype: None
         """
         plt.boxplot(data.values())
-        plt.xticks(range(1, len(data) + 1), data.keys())
+        for i, data_array in enumerate(data.values()):
+            plt.text(
+                i+0.5, np.array(data_array).max() * 0.9,
+                'mean {} '.format(
+                    np.array(data_array).mean().__round__(3)
+                )
+            )
         self.figure = plt.gcf()
 

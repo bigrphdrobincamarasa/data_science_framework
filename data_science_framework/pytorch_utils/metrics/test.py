@@ -175,7 +175,7 @@ def test_MetricPerClass() -> None:
     :rtype: None
     """
     # Test compute
-    metric_per_class = MetricPerClass(name = 'test')
+    metric_per_class = MetricPerClass(name='test')
     metric_per_class.metric_function = lambda x, y: (x.shape + y.shape)
     output = torch.rand((2, 3, 4, 5))
     target = torch.rand((2, 3, 4, 5))

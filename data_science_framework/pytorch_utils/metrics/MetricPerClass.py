@@ -25,8 +25,10 @@ class MetricPerClass(Metric):
 
     ;param name: Name of the metric
     """
-    def __init__(name='accuracy_per_class'):
-        super().__init__(name=name)
+    def __init__(self, name, threshold: float = 0.5):
+        super().__init__(name)
+        self.threshold = threshold
+
     def compute(
             self, output: torch.Tensor, target: torch.Tensor
         ) -> List:
@@ -40,7 +42,7 @@ class MetricPerClass(Metric):
         return [
                 self.metric_function(
                     1.0 * output[:, i, :]\
-                            .cpu().detach().numpy().ravel() > 0.5,
+                            .cpu().detach().numpy().ravel() > self.threshold,
                     target[:, i, :].cpu().detach().numpy().ravel()
                 )
             for i in range(output.shape[1])

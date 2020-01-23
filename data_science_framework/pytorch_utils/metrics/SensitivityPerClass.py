@@ -16,11 +16,11 @@
 import torch
 import numpy as np
 from typing import Tuple, List
-from data_science_framework.pytorch_utils.metrics import Metric
+from data_science_framework.pytorch_utils.metrics import MetricPerClass
 from sklearn.metrics import confusion_matrix
 
 
-class SensitivityPerClass(Metric):
+class SensitivityPerClass(MetricPerClass):
     """
     Class that implements SensitivityPerClass
 

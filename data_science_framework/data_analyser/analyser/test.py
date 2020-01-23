@@ -18,8 +18,12 @@ from data_science_framework.data_analyser.analyser import MODULE,\
 from data_science_framework.data_analyser.plotter import ConfusionMatrixPlotter
 from data_science_framework.settings import TEST_ROOT
 from data_science_framework.scripting.test_manager import set_test_folders
+from data_science_framework.pytorch_utils.metrics import DicePerClass,\
+        AccuracyPerClass, SensitivityPerClass, PrecisionPerClass,\
+        SpecificityPerClass
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
+import pandas as pd
 import torch
 import os
 
@@ -69,6 +73,56 @@ def test_ConfusionMatricesAnalyser(output_folder: str) -> None:
     assert np.load(
         os.path.join(output_folder, 'confusion_matrices_test.npy')
     ).shape  == (2, 5, 5)
+
+    # Test save tensorboard
+    analyser.save_to_tensorboard()
+
+
+@set_test_folders(
+    output_root=TEST_ROOT,
+    current_module=MODULE
+)
+def test_MetricsAnalyser(output_folder: str) -> None:
+    """
+    Function that tests MetricsAnalyser
+
+    :param output_folder: Path to the output folder
+    :return: None
+    """
+    # Test object creation
+    analyser = MetricsAnalyser(
+        writer=SummaryWriter(log_dir=output_folder),
+        save_path=output_folder,
+        subset_name='test',
+        metrics=[
+            DicePerClass(), SensitivityPerClass(),
+            AccuracyPerClass(), PrecisionPerClass(),
+            SpecificityPerClass()
+        ]
+    )
+    assert analyser.subset_name == 'test'
+    assert analyser.save_path == output_folder
+    assert type(analyser.writer) == type(SummaryWriter(log_dir=output_folder))
+    assert type(analyser.dataframe) == type(pd.DataFrame())
+
+    # Test call
+    for i in range(10):
+        output = torch.rand((2, 5, 6, 7, 8))
+        target = torch.rand((2, 5, 6, 7, 8)) > 0.5
+        analyser(output, target, meta={'test': 'test_{}'.format(i)})
+
+    assert analyser.dataframe.shape == (10, 26)
+
+    # Test save data
+    analyser.save_data()
+
+    assert pd.read_csv(
+        os.path.join(output_folder, 'metrics_test.csv')
+    ).shape  == (10, 26)
+
+    assert pd.read_csv(
+        os.path.join(output_folder, 'metrics_human_readable_test.csv')
+    ).shape  == (5, 6)
 
     # Test save tensorboard
     analyser.save_to_tensorboard()

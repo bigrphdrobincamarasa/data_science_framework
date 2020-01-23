@@ -143,8 +143,8 @@ class ConfusionMatrixCallback(Callback):
                 plt.text(
                     i, j,
                     '{}\n±\n{}'.format(
-                        confusion_matrix_mean[i, j].__round__(3),
-                        confusion_matrix_std[i, j].__round__(3),
+                        confusion_matrix_mean[j, i].__round__(3),
+                        confusion_matrix_std[j, i].__round__(3),
                     ),
                 )
         plt.colorbar()
