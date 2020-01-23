@@ -51,12 +51,23 @@ class Unet(nn.Module):
         self.padding = padding
         self.depth = depth
         self.activation = activation
+        self.down_conv = DownConvolution3DLayer
+        self.double_conv = DoubleConvolution3DLayer
+        self.up_conv = UpConvolution3DLayer
+        self.out_conv = OutConvolution3DLayer
+        self.create_architecture()
 
+
+    def create_architecture(self):
+        """create_architecture
+
+        Initialize architecture
+        """
         # Initialize the number of features in the layer
-        layer_n_features_ = n_features
+        layer_n_features_ = self.n_features
 
         # Initialize down path
-        self.down_path_0 = DoubleConvolution3DLayer(
+        self.down_path_0 = self.double_conv(
             in_channels=self.in_channels,
             out_channels=layer_n_features_,
             kernel_size=self.kernel_size,
@@ -66,7 +77,7 @@ class Unet(nn.Module):
         for i in range(1, self.depth + 1):
             self.__setattr__(
                 'down_path_{}'.format(i),
-                DownConvolution3DLayer(
+                self.down_conv(
                     in_channels=layer_n_features_,
                     out_channels=layer_n_features_ * self.pool_size,
                     pool_size=self.pool_size,
@@ -81,7 +92,7 @@ class Unet(nn.Module):
             layer_n_features_ = int(layer_n_features_ / self.pool_size)
             self.__setattr__(
                 'up_path_{}'.format(i),
-                UpConvolution3DLayer(
+                self.up_conv(
                     in_channels=layer_n_features_,
                     out_channels=layer_n_features_,
                     pool_size=self.pool_size,
@@ -91,7 +102,7 @@ class Unet(nn.Module):
             )
         self.__setattr__(
             'up_path_{}'.format(i+1),
-            OutConvolution3DLayer(
+            self.out_conv(
                 in_channels=self.n_features,
                 out_channels=self.out_channels,
                 kernel_size=self.kernel_size,
