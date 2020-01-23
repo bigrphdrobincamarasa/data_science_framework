@@ -39,11 +39,19 @@ class UpConvolution3DLayer(nn.Module):
         self.kernel_size = kernel_size
         self.padding = padding
         self.pool_size = pool_size
+        self.up_sample = nn.Upsample
+        self.double_convolution = DoubleConvolution3DLayer
+        self.create_architecture()
 
-        self.up = nn.Upsample(
+    def create_architecture(self):
+        """create_architecture
+
+        Initialise architecture
+        """
+        self.up = self.up_sample(
             scale_factor=self.pool_size
         )
-        self.conv = DoubleConvolution3DLayer(
+        self.conv = self.double_convolution(
             in_channels=3 * self.in_channels, out_channels=self.out_channels,
             kernel_size=self.kernel_size, padding=self.padding
         )
