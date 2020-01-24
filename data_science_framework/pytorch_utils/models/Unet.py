@@ -16,16 +16,15 @@
 """
 import torch.nn as nn
 import torch
-from data_science_framework.pytorch_utils.layers.DoubleConvolution3DLayer import DoubleConvolution3DLayer
-from data_science_framework.pytorch_utils.layers.DownConvolution3DLayer import DownConvolution3DLayer
-from data_science_framework.pytorch_utils.layers.OutConvolution3DLayer import OutConvolution3DLayer
-from data_science_framework.pytorch_utils.layers.UpConvolution3DLayer import UpConvolution3DLayer
+from data_science_framework.pytorch_utils.layers import DoubleConvolution3DLayer,\
+        DownConvolution3DLayer, OutConvolution3DLayer, UpConvolution3DLayer
 
 
 class Unet(nn.Module):
     """
     Class that implements Unet structure
 
+    :param name: Name of the model
     :param in_channels: Number of channel of the input
     :param out_channels: Number of channel of the output
     :param depth: Depth of the network
@@ -36,9 +35,11 @@ class Unet(nn.Module):
     :param activation: Type of activation function (either 'sigmoid' or 'softmax')
     """
     def __init__(
-            self, in_channels: int=1, out_channels: int=1,
+            self, name='unet', in_channels: int=1, out_channels: int=1,
             depth: int=3, n_features: int=8, kernel_size: int=3,
-            pool_size: int=2, padding: int=1, activation: str='softmax'
+            pool_size: int=2, padding: int=1, activation: str='softmax',
+            double_conv=DoubleConvolution3DLayer, up_conv=UpConvolution3DLayer,
+            out_conv=OutConvolution3DLayer, down_conv=DownConvolution3DLayer
     ):
         super(Unet, self).__init__()
 
@@ -51,12 +52,11 @@ class Unet(nn.Module):
         self.padding = padding
         self.depth = depth
         self.activation = activation
-        self.down_conv = DownConvolution3DLayer
-        self.double_conv = DoubleConvolution3DLayer
-        self.up_conv = UpConvolution3DLayer
-        self.out_conv = OutConvolution3DLayer
+        self.down_conv = down_conv
+        self.double_conv = double_conv
+        self.up_conv = up_conv
+        self.out_conv = out_conv
         self.create_architecture()
-
 
     def create_architecture(self):
         """create_architecture
