@@ -34,7 +34,6 @@ class UpConvolution2Axis3DLayer(UpConvolution3DLayer):
             self, in_channels: int, out_channels: int,
             kernel_size: int, padding: int, pool_size: int
     ):
-        import ipdb; ipdb.set_trace() ###!!!BREAKPOINT!!!
         super(UpConvolution2Axis3DLayer, self).__init__(
             in_channels=in_channels, out_channels=out_channels,
             kernel_size=kernel_size, padding=padding,

@@ -17,6 +17,7 @@
 MODULE = ['data_science_framework', 'pytorch_utils', 'layers']
 
 from .DownConvolution3DLayer import DownConvolution3DLayer
+from .DownConvolution2Axis3DLayer import DownConvolution2Axis3DLayer
 from .UpConvolution3DLayer import UpConvolution3DLayer
 from .UpConvolution2Axis3DLayer import UpConvolution2Axis3DLayer
 from .OutConvolution3DLayer import OutConvolution3DLayer
