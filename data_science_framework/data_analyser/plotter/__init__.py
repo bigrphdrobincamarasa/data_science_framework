@@ -19,3 +19,4 @@ MODULE=['data_science_framework', 'data_analyser', 'plotter']
 from .Plotter import Plotter
 from .ConfusionMatrixPlotter import ConfusionMatrixPlotter
 from .BoxPlotter import BoxPlotter
+from .ROCPlotter import ROCPlotter

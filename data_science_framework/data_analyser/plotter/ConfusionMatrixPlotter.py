@@ -61,22 +61,19 @@ class ConfusionMatrixPlotter(Plotter):
         """
         self.initialise_figure()
         self.generate_figure(
-            confusion_matrix_mean=confusion_matrices.mean(axis=0),
-            confusion_matrix_std=confusion_matrices.std(axis=0)
+            confusion_matrix_mean=confusion_matrices.sum(axis=0)\
+                    /confusion_matrices.sum(),
 
         )
         return self.figure
 
     def generate_figure(
-            self, confusion_matrix_mean: np.ndarray,
-            confusion_matrix_std: np.array
+            self, confusion_matrix_mean: np.ndarray
         ) -> None:
         """generate_figure
 
         :param confusion_matrices: Confusion matrices over the dataset
         :type confusion_matrices: np.ndarray
-        :param confusion_matrices_std: Confusion matrices standard deviation
-        :type confusion_matrices_std: np.array
         :rtype: None
         """
         plt.imshow(confusion_matrix_mean, cmap=self.cmap)
@@ -84,10 +81,9 @@ class ConfusionMatrixPlotter(Plotter):
             for j in range(self.nb_classes):
                 plt.text(
                     i, j,
-                    '{}\n±\n{}'.format(
+                    '{}'.format(
                         confusion_matrix_mean[j, i].__round__(3),
-                        confusion_matrix_std[j, i].__round__(3),
-                    ),
+                    )
                 )
         plt.colorbar()
         self.figure = plt.gcf()
