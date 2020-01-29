@@ -14,7 +14,8 @@
 **File that test the module Metric**
 """
 from data_science_framework.pytorch_utils.metrics import SegmentationAccuracyMetric,\
-        SegmentationBCEMetric, SegmentationDiceMetric
+        SegmentationBCEMetric, SegmentationDiceMetric, MetricPerClass, AccuracyPerClass,\
+        SensitivityPerClass, SpecificityPerClass, PrecisionPerClass, DicePerClass
 import numpy as np
 import torch
 
@@ -164,3 +165,115 @@ def test_SegmentationDiceMetric() -> None:
     )
     assert batch_size == 2
     assert (cumulated_accuracy - 2.)**2 < 0.01
+
+
+def test_MetricPerClass() -> None:
+    """test_MetricPerClass
+
+    Function that tests test_MetricPerClass
+
+    :rtype: None
+    """
+    # Test compute
+    metric_per_class = MetricPerClass(name='test')
+    metric_per_class.metric_function = lambda x, y: (x.shape + y.shape)
+    output = torch.rand((2, 3, 4, 5))
+    target = torch.rand((2, 3, 4, 5))
+    output_ = metric_per_class.compute(output, target)
+    assert len(output_) == 3
+    assert output_[0] == (40, 40)
+
+
+def test_AccuracyPerClass() -> None:
+    """test_AccuracyPerClass
+
+    Function that tests test_AccuracyPerClass
+
+    :rtype: None
+    """
+    # Test initialisation
+    metric_per_class = AccuracyPerClass()
+    assert metric_per_class.name == 'accuracy_per_class'
+
+    # Test compute
+    output = metric_per_class.metric_function(
+        output=np.array([1, 0, 1, 0]),
+        target=np.array([1, 0, 1, 1])
+    )
+    assert output == 0.75
+
+
+def test_SensitivityPerClass() -> None:
+    """test_SensitivityPerClass
+
+    Function that tests test_SensitivityPerClass
+
+    :rtype: None
+    """
+    # Test initialisation
+    metric_per_class = SensitivityPerClass()
+    assert metric_per_class.name == 'sensitivity_per_class'
+
+    # Test compute
+    output = metric_per_class.metric_function(
+        output=np.array([1, 0, 1, 0]),
+        target=np.array([1, 0, 1, 1])
+    )
+    assert (output - 0.66) ** 2 < 0.0001
+
+
+def test_SpecificityPerClass() -> None:
+    """test_SpecificityPerClass
+
+    Function that tests test_SpecificityPerClass
+
+    :rtype: None
+    """
+    # Test initialisation
+    metric_per_class = SpecificityPerClass()
+    assert metric_per_class.name == 'specificity_per_class'
+
+    # Test compute
+    output = metric_per_class.metric_function(
+        output=np.array([1, 0, 1, 0]),
+        target=np.array([1, 0, 1, 1])
+    )
+    assert output == 1
+
+
+def test_PrecisionPerClass() -> None:
+    """test_PrecisionPerClass
+
+    Function that tests test_PrecisionPerClass
+
+    :rtype: None
+    """
+    # Test initialisation
+    metric_per_class = PrecisionPerClass()
+    assert metric_per_class.name == 'precision_per_class'
+
+    # Test compute
+    output = metric_per_class.metric_function(
+        output=np.array([1, 0, 1, 0]),
+        target=np.array([1, 0, 1, 1])
+    )
+    assert output == 1
+
+
+def test_DicePerClass() -> None:
+    """test_DicePerClass
+
+    Function that tests test_DicePerClass
+
+    :rtype: None
+    """
+    # Test initialisation
+    metric_per_class = DicePerClass()
+    assert metric_per_class.name == 'dice_per_class'
+
+    # Test compute
+    output = metric_per_class.metric_function(
+        output=np.array([1, 0, 1, 0]),
+        target=np.array([1, 0, 1, 1])
+    )
+    assert output == 0.8

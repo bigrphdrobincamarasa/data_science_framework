@@ -21,3 +21,9 @@ from .Metric import Metric
 from .SegmentationAccuracyMetric import SegmentationAccuracyMetric
 from .SegmentationBCEMetric import SegmentationBCEMetric
 from .SegmentationDiceMetric import SegmentationDiceMetric
+from .MetricPerClass import MetricPerClass
+from .AccuracyPerClass import AccuracyPerClass
+from .SensitivityPerClass import SensitivityPerClass
+from .SpecificityPerClass import SpecificityPerClass
+from .PrecisionPerClass import PrecisionPerClass
+from .DicePerClass import DicePerClass
