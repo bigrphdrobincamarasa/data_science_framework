@@ -17,7 +17,7 @@ import os
 from torch.utils.tensorboard import SummaryWriter
 from data_science_framework.pytorch_utils.callbacks import Callback, MetricsWritter, ModelCheckpoint,\
         ModelPlotter, DataDisplayer, ConfusionMatrixCallback
-from data_science_framework.pytorch_utils.models.Unet import Unet
+from data_science_framework.pytorch_utils.models import Unet
 from data_science_framework.pytorch_utils.callbacks import MODULE
 from data_science_framework.scripting.test_manager import set_test_folders
 from data_science_framework.settings import TEST_ROOT
@@ -130,8 +130,11 @@ def test_ModelCheckpoint(output_folder: str) -> None:
     )
 
     # Test on epoch start
-    model_checkpoint.on_epoch_start(0, None)
+    model_checkpoint.on_epoch_start(0, Unet())
     assert len(list(model_checkpoint.metric_values)) == 3
+    assert os.path.isfile(
+        os.path.join(output_folder, 'model.pkl')
+    )
 
     # Test call method
     model_checkpoint(3, 4, training=True)
@@ -146,7 +149,7 @@ def test_ModelCheckpoint(output_folder: str) -> None:
     # Test on epoch end
     model = Unet()
     for epoch in range(10):
-        model_checkpoint.on_epoch_start(epoch, None)
+        model_checkpoint.on_epoch_start(epoch, model)
         for i in range(epoch):
             model_checkpoint(3, 4, training=False)
         model_checkpoint.on_epoch_end(epoch, model)

@@ -20,6 +20,7 @@ import torch
 import torch.nn as nn
 import os
 import numpy as np
+import pickle
 
 
 class ModelCheckpoint(Callback):
@@ -39,24 +40,32 @@ class ModelCheckpoint(Callback):
         self.metric = metric
         self.save_folder = save_folder
         self.metric_to_minimize = metric_to_minimize
+        self.metric_values = (self.metric, 0, 0)
 
         self.best_score = np.inf if self.metric_to_minimize else -np.inf
         self.best_epoch = 0
-        self.on_epoch_start(0, None)
 
     def on_epoch_start(self, epoch: int, model: nn.Module):
         """
         Method called on epoch start
-        
+
         :param epoch: Epoch value
         :param model: Model under study
         """
         self.metric_values = (self.metric, 0, 0)
 
+        # If first epoch save model
+        if epoch == 0:
+            with open(
+                os.path.join(self.save_folder, 'model.pkl'),
+                'wb'
+            ) as handle:
+                pickle.dump(model, handle)
+
     def on_epoch_end(self, epoch: int, model: nn.Module):
         """
         Method called on epoch end
-        
+
         :param epoch: Epoch value
         :param model: Model under study
         """
