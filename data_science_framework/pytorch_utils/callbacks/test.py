@@ -235,8 +235,7 @@ def test_ConfusionMatrixCallback(output_folder: str) -> None:
     confusion_matrix_callback = ConfusionMatrixCallback(
         writer=SummaryWriter(log_dir=output_folder),
     )
-    assert confusion_matrix_callback.training_confusion_matrices == []
-    assert confusion_matrix_callback.validation_confusion_matrices == []
+    assert confusion_matrix_callback.nb_classes == None
 
     # Test on epoch start
     confusion_matrix_callback.on_epoch_start(0, None)
@@ -270,15 +269,6 @@ def test_ConfusionMatrixCallback(output_folder: str) -> None:
         assert len(
             confusion_matrix_callback.validation_confusion_matrices
         ) == validation_length_
-
-    # Test plot method
-    figure = confusion_matrix_callback.generate_plot(
-        title='title',
-        confusion_matrices=np.array(
-            confusion_matrix_callback.training_confusion_matrices
-        )
-    )
-    figure.savefig(os.path.join(output_folder, 'figure.png'))
 
     # Test on epoch end
     confusion_matrix_callback.on_epoch_end(

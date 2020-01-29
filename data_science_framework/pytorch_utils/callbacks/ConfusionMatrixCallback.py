@@ -16,6 +16,7 @@
 from data_science_framework.pytorch_utils.metrics import SegmentationAccuracyMetric
 from torch.utils.tensorboard import SummaryWriter
 from data_science_framework.pytorch_utils.callbacks import Callback
+from data_science_framework.data_analyser.plotter import ConfusionMatrixPlotter
 import torch
 import torch.nn as nn
 import os
@@ -34,8 +35,7 @@ class ConfusionMatrixCallback(Callback):
             self, writer: SummaryWriter,
         ) -> None:
         super(ConfusionMatrixCallback, self).__init__(writer=writer)
-        self.training_confusion_matrices = []
-        self.validation_confusion_matrices = []
+        self.nb_classes=None
 
     def on_epoch_start(self, epoch: int, model: nn.Module):
         """
@@ -57,7 +57,8 @@ class ConfusionMatrixCallback(Callback):
         :param training: True if metric is computed on test
         """
         # Get nb classes
-        nb_classes = output.shape[1]
+        if self.nb_classes == None:
+            self.nb_classes = output.shape[1]
 
         # Get output classification 
         output_classification = output.max(1)[1]\
@@ -70,7 +71,7 @@ class ConfusionMatrixCallback(Callback):
         # Compute confusion matrix
         confusion_matrix_ = confusion_matrix(
             target_classification, output_classification,
-            normalize='true', labels=list(range(nb_classes))
+            normalize='true', labels=list(range(self.nb_classes))
         )
 
         # Sum confusion matrix
@@ -96,62 +97,13 @@ class ConfusionMatrixCallback(Callback):
             ('training', self.training_confusion_matrices),
             ('validation', self.validation_confusion_matrices),
         ]:
+            plotter = ConfusionMatrixPlotter(
+                title='Confusion matrix on {} at epoch {}'.format(subset_, epoch),
+                nb_classes=self.nb_classes
+            )
             self.writer.add_figure(
                 'confusion_matrix/{}'.format(subset_),
-                self.generate_plot(
-                    title='Confusion matrix on {} at epoch {}'.format(
-                        subset_, epoch
-                    ),
-                        confusion_matrices=np.array(confusion_matrices_)
-                    ),
+                plotter(np.array(confusion_matrices_)),
                 epoch
             )
-
-    def generate_plot(
-            self, title: str, confusion_matrices: np.ndarray
-        ) -> plt.figure:
-        """
-        Method that generate confusion_matrix plot
-
-        :param title: Title of the graph
-        :param confusion_matrix: Confusion matrix value
-        """
-        # Define title font
-        fontdict = {
-            'family': 'serif',
-            'color':  'darkred',
-            'weight': 'normal',
-            'size': 25,
-        }
-
-        # Define the number of classes
-        nb_classes = confusion_matrices.shape[-1]
-
-        # Clear matplotlib
-        plt.figure(figsize=(22, 16), dpi=65)
-
-        # Display heatmap
-        confusion_matrix_std = confusion_matrices.std(axis=0)
-        confusion_matrix_mean = confusion_matrices.mean(axis=0)
-        plt.imshow(confusion_matrix_mean, cmap='jet')
-
-        plt.xticks(range(nb_classes))
-        plt.yticks(range(nb_classes -1, -1, -1))
-        plt.title(title, fontdict=fontdict)
-        for i in range(nb_classes):
-            for j in range(nb_classes):
-                plt.text(
-                    i, j,
-                    '{}\n±\n{}'.format(
-                        confusion_matrix_mean[j, i].__round__(3),
-                        confusion_matrix_std[j, i].__round__(3),
-                    ),
-                )
-        plt.colorbar()
-
-        # Get figure 
-        figure = plt.gcf()
-
-        # Return figure
-        return figure
 

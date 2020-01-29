@@ -35,7 +35,7 @@ class ConfusionMatrixPlotter(Plotter):
     def __init__(
             self, title: str,
             nb_classes,
-            cmap='jet'
+            cmap='viridis'
         )  -> None:
         super().__init__(title)
         self.nb_classes = nb_classes
@@ -60,10 +60,20 @@ class ConfusionMatrixPlotter(Plotter):
         :rtype: plt.figure
         """
         self.initialise_figure()
-        self.generate_figure(
-            confusion_matrix_mean=confusion_matrices.sum(axis=0)\
-                    /confusion_matrices.sum(),
 
+        # Sum values confusion matrices
+        summed_confusion_matrices = confusion_matrices\
+                .sum(axis=0).astype(float)
+
+        # Divide by class cardinal
+        for i in range(
+            summed_confusion_matrices.shape[1]
+        ):
+            summed_confusion_matrices[i, :] = summed_confusion_matrices[i, :] \
+                    / summed_confusion_matrices[i, :].sum()
+
+        self.generate_figure(
+            confusion_matrix_mean=summed_confusion_matrices,
         )
         return self.figure
 

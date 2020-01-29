@@ -60,7 +60,7 @@ def test_ConfusionMatrixPlotter(output_folder: str) -> None:
     """
     # Test object creation
     plotter = ConfusionMatrixPlotter('test title', 5)
-    assert plotter.cmap == 'jet'
+    assert plotter.cmap == 'viridis'
 
     # Test figure initialisation
     plotter.initialise_figure()
