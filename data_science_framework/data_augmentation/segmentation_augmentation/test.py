@@ -493,14 +493,15 @@ def test_SegmentationROISelector(ressources_structure: dict, output_folder: str)
     segmentation_roi_selector = SegmentationROISelector(
             shape_x=16,
             shape_y=16,
-            shape_z=16
+            shape_z=16,
+            centered=True
     )
 
     for i, input_ in enumerate(input):
         nib.save(
             input_, os.path.join(output_folder, 'input_{}.nii.gz'.format(i))
         )
-        
+
     input_transformed, gt_transformed = segmentation_roi_selector\
             .transform_patient(input, gt)
 
@@ -533,7 +534,6 @@ def test_SegmentationROISelector(ressources_structure: dict, output_folder: str)
     assert len(input) == len(input_transformed)
     assert input_transformed[0].shape == (16, 16, 16)
     assert gt_transformed[0].shape == (16, 16, 16)
-
 
 @set_test_folders(
     output_root=TEST_ROOT,

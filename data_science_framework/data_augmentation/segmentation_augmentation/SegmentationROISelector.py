@@ -28,14 +28,17 @@ class SegmentationROISelector(SegmentationPatientTransformation):
     :param shape_x: Tile dimension in the x dimension
     :param shape_y: Tile dimension in the y dimension
     :param shape_z: Tile dimension in the z dimension
+    :param centered: True if the groundtruth is centered
     """
 
     def __init__(
-            self, shape_x=16, shape_y=16, shape_z=16,
+            self, shape_x: int = 16, shape_y: int = 16,
+            shape_z: int = 16, centered: bool = False
     ):
         self.shape_x = shape_x
         self.shape_y = shape_y
         self.shape_z = shape_z
+        self.centered = centered
         self.tile_shape = (shape_x, shape_y, shape_z)
 
     def transform_patient(self, input, gt) -> Tuple:
@@ -74,15 +77,28 @@ class SegmentationROISelector(SegmentationPatientTransformation):
         """
         # Get the ground truth center
         gt_centers = self.get_gt_centers(gt)
-        tile_start = tuple(
-            [
-                np.random.randint(
-                    low=max(0, gt_centers[i] - self.tile_shape[i]),
-                    high=min(gt_centers[i], gt[0].shape[i] - self.tile_shape[i])+1
-                )
-                for i in range(len(list(gt[0].shape)))
-            ]
-        )
+        if self.centered:
+            tile_start = tuple(
+                [
+                    max(
+                        0,
+                        int(gt_centers[i] - self.tile_shape[i] / 2)
+                    )
+                    for i in range(len(list(gt[0].shape)))
+                ]
+            )
+        else:
+            tile_start = tuple(
+                [
+                    np.random.randint(
+                        low=max(0, gt_centers[i] - self.tile_shape[i]),
+                        high=min(
+                            gt_centers[i], gt[0].shape[i] - self.tile_shape[i]
+                        )+1
+                    )
+                    for i in range(len(list(gt[0].shape)))
+                ]
+            )
 
         # Tile the image
         tile = lambda image_array, tile_start: image_array[
