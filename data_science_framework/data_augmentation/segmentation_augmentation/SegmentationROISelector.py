@@ -82,7 +82,10 @@ class SegmentationROISelector(SegmentationPatientTransformation):
                 [
                     max(
                         0,
-                        int(gt_centers[i] - self.tile_shape[i] / 2)
+                        min(
+                            int(gt_centers[i] - self.tile_shape[i] / 2),
+                            gt[0].shape[i] - self.tile_shape[i],
+                        )
                     )
                     for i in range(len(list(gt[0].shape)))
                 ]
