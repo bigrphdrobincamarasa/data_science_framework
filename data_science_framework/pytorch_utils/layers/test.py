@@ -18,7 +18,8 @@ import torch
 import numpy as np
 from data_science_framework.pytorch_utils.layers import DoubleConvolution3DLayer,\
         OutConvolution3DLayer, DownConvolution3DLayer, UpConvolution3DLayer, \
-        UpConvolution2Axis3DLayer, DownConvolution2Axis3DLayer, MCDoubleConvolution3DLayer
+        UpConvolution2Axis3DLayer, DownConvolution2Axis3DLayer, MCDoubleConvolution3DLayer,\
+        MCDownConvolution3DLayer
 
 def test_DoubleConvolution3DLayer() -> None:
     """
@@ -92,6 +93,33 @@ def test_DownConvolution3DLayer() -> None:
 
     # Apply forward pass
     assert down_convolution_3_d_layer(input_torch).shape == (1, 3, 2, 2, 2)
+
+
+def test_MCDownConvolution3DLayer() -> None:
+    """
+    Function that tests MCDownConvolution3DLayer
+
+    :return: None
+    """
+    # Initialize layer
+    down_convolution_3_d_layer = MCDownConvolution3DLayer(
+        in_channels=2,
+        out_channels=3,
+        pool_size=2,
+        kernel_size=3,
+        padding=1,
+        dropout=0.5
+    )
+
+    # Initialize input
+    input = np.arange(2 * 4 * 4 * 4).reshape(1, 2, 4, 4, 4)
+    input_torch = torch.tensor(
+        input, dtype=torch.float32,
+    ).to('cpu')
+
+    # Apply forward pass
+    assert down_convolution_3_d_layer(input_torch).shape == (1, 3, 2, 2, 2)
+
 
 def test_DownConvolution2Axis3DLayer() -> None:
     """
