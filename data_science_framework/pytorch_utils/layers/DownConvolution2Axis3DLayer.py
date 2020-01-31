@@ -15,8 +15,7 @@
 """
 import torch.nn as nn
 import torch
-from data_science_framework.pytorch_utils.layers import DownConvolution2Axis3DLayer,\
-        DownConvolution3DLayer
+from data_science_framework.pytorch_utils.layers import DownConvolution3DLayer
 
 
 class DownConvolution2Axis3DLayer(DownConvolution3DLayer):
