@@ -85,7 +85,7 @@ class VanillaTrainer(Trainer):
         )
 
         # Loop over each training batch
-        for i, (data, target) in progress_bar:
+        for i, (data, target, meta) in progress_bar:
 
             # Update losse training value
             loss_training = (
@@ -108,7 +108,7 @@ class VanillaTrainer(Trainer):
         )
 
         # Loop over each validation batch
-        for i, (data, target) in progress_bar:
+        for i, (data, target, meta) in progress_bar:
 
             # Update losse training value
             loss_validation = (

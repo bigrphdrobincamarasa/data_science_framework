@@ -64,8 +64,8 @@ def test_VanillaTrainer_run(output_folder: str) -> None:
     )
 
     # Reset trainning generator
-    trainer.trainning_generator = [(2*i, i)for i in range(10)]
-    trainer.validation_generator = [(2*i, i)for i in range(10)]
+    trainer.trainning_generator = [(2*i, i, None)for i in range(10)]
+    trainer.validation_generator = [(2*i, i, None)for i in range(10)]
     
     # Launch function
     trainer.run()
@@ -91,8 +91,8 @@ def test_VanillaTrainer_run_epoch(output_folder: str) -> None:
     )
 
     # Reset trainning generator
-    trainer.trainning_generator = [(2*i, i)for i in range(10)]
-    trainer.validation_generator = [(2*i, i)for i in range(10)]
+    trainer.trainning_generator = [(2*i, i, None)for i in range(10)]
+    trainer.validation_generator = [(2*i, i, None)for i in range(10)]
 
     trainer.run_epoch(epoch=5)
 
