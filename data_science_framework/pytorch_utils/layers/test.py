@@ -19,7 +19,7 @@ import numpy as np
 from data_science_framework.pytorch_utils.layers import DoubleConvolution3DLayer,\
         OutConvolution3DLayer, DownConvolution3DLayer, UpConvolution3DLayer, \
         UpConvolution2Axis3DLayer, DownConvolution2Axis3DLayer, MCDoubleConvolution3DLayer,\
-        MCDownConvolution3DLayer
+        MCDownConvolution3DLayer, MCUpConvolution3DLayer, MCDownConvolution2Axis3DLayer
 
 def test_DoubleConvolution3DLayer() -> None:
     """
@@ -121,6 +121,32 @@ def test_MCDownConvolution3DLayer() -> None:
     assert down_convolution_3_d_layer(input_torch).shape == (1, 3, 2, 2, 2)
 
 
+def test_MCDownConvolution2Axis3DLayer() -> None:
+    """
+    Function that tests MCDownConvolution3DLayer
+
+    :return: None
+    """
+    # Initialize layer
+    down_convolution_3_d_layer = MCDownConvolution2Axis3DLayer(
+        in_channels=2,
+        out_channels=3,
+        pool_size=2,
+        kernel_size=3,
+        padding=1,
+        dropout=0.5
+    )
+
+    # Initialize input
+    input = np.arange(2 * 4 * 4 * 7).reshape(1, 2, 4, 4, 7)
+    input_torch = torch.tensor(
+        input, dtype=torch.float32,
+    ).to('cpu')
+
+    # Apply forward pass
+    assert down_convolution_3_d_layer(input_torch).shape == (1, 3, 2, 2, 7)
+
+
 def test_DownConvolution2Axis3DLayer() -> None:
     """
     Function that tests DownConvolution3DLayer
@@ -177,6 +203,41 @@ def test_UpConvolution3DLayer() -> None:
         x_down=input_down_torch,
         x_left=input_left_torch
     ).shape == (1, 5, 8, 8, 8)
+
+
+def test_MCUpConvolution3DLayer() -> None:
+    """
+    Function that tests MCUpConvolution3DLayer
+
+    :return: None
+    """
+    # Initialize layer
+    up_convonvolution_3_d_layer = MCUpConvolution3DLayer(
+        in_channels=3,
+        out_channels=5,
+        pool_size=2,
+        kernel_size=3,
+        padding=1,
+        dropout=0.5
+    )
+
+    # Initialize input
+    input_left = np.arange(3 * 8 * 8 * 8).reshape(1, 3, 8, 8, 8)
+    input_down = np.arange(6 * 4 * 4 * 4).reshape(1, 6, 4, 4, 4)
+
+    input_left_torch = torch.tensor(
+        input_left, dtype=torch.float32,
+    ).to('cpu')
+    input_down_torch = torch.tensor(
+        input_down, dtype=torch.float32,
+    ).to('cpu')
+
+    # Apply forward pass
+    assert up_convonvolution_3_d_layer(
+        x_down=input_down_torch,
+        x_left=input_left_torch
+    ).shape == (1, 5, 8, 8, 8)
+
 
 
 def test_UpConvolution2Axis3DLayer() -> None:
