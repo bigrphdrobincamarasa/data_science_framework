@@ -33,17 +33,17 @@ class ROCPlotter(Plotter):
         ) -> plt.figure:
         """__call__
 
-        :param data: Array of shape (n, m, 4) n values of thresholds, m samples, 4 (tn, fp, fn, tp)
+        :param data: Array of shape (m, n, 4) m samples, n values of thresholds, 4 (tn, fp, fn, tp)
         :type data: np.ndarray
         :rtype: plt.figure
         """
         self.initialise_figure()
 
         # Compute metrics
-        tn = np.sum(data[:, :, 0], axis=1)
-        fp = np.sum(data[:, :, 1], axis=1)
-        fn = np.sum(data[:, :, 2], axis=1)
-        tp = np.sum(data[:, :, 3], axis=1)
+        tn = np.sum(data[:, :, 0], axis=0)
+        fp = np.sum(data[:, :, 1], axis=0)
+        fn = np.sum(data[:, :, 2], axis=0)
+        tp = np.sum(data[:, :, 3], axis=0)
 
         # Format data
         thresholds = np.linspace(0, 1, data.shape[0])

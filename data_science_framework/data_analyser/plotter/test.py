@@ -162,7 +162,7 @@ def test_ROCPlotter(output_folder: str) -> None:
     )
 
     # Test call
-    data=np.arange(10 * 100 * 4).reshape(10, 100, 4)
+    data=np.arange(10 * 100 * 4).reshape(100, 10, 4)
     plotter(data=data)
     plotter.figure.savefig(
         os.path.join(output_folder, 'roc_call.png')
