@@ -108,8 +108,7 @@ def test_MCUnet() -> None:
     assert unet(input_torch).sum().item() != unet(input_torch).sum().item()
 
     # Test MCDropout
-    assert len(unet.mc_forward(input_torch)) == 5
-    assert unet.mc_forward(input_torch)[0].shape == (1, 3, 32, 32, 32)
+    assert unet.mc_forward(input_torch).shape == (5, 1, 3, 32, 32, 32)
 
 
 def test_MCUnet2Axis() -> None:

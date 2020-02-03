@@ -16,6 +16,7 @@
 """
 import torch.nn as nn
 import torch
+from typing import Tuple
 from data_science_framework.pytorch_utils.models import Unet
 from data_science_framework.pytorch_utils.layers import MCDownConvolution3DLayer,\
         MCUpConvolution3DLayer
@@ -56,16 +57,22 @@ class MCUnet(Unet):
             )
         )
 
-    def mc_forward(self, x, uncertainty=False):
+    def mc_forward(self, x) -> torch.Tensor:
         """
         Method that computes multiple forward passes
 
         :param x: Tensor value before forward pass
-        :param uncertainty: True if applying MC Dropout method
-        :return: Tensor value after forward pass
+        :return: Tensor value after n_iter forward pass
         """
-        return [
-            super(MCUnet, self).forward(x=x)
-            for _ in range(self.n_iter)
-        ]
-
+        forward_passes = torch.cat(
+            [
+                super(MCUnet, self).forward(x=x)
+                for _ in range(self.n_iter)
+            ]
+        )
+        return forward_passes.reshape(
+            *tuple(
+                [self.n_iter, int(forward_passes.shape[0]/self.n_iter)] +\
+                        list(forward_passes.shape)[1:]
+            )
+        )
