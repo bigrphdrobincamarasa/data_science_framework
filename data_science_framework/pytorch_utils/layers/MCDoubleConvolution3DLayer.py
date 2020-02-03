@@ -42,11 +42,11 @@ class MCDoubleConvolution3DLayer(nn.Module):
         self.dropout = dropout
         self.double_conv = nn.Sequential(
             nn.Conv3d(in_channels, out_channels, kernel_size=kernel_size, padding=padding),
-            nn.Dropout3d(p=self.dropout),
+            nn.Dropout3d(p=self.dropout, inplace=True),
             nn.BatchNorm3d(out_channels),
             nn.ReLU(inplace=True),
             nn.Conv3d(out_channels, out_channels, kernel_size=kernel_size, padding=padding),
-            nn.Dropout3d(self.dropout),
+            nn.Dropout3d(self.dropout, inplace=True),
             nn.BatchNorm3d(out_channels),
             nn.ReLU(inplace=True)
         )

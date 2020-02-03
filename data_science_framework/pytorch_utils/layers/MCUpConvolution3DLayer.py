@@ -52,7 +52,7 @@ class MCUpConvolution3DLayer(nn.Module):
         """
         self.up = nn.Sequential(
             nn.Upsample(scale_factor=self.pool_size),
-            nn.Dropout3d(p=self.dropout)
+            nn.Dropout3d(p=self.dropout, inplace=True)
         )
         self.conv = self.double_convolution(
             in_channels=3 * self.in_channels, out_channels=self.out_channels,

@@ -26,3 +26,4 @@ from .MCDoubleConvolution3DLayer import MCDoubleConvolution3DLayer
 from .MCDownConvolution3DLayer import MCDownConvolution3DLayer
 from .MCDownConvolution2Axis3DLayer import MCDownConvolution2Axis3DLayer
 from .MCUpConvolution3DLayer import MCUpConvolution3DLayer
+from .MCUpConvolution2Axis3DLayer import MCUpConvolution2Axis3DLayer
