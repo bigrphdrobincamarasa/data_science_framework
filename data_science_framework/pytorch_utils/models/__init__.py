@@ -18,4 +18,5 @@ MODULE = ['data_science_framework', 'pytorch_utils', 'models']
 
 from .Unet import Unet
 from .Unet2Axis import Unet2Axis
+from .MCUnet2Axis import MCUnet2Axis
 from .MCUnet import MCUnet
