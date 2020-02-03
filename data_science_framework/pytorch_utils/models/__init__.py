@@ -20,3 +20,4 @@ from .Unet import Unet
 from .Unet2Axis import Unet2Axis
 from .MCUnet2Axis import MCUnet2Axis
 from .MCUnet import MCUnet
+from .MCNetwork import MCNetwork

@@ -34,13 +34,15 @@ class MCUnet(Unet):
     :param padding: Padding of the convolution
     :param activation: Type of activation function (either 'sigmoid' or 'softmax')
     :param dropout: Value of dropout
+    :param n_iter: Number of interation to compute mc dropout
     """
     def __init__(
             self, name='mc_unet', in_channels: int=1, out_channels: int=1,
             depth: int=3, n_features: int=8, kernel_size: int=3,
             pool_size: int=2, padding: int=1, activation: str='softmax',
-            dropout: float=0.1
+            dropout: float=0.1, n_iter: int=20
     ):
+        self.n_iter = n_iter
         self.dropout = dropout
         super(MCUnet, self).__init__(
             name=name, in_channels=in_channels, out_channels=out_channels,
@@ -53,4 +55,17 @@ class MCUnet(Unet):
                 dropout=self.dropout, *args, **kwargs
             )
         )
+
+    def mc_forward(self, x, uncertainty=False):
+        """
+        Method that computes multiple forward passes
+
+        :param x: Tensor value before forward pass
+        :param uncertainty: True if applying MC Dropout method
+        :return: Tensor value after forward pass
+        """
+        return [
+            super(MCUnet, self).forward(x=x)
+            for _ in range(self.n_iter)
+        ]
 

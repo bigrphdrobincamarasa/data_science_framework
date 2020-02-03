@@ -91,7 +91,8 @@ def test_MCUnet() -> None:
         pool_size=2,
         padding=1,
         activation='softmax',
-        dropout=0.5
+        dropout=0.5,
+        n_iter=5
     )
 
     # Define input
@@ -105,6 +106,10 @@ def test_MCUnet() -> None:
 
     # Test stochasticity
     assert unet(input_torch).sum().item() != unet(input_torch).sum().item()
+
+    # Test MCDropout
+    assert len(unet.mc_forward(input_torch)) == 5
+    assert unet.mc_forward(input_torch)[0].shape == (1, 3, 32, 32, 32)
 
 
 def test_MCUnet2Axis() -> None:
@@ -123,7 +128,8 @@ def test_MCUnet2Axis() -> None:
         pool_size=2,
         padding=1,
         activation='softmax',
-        dropout=0.5
+        dropout=0.5,
+        n_iter=5
     )
 
     # Define input
@@ -137,3 +143,9 @@ def test_MCUnet2Axis() -> None:
 
     # Test stochasticity
     assert unet(input_torch).sum().item() != unet(input_torch).sum().item()
+
+    # Test MCDropout
+    assert len(unet.mc_forward(input_torch)) == 5
+    assert unet.mc_forward(input_torch)[0].shape == (1, 3, 32, 32, 32)
+
+
