@@ -16,7 +16,8 @@
 import torch
 import numpy as np
 from data_science_framework.pytorch_utils.models import Unet,\
-        Unet2Axis, MCUnet, MCUnet2Axis, ApproxMCUnet
+        Unet2Axis, MCUnet, MCUnet2Axis, ApproxMCUnet,\
+        ApproxMCUnet2Axis
 
 
 def test_Unet() -> None:
@@ -188,6 +189,45 @@ def test_ApproxMCUnet() -> None:
     """
     # Initialize network
     unet = ApproxMCUnet(
+        in_channels=5,
+        out_channels=3,
+        depth=4,
+        n_features=2,
+        kernel_size=3,
+        pool_size=2,
+        padding=1,
+        activation='softmax',
+        dropout=0.5,
+        n_iter=5
+    )
+
+    # Define input
+    input = np.arange(5 * 32 * 32 * 32).reshape(1, 5, 32, 32, 32)
+    input_torch = torch.tensor(
+        input, dtype=torch.float32,
+    ).to('cpu')
+
+    # Test output shape 'both' modality
+    unet.modality = 'both'
+    assert unet(input_torch).shape == (1, 6, 32, 32, 32)
+
+    # Test output shape 'mean' modality
+    unet.modality = 'mean'
+    assert unet(input_torch).shape == (1, 3, 32, 32, 32)
+
+    # Test output shape 'std' modality
+    unet.modality = 'std'
+    assert unet(input_torch).shape == (1, 3, 32, 32, 32)
+
+
+def test_ApproxMCUnet2Axis() -> None:
+    """
+    Function that tests ApproxMCUnet2Axis
+
+    :return: None
+    """
+    # Initialize network
+    unet = ApproxMCUnet2Axis(
         in_channels=5,
         out_channels=3,
         depth=4,

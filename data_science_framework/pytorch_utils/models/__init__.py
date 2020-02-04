@@ -21,3 +21,4 @@ from .Unet2Axis import Unet2Axis
 from .MCUnet import MCUnet
 from .MCUnet2Axis import MCUnet2Axis
 from .ApproxMCUnet import ApproxMCUnet
+from .ApproxMCUnet2Axis import ApproxMCUnet2Axis
