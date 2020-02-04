@@ -16,32 +16,37 @@
 from data_science_framework.data_spy.loggers.experiment_loggers import timer
 from data_science_framework.pytorch_utils.optimizer import Optimizer
 from data_science_framework.data_analyser.analyser import Analyser
+from data_science_framework.pytorch_utils.models import MCUnet
+from data_science_framework.data_analyser.tester import Tester
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
 from typing import List
 import torch
 
 
-class Tester(object):
+class MCTester(Tester):
     """
-    Class that implements Tester
+    Class that implements MCTester
 
     :param result_folder: Path to the test folder
     :param writer: Tensorboad summary writer file
     :param dataset: Subset of the dataset
     :param analysers: List of analysis launched on the dataset
+    :param mc_analyser: List of analysis launched on the dataset
     :param model: Tested model
     """
     def __init__(
             self, result_folder: str, writer: SummaryWriter,
             dataset: Dataset, analysers : List[Analyser],
-            model: torch.nn.Module
+            mc_analysers : List[Analyser],
+            model: MCUnet
         ) -> None:
-        self.result_folder = result_folder
-        self.writer = writer
-        self.dataset = dataset
-        self.model = model
-        self.analysers = analysers
+        super(MCTester, self).__init__(
+            result_folder=result_folder, writer=writer,
+            dataset=dataset, analysers=analysers,
+            model=model
+        )
+        self.mc_analysers=mc_analysers
 
     def __call__(self) -> None:
         """__call__
@@ -53,14 +58,17 @@ class Tester(object):
         # Apply analysis
         with torch.no_grad():
             for input, target, meta in self.dataset:
-                output = self.model(input)
+                output = self.model.mc_forward(input)
                 for analyser in self.analysers:
                     analyser(
-                        output, target, meta=meta
+                        output.mean(0),
+                        target, meta=meta
                     )
+                for mc_analyser in self.mc_analysers:
+                    mc_analyser(output, target, meta=meta)
 
         # Save results
-        for analyser in self.analysers:
+        for analyser in self.analysers + self.mc_analysers:
             analyser.save_data()
             analyser.save_to_tensorboard()
 

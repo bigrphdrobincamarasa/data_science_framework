@@ -16,3 +16,4 @@
 MODULE = ['data_science_framework', 'data_analyser', 'tester']
 
 from .Tester import Tester
+from .MCTester import MCTester
