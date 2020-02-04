@@ -83,7 +83,7 @@ class ModelCheckpoint(Callback):
             self.best_score = epoch_score
             self.best_epoch = epoch
             torch.save(
-                model, os.path.join(
+                model.state_dict(), os.path.join(
                     self.save_folder,
                     'model_epoch_{}.pt'.format(epoch)
                 )
