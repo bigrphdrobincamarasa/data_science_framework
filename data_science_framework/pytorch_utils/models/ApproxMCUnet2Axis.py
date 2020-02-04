@@ -44,11 +44,8 @@ class ApproxMCUnet2Axis(ApproxMCUnet):
             depth: int=3, n_features: int=8, kernel_size: int=3,
             pool_size: int=2, padding: int=1, activation: str='softmax',
             dropout: float=0.1, n_iter: int=20, modality='mean',
-            down_conv=lambda *args, **kwargs: MCDownConvolution2Axis3DLayer(
-                dropout=self.dropout, *args, **kwargs
-            ),up_conv=lambda *args, **kwargs: MCUpConvolution2Axis3DLayer(
-                dropout=self.dropout, *args, **kwargs
-            )
+            down_conv=MCDownConvolution2Axis3DLayer,
+            up_conv=MCUpConvolution2Axis3DLayer
 
     ):
         super(ApproxMCUnet2Axis, self).__init__(

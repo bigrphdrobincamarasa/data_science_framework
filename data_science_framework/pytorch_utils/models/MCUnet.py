@@ -19,7 +19,7 @@ import torch
 from typing import Tuple
 from data_science_framework.pytorch_utils.models import Unet
 from data_science_framework.pytorch_utils.layers import MCDownConvolution3DLayer,\
-        MCUpConvolution3DLayer
+        MCUpConvolution3DLayer, MCLayerGenerator
 
 class MCUnet(Unet):
     """
@@ -42,25 +42,17 @@ class MCUnet(Unet):
             depth: int=3, n_features: int=8, kernel_size: int=3,
             pool_size: int=2, padding: int=1, activation: str='softmax',
             dropout: float=0.1, n_iter: int=20,
-            down_conv=lambda *args, **kwargs: MCDownConvolution3DLayer(
-                dropout=self.dropout, *args, **kwargs
-            ),
-            up_conv=lambda *args, **kwargs: MCUpConvolution3DLayer(
-                dropout=self.dropout, *args, **kwargs
-            )
-    ):
+            down_conv=MCDownConvolution3DLayer,
+            up_conv=MCUpConvolution3DLayer
+        ):
         self.n_iter = n_iter
         self.dropout = dropout
         super(MCUnet, self).__init__(
             name=name, in_channels=in_channels, out_channels=out_channels,
             depth=depth, n_features=n_features, kernel_size=kernel_size,
             pool_size=pool_size, padding=padding, activation=activation,
-            down_conv=lambda *args, **kwargs: MCDownConvolution3DLayer(
-                dropout=self.dropout, *args, **kwargs
-            ),
-            up_conv=lambda *args, **kwargs: MCUpConvolution3DLayer(
-                dropout=self.dropout, *args, **kwargs
-            )
+            down_conv=MCLayerGenerator(dropout=dropout, layer=down_conv),
+            up_conv=MCLayerGenerator(dropout=dropout, layer=up_conv),
         )
 
     def mc_forward(self, x) -> torch.Tensor:

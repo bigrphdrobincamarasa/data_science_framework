@@ -20,7 +20,7 @@ from data_science_framework.pytorch_utils.layers import DoubleConvolution3DLayer
         OutConvolution3DLayer, DownConvolution3DLayer, UpConvolution3DLayer, \
         UpConvolution2Axis3DLayer, DownConvolution2Axis3DLayer, MCDoubleConvolution3DLayer,\
         MCDownConvolution3DLayer, MCUpConvolution3DLayer, MCDownConvolution2Axis3DLayer,\
-        MCUpConvolution2Axis3DLayer
+        MCUpConvolution2Axis3DLayer, MCLayerGenerator
 
 def test_DoubleConvolution3DLayer() -> None:
     """
@@ -367,3 +367,36 @@ def test_OutConvolution3DLayer() -> None:
         assert out_convolution_3_d_layer(
             input_torch
         ).shape == (1, 5, 4, 4, 4)
+
+
+def test_LayerGenerator() -> None:
+    """
+    Function that tests LayerGenerator
+
+    :return: None
+    """
+    dropout = 0.1
+    layer = MCDoubleConvolution3DLayer
+
+    # Test MC Layer Generator initialization
+    mc_layer_generator = MCLayerGenerator(
+        dropout=dropout, layer=layer
+    )
+    assert mc_layer_generator.dropout == 0.1
+    assert type(mc_layer_generator.layer) == type(type)
+
+    # Test __call__
+    assert type(mc_layer_generator(
+        in_channels=2,
+        out_channels=3,
+        kernel_size=3,
+        padding=1,)
+    ) == type(MCDoubleConvolution3DLayer(
+            in_channels=2,
+            out_channels=3,
+            kernel_size=3,
+            padding=1,
+            dropout=0.5
+        )
+    )
+

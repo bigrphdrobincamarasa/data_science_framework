@@ -83,7 +83,7 @@ class ModelCheckpoint(Callback):
             self.best_score = epoch_score
             self.best_epoch = epoch
             torch.save(
-                model.state_dict(), os.path.join(
+                model, os.path.join(
                     self.save_folder,
                     'model_epoch_{}.pt'.format(epoch)
                 )
@@ -109,7 +109,7 @@ class ModelCheckpoint(Callback):
     def __call__(
             self, output: torch.Tensor,
             target: torch.Tensor, training: bool = True
-        ) -> None: 
+        ) -> None:
         """
         Method call
 

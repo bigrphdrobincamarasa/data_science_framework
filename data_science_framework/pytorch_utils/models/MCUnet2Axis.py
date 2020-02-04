@@ -18,7 +18,7 @@ import torch.nn as nn
 import torch
 from data_science_framework.pytorch_utils.models import MCUnet
 from data_science_framework.pytorch_utils.layers import MCDownConvolution2Axis3DLayer,\
-        MCUpConvolution2Axis3DLayer
+        MCUpConvolution2Axis3DLayer, MCLayerGenerator
 
 
 class MCUnet2Axis(MCUnet):
@@ -43,12 +43,9 @@ class MCUnet2Axis(MCUnet):
             depth: int=3, n_features: int=8, kernel_size: int=3,
             pool_size: int=2, padding: int=1, activation: str='softmax',
             dropout: float=0.1, n_iter: int=20,
-            down_conv=lambda *args, **kwargs: MCDownConvolution2Axis3DLayer(
-                dropout=self.dropout, *args, **kwargs
-            ), up_conv=lambda *args, **kwargs: MCUpConvolution2Axis3DLayer(
-                dropout=self.dropout, *args, **kwargs
-            )
-    ):
+            down_conv=MCDownConvolution2Axis3DLayer,
+            up_conv=MCUpConvolution2Axis3DLayer
+        ):
         super(MCUnet2Axis, self).__init__(
             name=name, in_channels=in_channels, out_channels=out_channels,
             depth=depth, n_features=n_features, kernel_size=kernel_size,

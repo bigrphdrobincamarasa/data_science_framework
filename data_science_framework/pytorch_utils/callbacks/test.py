@@ -17,7 +17,7 @@ import os
 from torch.utils.tensorboard import SummaryWriter
 from data_science_framework.pytorch_utils.callbacks import Callback, MetricsWritter, ModelCheckpoint,\
         ModelPlotter, DataDisplayer, ConfusionMatrixCallback
-from data_science_framework.pytorch_utils.models import Unet
+from data_science_framework.pytorch_utils.models import ApproxMCUnet2Axis
 from data_science_framework.pytorch_utils.callbacks import MODULE
 from data_science_framework.scripting.test_manager import set_test_folders
 from data_science_framework.settings import TEST_ROOT
@@ -130,7 +130,7 @@ def test_ModelCheckpoint(output_folder: str) -> None:
     )
 
     # Test on epoch start
-    model_checkpoint.on_epoch_start(0, Unet())
+    model_checkpoint.on_epoch_start(0, ApproxMCUnet2Axis())
     assert len(list(model_checkpoint.metric_values)) == 3
     assert os.path.isfile(
         os.path.join(output_folder, 'model.pkl')
@@ -147,7 +147,7 @@ def test_ModelCheckpoint(output_folder: str) -> None:
     assert model_checkpoint.metric_values[2] != 0
 
     # Test on epoch end
-    model = Unet()
+    model = ApproxMCUnet2Axis()
     for epoch in range(10):
         model_checkpoint.on_epoch_start(epoch, model)
         for i in range(epoch):
@@ -167,7 +167,7 @@ def test_ModelPlotter(output_folder: str) -> None:
     :return: None
     """
     # Initialize callback
-    model = Unet(
+    model = ApproxMCUnet2Axis(
         in_channels=5,
         out_channels=3,
         depth=3,
