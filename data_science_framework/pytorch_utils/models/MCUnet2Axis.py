@@ -57,17 +57,23 @@ class MCUnet2Axis(Unet):
             ),
         )
 
-
-    def mc_forward(self, x, uncertainty=False):
+    def mc_forward(self, x) -> torch.Tensor:
         """
         Method that computes multiple forward passes
 
         :param x: Tensor value before forward pass
-        :param uncertainty: True if applying MC Dropout method
-        :return: Tensor value after forward pass
+        :return: Tensor value after n_iter forward pass
         """
-        return [
-            super(MCUnet2Axis, self).forward(x=x)
-            for _ in range(self.n_iter)
-        ]
+        forward_passes = torch.cat(
+            [
+                self.forward(x=x)
+                for _ in range(self.n_iter)
+            ]
+        )
+        return forward_passes.reshape(
+            *tuple(
+                [self.n_iter, int(forward_passes.shape[0]/self.n_iter)] +\
+                        list(forward_passes.shape)[1:]
+            )
+        )
 

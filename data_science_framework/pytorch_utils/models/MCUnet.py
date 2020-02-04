@@ -66,7 +66,7 @@ class MCUnet(Unet):
         """
         forward_passes = torch.cat(
             [
-                super(MCUnet, self).forward(x=x)
+                self.forward(x=x)
                 for _ in range(self.n_iter)
             ]
         )
